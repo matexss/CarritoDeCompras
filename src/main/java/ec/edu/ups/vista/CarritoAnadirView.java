@@ -14,7 +14,6 @@ public class CarritoAnadirView extends JInternalFrame {
     private JLabel lblPrecio;
     private JButton btnAñadir;
     private JButton btnGuardar;
-    private JButton btnBuscar2;
     private JTable table1;
     private JTextField txtSubtotal;
     private JTextField txtIva;
