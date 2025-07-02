@@ -1,4 +1,3 @@
-// Archivo: src/ec/edu/ups/Main.java
 package ec.edu.ups.vista;
 
 import ec.edu.ups.controlador.CarritoController;

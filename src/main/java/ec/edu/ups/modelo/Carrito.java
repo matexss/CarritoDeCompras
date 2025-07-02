@@ -8,14 +8,12 @@ import java.util.List;
 public class Carrito {
 
     private final double IVA = 0.12;
-
     private static int contador = 1;
 
     private int codigo;
-
     private GregorianCalendar fechaCreacion;
-
     private List<ItemCarrito> items;
+    private Usuario usuario; // NUEVO
 
     public Carrito() {
         codigo = contador++;
@@ -23,21 +21,14 @@ public class Carrito {
         fechaCreacion = new GregorianCalendar();
     }
 
-    public int getCodigo() {
-        return codigo;
-    }
+    public int getCodigo() { return codigo; }
+    public void setCodigo(int codigo) { this.codigo = codigo; }
 
-    public void setCodigo(int codigo) {
-        this.codigo = codigo;
-    }
+    public GregorianCalendar getFechaCreacion() { return fechaCreacion; }
+    public void setFechaCreacion(GregorianCalendar fechaCreacion) { this.fechaCreacion = fechaCreacion; }
 
-    public GregorianCalendar getFechaCreacion() {
-        return fechaCreacion;
-    }
-
-    public void setFechaCreacion(GregorianCalendar fechaCreacion) {
-        this.fechaCreacion = fechaCreacion;
-    }
+    public Usuario getUsuario() { return usuario; } // NUEVO
+    public void setUsuario(Usuario usuario) { this.usuario = usuario; } // NUEVO
 
     public void agregarProducto(Producto producto, int cantidad) {
         items.add(new ItemCarrito(producto, cantidad));
@@ -74,13 +65,22 @@ public class Carrito {
     }
 
     public double calcularIVA() {
-        double subtotal = calcularSubtotal();
-        return subtotal * IVA;
+        return calcularSubtotal() * IVA;
     }
 
     public double calcularTotal() {
         return calcularSubtotal() + calcularIVA();
     }
+
+    public void actualizarCantidadProducto(int codigoProducto, int nuevaCantidad) {
+        for (ItemCarrito item : items) {
+            if (item.getProducto().getCodigo() == codigoProducto) {
+                item.setCantidad(nuevaCantidad);
+                break;
+            }
+        }
+    }
+
 
     @Override
     public String toString() {
@@ -89,7 +89,7 @@ public class Carrito {
                 ", codigo=" + codigo +
                 ", fechaCreacion=" + fechaCreacion +
                 ", items=" + items +
+                ", usuario=" + (usuario != null ? usuario.getUsername() : "null") +
                 '}';
     }
 }
-

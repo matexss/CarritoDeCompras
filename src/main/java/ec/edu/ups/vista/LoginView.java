@@ -4,73 +4,71 @@ import javax.swing.*;
 import java.awt.*;
 
 public class LoginView extends JFrame {
-    private JTextField txtUsername;
     private JPanel panelPrincipal;
     private JPanel panelSecundario;
+    private JTextField txtUsuario;
     private JPasswordField txtContrasenia;
-    private JButton btnIniciarSesion;
+    private JButton btnLogin;
     private JButton btnRegistrarse;
+    private JButton btnRecuperarContrasenia;
 
     public LoginView() {
-        setTitle("Iniciar Sesión");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(400, 200);
+        setTitle("Login");
+        Color fondo = new Color(215, 144, 70);
+        getContentPane().setBackground(fondo);
+        setLayout(new BorderLayout());
+        setSize(350, 250);
         setLocationRelativeTo(null);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setLayout(null);
 
-        // Panel para etiquetas y campos
-        JPanel panelCampos = new JPanel(new GridLayout(2, 2, 10, 10));
-        JLabel lblUsername = new JLabel("Usuario:");
-        txtUsername = new JTextField();
+        JLabel lblUsuario = new JLabel("Usuario:");
+        lblUsuario.setBounds(30, 30, 80, 25);
+        add(lblUsuario);
+
+        txtUsuario = new JTextField();
+        txtUsuario.setBounds(120, 30, 180, 25);
+        add(txtUsuario);
+
         JLabel lblContrasenia = new JLabel("Contraseña:");
+        lblContrasenia.setBounds(30, 70, 80, 25);
+        add(lblContrasenia);
+
         txtContrasenia = new JPasswordField();
+        txtContrasenia.setBounds(120, 70, 180, 25);
+        add(txtContrasenia);
 
-        panelCampos.add(lblUsername);
-        panelCampos.add(txtUsername);
-        panelCampos.add(lblContrasenia);
-        panelCampos.add(txtContrasenia);
+        btnLogin = new JButton("Iniciar sesión");
+        btnLogin.setBounds(30, 120, 130, 30);
+        add(btnLogin);
 
-        // Panel para botones, centrado con FlowLayout
-        JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 0));
-        btnIniciarSesion = new JButton("Iniciar Sesión");
         btnRegistrarse = new JButton("Registrarse");
-        panelBotones.add(btnIniciarSesion);
-        panelBotones.add(btnRegistrarse);
+        btnRegistrarse.setBounds(170, 120, 130, 30);
+        add(btnRegistrarse);
 
-        // Panel principal con BorderLayout
-        JPanel panelPrincipal = new JPanel(new BorderLayout(10, 10));
-        panelPrincipal.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-        panelPrincipal.add(panelCampos, BorderLayout.CENTER);
-        panelPrincipal.add(panelBotones, BorderLayout.SOUTH);
-
-        setContentPane(panelPrincipal);
+        btnRecuperarContrasenia = new JButton("¿Olvidó su contraseña?");
+        btnRecuperarContrasenia.setBounds(80, 170, 180, 25);
+        add(btnRecuperarContrasenia);
     }
 
-    // Getters
-    public JTextField getTxtUsername() {
-        return txtUsername;
+    // Getters públicos para el controlador
+    public JTextField getTxtUsuario() {
+        return txtUsuario;
     }
 
     public JPasswordField getTxtContrasenia() {
         return txtContrasenia;
     }
 
-    public JButton getBtnIniciarSesion() {
-        return btnIniciarSesion;
+    public JButton getBtnLogin() {
+        return btnLogin;
     }
 
     public JButton getBtnRegistrarse() {
         return btnRegistrarse;
     }
 
-    public void mostrarMensaje(String mensaje) {
-        JOptionPane.showMessageDialog(this, mensaje);
-    }
-
-    // Para probar la ventana
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            LoginView login = new LoginView();
-            login.setVisible(true);
-        });
+    public JButton getBtnRecuperarContrasenia() {
+        return btnRecuperarContrasenia;
     }
 }
