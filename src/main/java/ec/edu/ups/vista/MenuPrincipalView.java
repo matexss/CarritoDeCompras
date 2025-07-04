@@ -1,5 +1,6 @@
 package ec.edu.ups.vista;
 
+import ec.edu.ups.controlador.CarritoController;
 import ec.edu.ups.util.MensajeInternacionalizacionHandler;
 
 import javax.swing.*;
@@ -7,6 +8,7 @@ import javax.swing.*;
 public class MenuPrincipalView extends JFrame {
 
     private MensajeInternacionalizacionHandler mensajeInternacionalizacionHandler;
+    private CarritoController carritoController;
 
     private JMenuBar menuBar;
     private JMenu menuProducto;
@@ -18,7 +20,11 @@ public class MenuPrincipalView extends JFrame {
     private JMenuItem menuItemEliminarProducto;
     private JMenuItem menuItemActualizarProducto;
     private JMenuItem menuItemBuscarProducto;
+
     private JMenuItem menuItemCrearCarrito;
+    private JMenuItem menuItemModificarCarrito;
+    private JMenuItem menuItemEliminarCarrito;
+    private JMenuItem menuItemListarCarritos;
 
     private JMenuItem menuItemIdiomaEspanol;
     private JMenuItem menuItemIdiomaIngles;
@@ -29,9 +35,11 @@ public class MenuPrincipalView extends JFrame {
 
     private JDesktopPane jDesktopPane;
 
-    public MenuPrincipalView() {
-        mensajeInternacionalizacionHandler = new MensajeInternacionalizacionHandler("es", "EC");
+    public MenuPrincipalView(MensajeInternacionalizacionHandler mih, CarritoController carritoController) {
+        this.mensajeInternacionalizacionHandler = mih;
+        this.carritoController = carritoController;
         initComponents();
+        initListeners();
     }
 
     private void initComponents() {
@@ -49,6 +57,9 @@ public class MenuPrincipalView extends JFrame {
         menuItemBuscarProducto = new JMenuItem(mensajeInternacionalizacionHandler.get("menu.producto.buscar"));
 
         menuItemCrearCarrito = new JMenuItem(mensajeInternacionalizacionHandler.get("menu.carrito.crear"));
+        menuItemModificarCarrito = new JMenuItem(mensajeInternacionalizacionHandler.get("menu.carrito.modificar"));
+        menuItemEliminarCarrito = new JMenuItem(mensajeInternacionalizacionHandler.get("menu.carrito.eliminar"));
+        menuItemListarCarritos = new JMenuItem(mensajeInternacionalizacionHandler.get("menu.carrito.listar"));
 
         menuItemIdiomaEspanol = new JMenuItem(mensajeInternacionalizacionHandler.get("menu.idioma.es"));
         menuItemIdiomaIngles = new JMenuItem(mensajeInternacionalizacionHandler.get("menu.idioma.en"));
@@ -63,6 +74,9 @@ public class MenuPrincipalView extends JFrame {
         menuProducto.add(menuItemBuscarProducto);
 
         menuCarrito.add(menuItemCrearCarrito);
+        menuCarrito.add(menuItemModificarCarrito);
+        menuCarrito.add(menuItemEliminarCarrito);
+        menuCarrito.add(menuItemListarCarritos);
 
         menuIdioma.add(menuItemIdiomaEspanol);
         menuIdioma.add(menuItemIdiomaIngles);
@@ -78,15 +92,51 @@ public class MenuPrincipalView extends JFrame {
 
         setJMenuBar(menuBar);
         setContentPane(jDesktopPane);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
         setTitle(mensajeInternacionalizacionHandler.get("app.titulo"));
-        setExtendedState(JFrame.MAXIMIZED_BOTH);
+        setExtendedState(MAXIMIZED_BOTH);
         setVisible(true);
+    }
+
+    private void initListeners() {
+        menuItemCrearCarrito.addActionListener(e -> {
+            CarritoAnadirView vista = new CarritoAnadirView(carritoController);
+            jDesktopPane.add(vista);
+            vista.setVisible(true);
+        });
+
+        menuItemModificarCarrito.addActionListener(e -> {
+            CarritoModificarView vista = new CarritoModificarView(carritoController);
+            jDesktopPane.add(vista);
+            vista.setVisible(true);
+        });
+
+        menuItemEliminarCarrito.addActionListener(e -> {
+            CarritoEliminarView vista = new CarritoEliminarView(carritoController, mensajeInternacionalizacionHandler);
+            jDesktopPane.add(vista);
+            vista.setVisible(true);
+        });
+
+        menuItemListarCarritos.addActionListener(e -> {
+            CarritoListarView vista = new CarritoListarView(carritoController);
+            jDesktopPane.add(vista);
+            vista.setVisible(true);
+        });
+
+        menuItemIdiomaEspanol.addActionListener(e -> cambiarIdioma("es", "EC"));
+        menuItemIdiomaIngles.addActionListener(e -> cambiarIdioma("en", "US"));
+        menuItemIdiomaFrances.addActionListener(e -> cambiarIdioma("fr", "FR"));
+
+        menuItemSalir.addActionListener(e -> System.exit(0));
+
+        menuItemCerrarSesion.addActionListener(e -> {
+            this.dispose();
+            new LoginView().setVisible(true);
+        });
     }
 
     public void cambiarIdioma(String lenguaje, String pais) {
         mensajeInternacionalizacionHandler.setLenguaje(lenguaje, pais);
-
         setTitle(mensajeInternacionalizacionHandler.get("app.titulo"));
 
         menuProducto.setText(mensajeInternacionalizacionHandler.get("menu.producto"));
@@ -100,6 +150,9 @@ public class MenuPrincipalView extends JFrame {
         menuItemBuscarProducto.setText(mensajeInternacionalizacionHandler.get("menu.producto.buscar"));
 
         menuItemCrearCarrito.setText(mensajeInternacionalizacionHandler.get("menu.carrito.crear"));
+        menuItemModificarCarrito.setText(mensajeInternacionalizacionHandler.get("menu.carrito.modificar"));
+        menuItemEliminarCarrito.setText(mensajeInternacionalizacionHandler.get("menu.carrito.eliminar"));
+        menuItemListarCarritos.setText(mensajeInternacionalizacionHandler.get("menu.carrito.listar"));
 
         menuItemIdiomaEspanol.setText(mensajeInternacionalizacionHandler.get("menu.idioma.es"));
         menuItemIdiomaIngles.setText(mensajeInternacionalizacionHandler.get("menu.idioma.en"));
@@ -120,12 +173,17 @@ public class MenuPrincipalView extends JFrame {
         menuItemBuscarProducto.setEnabled(false);
     }
 
-    // Getters
+    // Getters para los menús y items
+
     public JMenuItem getMenuItemCrearProducto() { return menuItemCrearProducto; }
     public JMenuItem getMenuItemEliminarProducto() { return menuItemEliminarProducto; }
     public JMenuItem getMenuItemActualizarProducto() { return menuItemActualizarProducto; }
     public JMenuItem getMenuItemBuscarProducto() { return menuItemBuscarProducto; }
+
     public JMenuItem getMenuItemCrearCarrito() { return menuItemCrearCarrito; }
+    public JMenuItem getMenuItemModificarCarrito() { return menuItemModificarCarrito; }
+    public JMenuItem getMenuItemEliminarCarrito() { return menuItemEliminarCarrito; }
+    public JMenuItem getMenuItemListarCarritos() { return menuItemListarCarritos; }
 
     public JMenuItem getMenuItemIdiomaEspanol() { return menuItemIdiomaEspanol; }
     public JMenuItem getMenuItemIdiomaIngles() { return menuItemIdiomaIngles; }

@@ -31,13 +31,13 @@
             <properties/>
             <border type="none"/>
             <children>
-              <component id="17aa2" class="javax.swing.JTable" binding="tblCarritos">
+              <component id="17aa2" class="javax.swing.JTable">
                 <constraints/>
                 <properties/>
               </component>
             </children>
           </scrollpane>
-          <component id="88404" class="javax.swing.JButton" binding="btnListar">
+          <component id="88404" class="javax.swing.JButton">
             <constraints>
               <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -45,7 +45,7 @@
               <text value="Listar"/>
             </properties>
           </component>
-          <component id="c6240" class="javax.swing.JLabel" binding="lblListaCarrito">
+          <component id="c6240" class="javax.swing.JLabel">
             <constraints>
               <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -53,7 +53,7 @@
               <text value="Label"/>
             </properties>
           </component>
-          <component id="79586" class="javax.swing.JButton" binding="btBuscar">
+          <component id="79586" class="javax.swing.JButton">
             <constraints>
               <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -61,7 +61,7 @@
               <text value="Buscar Destalles"/>
             </properties>
           </component>
-          <component id="5754" class="javax.swing.JTable" binding="tblDetalles">
+          <component id="5754" class="javax.swing.JTable">
             <constraints>
               <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false">
                 <preferred-size width="150" height="50"/>
@@ -69,7 +69,7 @@
             </constraints>
             <properties/>
           </component>
-          <component id="a6dac" class="javax.swing.JTextField" binding="txtCodigo">
+          <component id="a6dac" class="javax.swing.JTextField">
             <constraints>
               <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                 <preferred-size width="150" height="-1"/>

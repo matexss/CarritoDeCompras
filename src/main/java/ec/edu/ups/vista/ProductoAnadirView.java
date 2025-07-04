@@ -1,102 +1,87 @@
 package ec.edu.ups.vista;
 
-import ec.edu.ups.modelo.Producto;
-
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.List;
 
 public class ProductoAnadirView extends JInternalFrame {
-
     private JPanel panelPrincipal;
-    private JTextField txtPrecio;
-    private JTextField txtNombre;
     private JTextField txtCodigo;
+    private JTextField txtNombre;
+    private JTextField txtPrecio;
     private JButton btnAceptar;
     private JButton btnLimpiar;
 
     public ProductoAnadirView() {
+        super("Añadir Producto", true, true, true, true);
+        setSize(400, 250);
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        setLocation(30, 30);
+
+        panelPrincipal = new JPanel();
+        panelPrincipal.setLayout(null);
+
+        JLabel lblCodigo = new JLabel("Código:");
+        lblCodigo.setBounds(20, 20, 100, 25);
+        txtCodigo = new JTextField();
+        txtCodigo.setBounds(120, 20, 200, 25);
+
+        JLabel lblNombre = new JLabel("Nombre:");
+        lblNombre.setBounds(20, 60, 100, 25);
+        txtNombre = new JTextField();
+        txtNombre.setBounds(120, 60, 200, 25);
+
+        JLabel lblPrecio = new JLabel("Precio:");
+        lblPrecio.setBounds(20, 100, 100, 25);
+        txtPrecio = new JTextField();
+        txtPrecio.setBounds(120, 100, 200, 25);
+
+        btnAceptar = new JButton("Aceptar");
+        btnAceptar.setBounds(70, 150, 100, 30);
+
+        btnLimpiar = new JButton("Limpiar");
+        btnLimpiar.setBounds(210, 150, 100, 30);
+
+        panelPrincipal.add(lblCodigo);
+        panelPrincipal.add(txtCodigo);
+        panelPrincipal.add(lblNombre);
+        panelPrincipal.add(txtNombre);
+        panelPrincipal.add(lblPrecio);
+        panelPrincipal.add(txtPrecio);
+        panelPrincipal.add(btnAceptar);
+        panelPrincipal.add(btnLimpiar);
 
         setContentPane(panelPrincipal);
-        setClosable(true);
-        setMaximizable(true);
-        setIconifiable(true);
-        setSize(400, 300);
-        setClosable(true);
-        setMaximizable(true);
-        setIconifiable(true);
-        //pack();
-
-        btnLimpiar.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                limpiarCampos();
-            }
-        });
     }
 
-    public JPanel getPanelPrincipal() {
-        return panelPrincipal;
-    }
-
-    public void setPanelPrincipal(JPanel panelPrincipal) {
-        this.panelPrincipal = panelPrincipal;
-    }
-
-    public JTextField getTxtPrecio() {
-        return txtPrecio;
-    }
-
-    public void setTxtPrecio(JTextField txtPrecio) {
-        this.txtPrecio = txtPrecio;
+    // Getters para controlador
+    public JTextField getTxtCodigo() {
+        return txtCodigo;
     }
 
     public JTextField getTxtNombre() {
         return txtNombre;
     }
 
-    public void setTxtNombre(JTextField txtNombre) {
-        this.txtNombre = txtNombre;
-    }
-
-    public JTextField getTxtCodigo() {
-        return txtCodigo;
-    }
-
-    public void setTxtCodigo(JTextField txtCodigo) {
-        this.txtCodigo = txtCodigo;
+    public JTextField getTxtPrecio() {
+        return txtPrecio;
     }
 
     public JButton getBtnAceptar() {
         return btnAceptar;
     }
 
-    public void setBtnAceptar(JButton btnAceptar) {
-        this.btnAceptar = btnAceptar;
-    }
-
     public JButton getBtnLimpiar() {
         return btnLimpiar;
     }
 
-    public void setBtnLimpiar(JButton btnLimpiar) {
-        this.btnLimpiar = btnLimpiar;
-    }
-
+    // Mostrar mensajes emergentes
     public void mostrarMensaje(String mensaje) {
         JOptionPane.showMessageDialog(this, mensaje);
     }
 
+    // Limpiar campos
     public void limpiarCampos() {
         txtCodigo.setText("");
         txtNombre.setText("");
         txtPrecio.setText("");
-    }
-
-    public void mostrarProductos(List<Producto> productos) {
-        for (Producto producto : productos) {
-            System.out.println(producto);
-        }
     }
 }
