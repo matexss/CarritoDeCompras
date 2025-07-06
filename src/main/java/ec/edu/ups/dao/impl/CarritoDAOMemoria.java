@@ -4,33 +4,36 @@ import ec.edu.ups.dao.CarritoDAO;
 import ec.edu.ups.modelo.Carrito;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class CarritoDAOMemoria implements CarritoDAO {
 
-    private final Map<Integer, Carrito> carritos = new HashMap<>();
+    private final List<Carrito> lista = new ArrayList<>();
+    private int secuencia = 1;
 
     @Override
-    public void guardar(Carrito carrito) {
-        carritos.put(carrito.getCodigo(), carrito);
-        System.out.println(">>> DAO: Carrito guardado con código " + carrito.getCodigo());
-
+    public void crear(Carrito carrito) {
+        carrito.setCodigo(secuencia++);
+        lista.add(carrito);
     }
 
     @Override
-    public Carrito buscarPorCodigo(int codigoCarrito) {
-        return carritos.get(codigoCarrito);
+    public List<Carrito> listarTodos() {
+        return new ArrayList<>(lista); // evitar modificación externa
     }
 
     @Override
-    public void eliminarPorCodigo(int codigoCarrito) {
-        carritos.remove(codigoCarrito);
+    public Carrito buscarPorCodigo(int codigo) {
+        for (Carrito c : lista) {
+            if (c.getCodigo() == codigo) {
+                return c;
+            }
+        }
+        return null;
     }
 
     @Override
-    public List<Carrito> listarCarritos() {
-        return new ArrayList<>(carritos.values());
+    public void eliminarPorCodigo(int codigo) {
+        lista.removeIf(c -> c.getCodigo() == codigo);
     }
 }

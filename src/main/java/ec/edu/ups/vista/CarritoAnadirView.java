@@ -132,42 +132,40 @@ public class CarritoAnadirView extends JInternalFrame {
             String precioTexto = txtPrecio.getText().trim();
             String cantidadTexto = txtCantidad.getText().trim();
 
-            // Validaciones
             if (codigoTexto.isEmpty() || nombre.isEmpty() || precioTexto.isEmpty() || cantidadTexto.isEmpty()) {
                 mostrarMensaje("Todos los campos deben estar llenos.");
                 return;
             }
 
-            int codigo;
-            try {
-                codigo = Integer.parseInt(codigoTexto);
-            } catch (NumberFormatException ex) {
-                mostrarMensaje("Código inválido.");
-                return;
-            }
-
+            int codigo = Integer.parseInt(codigoTexto);
             double precio = Double.parseDouble(precioTexto);
             int cantidad = Integer.parseInt(cantidadTexto);
 
-            Producto producto = new Producto();
-            producto.setCodigo(codigo); // ✅ ASIGNAR CÓDIGO CORRECTAMENTE
-            producto.setNombre(nombre);
-            producto.setPrecio(precio);
-
+            Producto producto = new Producto(codigo, nombre, precio);
             carritoController.agregarProducto(producto, cantidad);
 
-            double subtotal = cantidad * precio;
-            modelo.addRow(new Object[]{
-                    codigo,
-                    nombre,
-                    FormateadorUtils.formatearMoneda(precio, locale),
-                    cantidad,
-                    FormateadorUtils.formatearMoneda(subtotal, locale)
-            });
+            // Actualiza visualmente la tabla sin duplicar
+            boolean encontrado = false;
+            for (int i = 0; i < modelo.getRowCount(); i++) {
+                int codTabla = Integer.parseInt(modelo.getValueAt(i, 0).toString());
+                if (codTabla == codigo) {
+                    int cantidadActual = Integer.parseInt(modelo.getValueAt(i, 3).toString());
+                    int nuevaCantidad = cantidadActual + cantidad;
+                    modelo.setValueAt(nuevaCantidad, i, 3);
+                    modelo.setValueAt(String.format("%.2f", nuevaCantidad * precio), i, 4);
+                    encontrado = true;
+                    break;
+                }
+            }
+
+            if (!encontrado) {
+                modelo.addRow(new Object[]{
+                        codigo, nombre, String.format("%.2f", precio),
+                        cantidad, String.format("%.2f", cantidad * precio)
+                });
+            }
 
             actualizarTotales();
-
-            // Limpiar
             txtCodigo.setText("");
             txtNombre.setText("");
             txtPrecio.setText("");
@@ -176,20 +174,12 @@ public class CarritoAnadirView extends JInternalFrame {
 
 
         btnGuardar.addActionListener(e -> {
-            System.out.println(">>> [DEBUG] Botón Guardar presionado");
-
-            if (carritoController.obtenerItems().isEmpty()) {
+            if (carritoController.estaVacio()) {
                 mostrarMensaje("No hay productos en el carrito.");
                 return;
             }
 
             Carrito carrito = new Carrito();
-            System.out.println(">>> [DEBUG] Carrito creado, agregando productos");
-
-            for (ItemCarrito item : carritoController.obtenerItems()) {
-                carrito.agregarProducto(item.getProducto(), item.getCantidad());
-            }
-
             carritoController.guardarCarrito(carrito);
             mostrarMensaje("Carrito guardado correctamente.");
 
@@ -198,7 +188,27 @@ public class CarritoAnadirView extends JInternalFrame {
             txtIva.setText("");
             txtTotal.setText("");
         });
+
     }
+
+    private void refrescarTabla() {
+        modelo.setRowCount(0); // limpia la tabla
+
+        for (ItemCarrito item : carritoController.obtenerItems()) {
+            Producto p = item.getProducto();
+            int cantidad = item.getCantidad();
+            double subtotal = cantidad * p.getPrecio();
+
+            modelo.addRow(new Object[]{
+                    p.getCodigo(),
+                    p.getNombre(),
+                    cantidad,
+                    p.getPrecio(),
+                    subtotal
+            });
+        }
+    }
+
 
     private void actualizarTotales() {
         double subtotal = carritoController.obtenerItems().stream()

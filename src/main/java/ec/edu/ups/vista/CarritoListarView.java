@@ -15,15 +15,17 @@ public class CarritoListarView extends JInternalFrame {
     private DefaultTableModel modeloTabla;
     private JPanel panelPrincipal;
 
-
     public CarritoListarView(CarritoController carritoController) {
-        super("Listado General de Carritos", true, true, true, true); // Título, resizable, closable, maximizable, iconifiable
+        super("Listado General de Carritos", true, true, true, true);
         this.carritoController = carritoController;
         initComponents();
+
+
+        // ✅ Listener para recargar los datos al activar la ventana
         addInternalFrameListener(new javax.swing.event.InternalFrameAdapter() {
             @Override
             public void internalFrameActivated(javax.swing.event.InternalFrameEvent e) {
-                cargarCarritos();  // recarga cada vez que se activa la ventana
+                cargarCarritos(); // 🔄 Recarga datos cada vez que se abre
             }
         });
     }
@@ -42,10 +44,10 @@ public class CarritoListarView extends JInternalFrame {
 
         add(scrollPane, BorderLayout.CENTER);
 
-        cargarCarritos();
+        cargarCarritos(); // Carga inicial (opcional)
     }
 
-    private void cargarCarritos() {
+    public void cargarCarritos() {
         modeloTabla.setRowCount(0);
         List<Carrito> carritos = carritoController.listarCarritosSinFiltro();
         System.out.println(">>> Carritos encontrados: " + (carritos != null ? carritos.size() : "null"));

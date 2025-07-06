@@ -1,13 +1,13 @@
 package ec.edu.ups.modelo.servicio;
+
 import ec.edu.ups.modelo.Carrito;
 import ec.edu.ups.modelo.ItemCarrito;
 import ec.edu.ups.modelo.Producto;
 
-import java.util.ArrayList;
 import java.util.List;
 
-
 public class CarritoServiceImpl implements CarritoService {
+
     private Carrito carritoTemporal = new Carrito();
 
     public void agregarProducto(Producto producto, int cantidad) {
@@ -19,7 +19,7 @@ public class CarritoServiceImpl implements CarritoService {
     }
 
     public void vaciarCarrito() {
-        carritoTemporal = new Carrito(); // nuevo carrito
+        carritoTemporal = new Carrito();
     }
 
     public List<ItemCarrito> obtenerItems() {
@@ -27,7 +27,7 @@ public class CarritoServiceImpl implements CarritoService {
     }
 
     public double calcularTotal() {
-        return carritoTemporal.calcularSubtotal() * 1.12; // subtotal + 12%
+        return carritoTemporal.calcularSubtotal() * 1.12;
     }
 
     public boolean estaVacio() {

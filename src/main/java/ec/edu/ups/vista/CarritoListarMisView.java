@@ -9,19 +9,28 @@ import java.awt.*;
 import java.util.List;
 
 public class CarritoListarMisView extends JInternalFrame {
-
-    private CarritoController carritoController;
+    private JPanel panelPrincipal;
+    private final CarritoController carritoController;
     private JTable tablaCarritos;
     private DefaultTableModel modeloTabla;
-    private JPanel panelPrincipal;
-
 
     public CarritoListarMisView(CarritoController carritoController) {
         this.carritoController = carritoController;
         initComponents();
+
+        // ✅ Se actualiza la tabla cada vez que se abre la ventana
+        addInternalFrameListener(new javax.swing.event.InternalFrameAdapter() {
+            @Override
+            public void internalFrameActivated(javax.swing.event.InternalFrameEvent e) {
+                cargarCarritos();
+            }
+        });
     }
 
     private void initComponents() {
+        JPanel panelBotones = new JPanel();
+        JButton btnModificar = new JButton("Modificar");
+        JButton btnEliminar = new JButton("Eliminar");
         setTitle("Mis Carritos");
         setSize(600, 400);
         setClosable(true);
@@ -32,25 +41,27 @@ public class CarritoListarMisView extends JInternalFrame {
         String[] columnas = {"Código", "Fecha Creación", "Cantidad Productos"};
         modeloTabla = new DefaultTableModel(columnas, 0);
         tablaCarritos = new JTable(modeloTabla);
+
         JScrollPane scrollPane = new JScrollPane(tablaCarritos);
-
         add(scrollPane, BorderLayout.CENTER);
+        cargarCarritos();           // ← carga inicial
 
-        cargarCarritos();
     }
 
-    private void cargarCarritos() {
+    public void cargarCarritos() {
         modeloTabla.setRowCount(0);
         List<Carrito> carritos = carritoController.listarMisCarritos();
-        if (carritos != null) {
+
+        if (carritos != null && !carritos.isEmpty()) {
             for (Carrito c : carritos) {
-                Object[] fila = {
+                modeloTabla.addRow(new Object[]{
                         c.getCodigo(),
                         c.getFechaCreacion().getTime(),
                         c.obtenerItems().size()
-                };
-                modeloTabla.addRow(fila);
+                });
             }
+        } else {
+            System.out.println(">>> No hay carritos del usuario autenticado.");
         }
-    }
+}
 }

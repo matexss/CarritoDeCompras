@@ -26,118 +26,94 @@ public class CarritoController {
         this.carritoService = new CarritoServiceImpl();
     }
 
-    // Agregar producto al carrito temporal
     public void agregarProducto(Producto producto, int cantidad) {
         carritoService.agregarProducto(producto, cantidad);
     }
 
-    // Eliminar producto del carrito temporal
     public void eliminarProducto(int codigoProducto) {
         carritoService.eliminarProducto(codigoProducto);
     }
 
-    // Vaciar carrito temporal
     public void vaciarCarrito() {
         carritoService.vaciarCarrito();
     }
 
-    // Calcular total (subtotal + IVA)
     public double calcularTotal() {
         return carritoService.calcularTotal();
     }
 
-    // Obtener ítems del carrito temporal
     public List<ItemCarrito> obtenerItems() {
         return carritoService.obtenerItems();
     }
 
-    // Verificar si el carrito está vacío
     public boolean estaVacio() {
         return carritoService.estaVacio();
     }
 
-    // Guardar el carrito actual como definitivo
     public void guardarCarrito(Carrito carrito) {
-        // Agregamos los productos del carrito temporal al carrito real
         for (ItemCarrito item : carritoService.obtenerItems()) {
             carrito.agregarProducto(item.getProducto(), item.getCantidad());
         }
-
-        // Asignamos el usuario autenticado
-        carrito.setUsuario(usuarioController.getUsuarioAutenticado());
-
-        // Guardamos el carrito en el DAO
-        carritoDAO.guardar(carrito);
-
-        // Limpieza del carrito temporal
+        carrito.setUsuario(usuarioController.getUsuarioAutenticado()); // ⚠️ CRUCIAL
+        carritoDAO.crear(carrito);
+        System.out.println(">>> DAO: Carrito guardado con código " + carrito.getCodigo());
         carritoService.vaciarCarrito();
-
-        // Trazas para depuración
-        System.out.println(">>> Carrito guardado con código: " + carrito.getCodigo());
-        System.out.println(">>> Total productos: " + carrito.obtenerItems().size());
-        System.out.println(">>> Usuario: " + carrito.getUsuario().getUsername());
-    }
-
-    public void imprimirTodosCarritosDebug() {
-        List<Carrito> lista = carritoDAO.listarCarritos();
-        System.out.println(">>> LISTA DE CARRITOS");
-        for (Carrito c : lista) {
-            System.out.println("- Código: " + c.getCodigo() + " | Usuario: " +
-                    (c.getUsuario() != null ? c.getUsuario().getUsername() : "null") +
-                    " | Productos: " + c.obtenerItems().size());
-        }
-    }
-
-    // Buscar un carrito por código
-    public Carrito buscarCarrito(int codigoCarrito) {
-        return carritoDAO.buscarPorCodigo(codigoCarrito);
-    }
-
-    // Eliminar un carrito
-    public void eliminarCarrito(int codigoCarrito) {
-        carritoDAO.eliminarPorCodigo(codigoCarrito);
-    }
-
-    // Listar todos los carritos (solo admin)
-    public List<Carrito> listarTodosCarritos() {
-        Usuario usuario = usuarioController.getUsuarioAutenticado();
-        System.out.println(">>> Usuario autenticado: " + (usuario != null ? usuario.getUsername() : "null"));
-        if (usuario != null && usuario.getRol() == Rol.ADMINISTRADOR) {
-            System.out.println(">>> Retornando todos los carritos...");
-            return carritoDAO.listarCarritos();
-        }
-        System.out.println(">>> Usuario no autorizado para ver todos los carritos.");
-        return null;
-    }
-
-    // Listar carritos del usuario actual
-    public List<Carrito> listarMisCarritos() {
-        Usuario usuario = usuarioController.getUsuarioAutenticado();
-        if (usuario != null && usuario.getRol() == Rol.ADMINISTRADOR) {
-            return carritoDAO.listarCarritos();
-        }
-        return null;
-    }
-
-    public List<Carrito> listarCarritosSinFiltro() {
-        return carritoDAO.listarCarritos();
     }
 
 
-    // Listar carritos de un usuario específico
-    public List<Carrito> listarMisCarritos(Usuario usuario) {
-        return carritoDAO.listarCarritos().stream()
-                .filter(c -> c.getUsuario() != null && c.getUsuario().getUsername().equals(usuario.getUsername()))
-                .toList();
-    }
-
-    // Buscar producto por código
     public Producto buscarProductoPorCodigo(int codigo) {
         return productoDAO.buscarPorCodigo(codigo);
     }
 
-    // Modificar cantidad de un producto en un carrito ya guardado
+    public Carrito buscarCarrito(int codigoCarrito) {
+        return carritoDAO.buscarPorCodigo(codigoCarrito);
+    }
+
+    public List<Carrito> listarTodosCarritos() {
+        Usuario usuario = usuarioController.getUsuarioAutenticado();
+        if (usuario != null && usuario.getRol() == Rol.ADMINISTRADOR) {
+            return carritoDAO.listarTodos();
+        }
+        return null;
+    }
+
+    public List<Carrito> listarMisCarritos() {
+        Usuario usuario = usuarioController.getUsuarioAutenticado();
+        if (usuario != null && usuario.getRol() == Rol.USUARIO) {
+            return carritoDAO.listarTodos().stream()
+                    .filter(c -> c.getUsuario() != null &&
+                            c.getUsuario().getUsername().equals(usuario.getUsername()))
+                    .toList();
+        }
+        return List.of(); // devuelve lista vacía, NO null
+
+    }
+
+    public List<Carrito> listarCarritosSinFiltro() {
+        return carritoDAO.listarTodos();
+    }
+
+    public void eliminarCarrito(int codigo) {
+        carritoDAO.eliminarPorCodigo(codigo);
+    }
+
     public void modificarCantidad(Carrito carrito, int codigoProducto, int nuevaCantidad) {
-        carrito.actualizarCantidadProducto(codigoProducto, nuevaCantidad);
+        for (ItemCarrito item : carrito.obtenerItems()) {
+            if (item.getProducto().getCodigo() == codigoProducto) {
+                item.setCantidad(nuevaCantidad);
+                return;
+            }
+        }
+        System.out.println(">>> Producto con código " + codigoProducto + " no encontrado en el carrito.");
+    }
+
+
+    public void imprimirTodosCarritosDebug() {
+        System.out.println(">>> LISTA DE CARRITOS:");
+        List<Carrito> carritos = carritoDAO.listarTodos();
+        for (Carrito c : carritos) {
+            String usuario = (c.getUsuario() != null) ? c.getUsuario().getUsername() : "desconocido";
+            System.out.println("- Carrito " + c.getCodigo() + " de " + usuario + " → " + c.obtenerItems().size() + " productos.");
+        }
     }
 }

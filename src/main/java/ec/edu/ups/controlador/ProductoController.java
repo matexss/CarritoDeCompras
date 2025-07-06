@@ -141,46 +141,21 @@ public class ProductoController {
         });
 
         carritoAnadirView.getBtnGuardar().addActionListener(e -> {
-            System.out.println("Botón Guardar presionado");
-
-            int filas = carritoAnadirView.getTable1().getRowCount();
-            if (filas == 0) {
+            if (carritoController.obtenerItems().isEmpty()) {
                 JOptionPane.showMessageDialog(null, "No hay productos en el carrito.");
                 return;
             }
 
-            Carrito carrito = new Carrito();
-
-            for (int i = 0; i < filas; i++) {
-                int codigo = Integer.parseInt(carritoAnadirView.getTable1().getValueAt(i, 0).toString()); // columna 0: código
-                String nombre = carritoAnadirView.getTable1().getValueAt(i, 1).toString(); // columna 1: nombre
-                String precioStr = carritoAnadirView.getTable1().getValueAt(i, 2).toString().replace("$", "").replace(",", "").trim();
-                double precio = Double.parseDouble(precioStr); // columna 2: precio
-                int cantidad = Integer.parseInt(carritoAnadirView.getTable1().getValueAt(i, 3).toString()); // columna 3: cantidad
-
-                Producto producto = productoDAO.buscarPorCodigo(codigo);
-                if (producto == null) {
-                    // Producto temporal si no existe (no recomendable, pero posible)
-                    producto = new Producto();
-                    producto.setCodigo(codigo);
-                    producto.setNombre(nombre);
-                    producto.setPrecio(precio);
-                }
-
-                carrito.agregarProducto(producto, cantidad);
-            }
-
-            carritoController.guardarCarrito(carrito);
+            Carrito carrito = new Carrito(); // carrito vacío
+            carritoController.guardarCarrito(carrito); // los productos vienen desde itemsTemporales
             JOptionPane.showMessageDialog(null, "Carrito guardado correctamente.");
 
-            // Limpiar tabla y totales
+            // Limpiar interfaz
             DefaultTableModel modelo = (DefaultTableModel) carritoAnadirView.getTable1().getModel();
             modelo.setRowCount(0);
             carritoAnadirView.getTxtSubtotal().setText("");
             carritoAnadirView.getTxtIva().setText("");
             carritoAnadirView.getTxtTotal().setText("");
-
-            carritoController.imprimirTodosCarritosDebug();
         });
 
         productoModificarView.getBuscarButton().addActionListener(e -> {
@@ -300,10 +275,24 @@ public class ProductoController {
     private void calcularTotales(DefaultTableModel modelo) {
         double subtotal = 0;
         for (int i = 0; i < modelo.getRowCount(); i++) {
-            int cantidad = Integer.parseInt(modelo.getValueAt(i, 3).toString());
-            double precio = Double.parseDouble(modelo.getValueAt(i, 2).toString().replace(",", "").replace("$", ""));
-            subtotal += cantidad * precio;
+            try {
+                int cantidad = Integer.parseInt(modelo.getValueAt(i, 3).toString());
+
+                String precioStr = modelo.getValueAt(i, 2).toString()
+                        .replace(".", "")   // elimina puntos de miles: "1.234,56" → "1234,56"
+                        .replace(",", ".")  // cambia coma por punto decimal
+                        .replace("$", "")   // quita símbolo $
+                        .trim();
+
+                double precio = Double.parseDouble(precioStr);
+
+                subtotal += cantidad * precio;
+
+            } catch (Exception e) {
+                System.err.println("[ERROR] Al calcular totales: " + e.getMessage());
+            }
         }
+
         double iva = subtotal * 0.12;
         double total = subtotal + iva;
 
@@ -311,6 +300,8 @@ public class ProductoController {
         carritoAnadirView.getTxtIva().setText(String.format("%.2f", iva));
         carritoAnadirView.getTxtTotal().setText(String.format("%.2f", total));
     }
+
+
 
     private void mostrarMensaje(String mensaje) {
         JOptionPane.showMessageDialog(null, mensaje);
