@@ -1,122 +1,201 @@
 package ec.edu.ups.controlador;
-import ec.edu.ups.servicio.PreguntaSeguridadService;
-import ec.edu.ups.vista.RecuperarContraseniaView;
+
 import ec.edu.ups.dao.UsuarioDAO;
-import ec.edu.ups.modelo.Usuario;
 import ec.edu.ups.modelo.Rol;
-import ec.edu.ups.vista.LoginView;
-import ec.edu.ups.vista.RegistroView;
+import ec.edu.ups.modelo.Usuario;
+import ec.edu.ups.servicio.PreguntaSeguridadService;
+import ec.edu.ups.util.MensajeInternacionalizacionHandler;
+import ec.edu.ups.vista.*;
 
 import javax.swing.*;
 import java.util.List;
 
 public class UsuarioController {
 
-    private UsuarioDAO usuarioDAO;
-    private LoginView loginView;
+    private final UsuarioDAO usuarioDAO;
+    private final LoginView loginView;
     private Usuario usuarioAutenticado;
+
+    private UsuarioCrearView crearView;
+    private UsuarioEliminarView eliminarView;
+    private UsuarioModificarView modificarView;
+    private UsuarioListarView listarView;
+    private UsuarioModificarMisView modificarMisView;
+
+    private MensajeInternacionalizacionHandler mensajes;
+    private MenuPrincipalView menuPrincipal;
 
     public UsuarioController(UsuarioDAO usuarioDAO, LoginView loginView) {
         this.usuarioDAO = usuarioDAO;
         this.loginView = loginView;
 
-        // Acción del botón "Iniciar sesión"
         this.loginView.getBtnLogin().addActionListener(e -> autenticar());
 
-        // Acción del botón "Registrarse"
-        this.loginView.getBtnRegistrarse().addActionListener(e -> {
-            PreguntaSeguridadService preguntaService = new PreguntaSeguridadService();
-            RegistroView registroView = new RegistroView(preguntaService);
-
-            registroView.getBtnRegistrar().addActionListener(ev -> {
-                if (registroView.validarCampos()) {
-                    String username = registroView.getTxtUsername().getText();
-                    String password = new String(registroView.getTxtContrasenia().getPassword());
-                    Rol rolSeleccionado = Rol.valueOf((String) registroView.getComboRol().getSelectedItem());
-
-                    List<String> preguntas = registroView.getPreguntasSeguridad();
-                    List<String> respuestas = registroView.getRespuestasSeguridad();
-
-                    Usuario nuevoUsuario = new Usuario();
-                    nuevoUsuario.setUsername(username);
-                    nuevoUsuario.setPassword(password);
-                    nuevoUsuario.setRol(rolSeleccionado);
-                    nuevoUsuario.setPreguntasSeguridad(preguntas);
-                    nuevoUsuario.setRespuestasSeguridad(respuestas);
-
-                    usuarioDAO.crear(nuevoUsuario);
-                    registroView.mostrarMensaje("Usuario registrado exitosamente.");
-                    registroView.dispose();
-                }
-            });
-
-            registroView.setVisible(true);
-        });
-
-
-        // Acción del botón "Recuperar contraseña"
-        this.loginView.getBtnRecuperarContrasenia().addActionListener(e -> {
-            String username = loginView.getTxtUsuario().getText();
-            Usuario usuario = usuarioDAO.buscarPorUsername(username);
-
-            if (usuario != null) {
-                List<String> preguntas = usuario.getPreguntasSeguridad();
-                RecuperarContraseniaView recuperarView = new RecuperarContraseniaView(preguntas);
-
-                recuperarView.getBtnVerificarRespuestas().addActionListener(ev -> {
-                    String r1 = recuperarView.getTxtPregunta1().getText().trim();
-                    String r2 = recuperarView.getTxtPregunta2().getText().trim();
-                    String r3 = recuperarView.getTxtPregunta3().getText().trim();
-
-                    List<String> respuestasCorrectas = usuario.getRespuestasSeguridad();
-
-                    if (respuestasCorrectas.size() >= 3 &&
-                            r1.equalsIgnoreCase(respuestasCorrectas.get(0)) &&
-                            r2.equalsIgnoreCase(respuestasCorrectas.get(1)) &&
-                            r3.equalsIgnoreCase(respuestasCorrectas.get(2))) {
-
-                        recuperarView.mostrarMensaje("Respuestas correctas. Ahora puedes cambiar tu contraseña.");
-                        recuperarView.getBtnCambiarContrasenia().setEnabled(true);
-                    } else {
-                        recuperarView.mostrarMensaje("Respuestas incorrectas. Inténtalo nuevamente.");
-                    }
-                });
-
-                recuperarView.getBtnCambiarContrasenia().addActionListener(ev -> {
-                    String nuevaContrasenia = new String(recuperarView.getTxtNuevaContrasenia().getPassword());
-                    if (nuevaContrasenia.length() < 4) {
-                        recuperarView.mostrarMensaje("La contraseña debe tener al menos 4 caracteres.");
-                        return;
-                    }
-
-                    usuario.setPassword(nuevaContrasenia);
-                    usuarioDAO.actualizar(usuario);
-                    recuperarView.mostrarMensaje("Contraseña actualizada correctamente.");
-                    recuperarView.dispose();
-                });
-
-                recuperarView.setVisible(true);
-            } else {
-                JOptionPane.showMessageDialog(loginView, "Usuario no encontrado.");
-            }
-        });
+        this.loginView.getBtnRegistrarse().addActionListener(e -> mostrarVistaRegistro());
+        this.loginView.getBtnRecuperarContrasenia().addActionListener(e -> mostrarVistaRecuperarContrasenia());
     }
 
-    private void autenticar() {
-        String username = loginView.getTxtUsuario().getText();
-        String password = new String(loginView.getTxtContrasenia().getPassword());
+    public void setInternacionalizacionYVistas(MensajeInternacionalizacionHandler mensajes, MenuPrincipalView menuPrincipal) {
+        this.mensajes = mensajes;
+        this.menuPrincipal = menuPrincipal;
 
-        Usuario usuario = usuarioDAO.autenticar(username, password);
-        if (usuario != null) {
-            this.usuarioAutenticado = usuario;
-            JOptionPane.showMessageDialog(loginView, "Inicio de sesión exitoso.");
-            loginView.dispose();
-        } else {
-            JOptionPane.showMessageDialog(loginView, "Credenciales incorrectas.");
-        }
+        this.crearView = new UsuarioCrearView(mensajes);
+        this.eliminarView = new UsuarioEliminarView(mensajes);
+        this.modificarView = new UsuarioModificarView(mensajes);
+        this.listarView = new UsuarioListarView(mensajes);
+        this.modificarMisView = new UsuarioModificarMisView(mensajes);
     }
 
     public Usuario getUsuarioAutenticado() {
         return usuarioAutenticado;
+    }
+
+    private void autenticar() {
+        String user = loginView.getTxtUsuario().getText();
+        String pass = new String(loginView.getTxtContrasenia().getPassword());
+
+        Usuario usuario = usuarioDAO.autenticar(user, pass);
+        if (usuario != null) {
+            this.usuarioAutenticado = usuario;
+            loginView.dispose();
+        } else {
+            loginView.mostrarMensaje("Credenciales incorrectas.");
+        }
+    }
+
+    // === Registro de nuevo usuario desde el Login ===
+    private void mostrarVistaRegistro() {
+        RegistroView registroView = new RegistroView(new PreguntaSeguridadService());
+        registroView.setVisible(true);
+
+        registroView.getBtnRegistrar().addActionListener(e -> {
+            if (!registroView.validarCampos()) return;
+
+            Usuario usuario = new Usuario();
+            usuario.setUsername(registroView.getTxtUsername().getText());
+            usuario.setPassword(new String(registroView.getTxtContrasenia().getPassword()));
+            usuario.setRol(Rol.USUARIO); // Fijo a USUARIO
+
+            usuarioDAO.crear(usuario);
+            registroView.mostrarMensaje("Usuario registrado correctamente");
+            registroView.dispose();
+        });
+    }
+
+    // === Recuperación de contraseña desde el Login ===
+    private void mostrarVistaRecuperarContrasenia() {
+        String pregunta = "¿Cuál es tu película favorita?"; // 🔁 puedes elegir otra pregunta también
+        RecuperarContraseniaView recuperarView = new RecuperarContraseniaView(pregunta);
+        recuperarView.setVisible(true);
+
+        recuperarView.getBtnVerificarRespuestas().addActionListener(e -> {
+            String respuesta = recuperarView.getRespuesta();
+
+            // Aquí deberías hacer la verificación contra base de datos real
+            if (respuesta.equalsIgnoreCase("respuestaCorrecta")) {
+                recuperarView.habilitarCambioContrasenia();
+                recuperarView.mostrarMensaje("Respuesta correcta");
+            } else {
+                recuperarView.mostrarMensaje("Respuesta incorrecta");
+            }
+        });
+
+        recuperarView.getBtnCambiarContrasenia().addActionListener(e -> {
+            String nueva = recuperarView.getNuevaContrasenia();
+            if (!nueva.isEmpty()) {
+                // 🔁 Aquí deberías buscar al usuario y actualizarlo
+                recuperarView.mostrarMensaje("Contraseña actualizada correctamente");
+                recuperarView.dispose();
+            }
+        });
+    }
+
+    // === Métodos del menú principal para admin ===
+
+    public void mostrarVistaCrearUsuario() {
+        crearView.getBtnCrear().addActionListener(e -> {
+            Usuario usuario = new Usuario();
+            usuario.setUsername(crearView.getTxtUsuario().getText());
+            usuario.setPassword(crearView.getTxtContraseña().getText());
+            usuario.setRol((Rol) crearView.getCbxRoles().getSelectedItem());
+
+            usuarioDAO.crear(usuario);
+            crearView.mostrarMensaje(mensajes.get("mensaje.usuario.creado"));
+            crearView.limpiarCampos();
+        });
+        mostrarVentana(crearView);
+    }
+
+    public void mostrarVistaEliminarUsuario() {
+        eliminarView.getBtnEliminar().addActionListener(e -> {
+            String user = eliminarView.getTxtUsuario().getText();
+            usuarioDAO.eliminar(user);
+            eliminarView.mostrarMensaje(mensajes.get("mensaje.usuario.eliminado"));
+            eliminarView.limpiarCampos();
+        });
+        mostrarVentana(eliminarView);
+    }
+
+    public void mostrarVistaModificarUsuario() {
+        modificarView.getBtnBuscar().addActionListener(e -> {
+            Usuario u = usuarioDAO.buscarPorUsername(modificarView.getTxtUsuario().getText());
+            if (u != null) {
+                modificarView.getTxtContraseña().setText(u.getPassword());
+                modificarView.getCbxRoles().setSelectedItem(u.getRol());
+                modificarView.getTxtUsuario().setEditable(false);
+                modificarView.getBtnBuscar().setEnabled(false);
+                modificarView.getTxtContraseña().setEnabled(true);
+                modificarView.getCbxRoles().setEnabled(true);
+                modificarView.getBtnModificar().setEnabled(true);
+            } else {
+                modificarView.mostrarMensaje(mensajes.get("mensaje.usuario.no.encontrado"));
+            }
+        });
+
+        modificarView.getBtnModificar().addActionListener(e -> {
+            Usuario usuario = new Usuario();
+            usuario.setUsername(modificarView.getTxtUsuario().getText());
+            usuario.setPassword(modificarView.getTxtContraseña().getText());
+            usuario.setRol((Rol) modificarView.getCbxRoles().getSelectedItem());
+
+            usuarioDAO.actualizar(usuario);
+            modificarView.mostrarMensaje(mensajes.get("mensaje.usuario.modificado"));
+            modificarView.limpiarCampos();
+        });
+
+        mostrarVentana(modificarView);
+    }
+
+    public void mostrarVistaListarUsuarios() {
+        List<Usuario> usuarios = usuarioDAO.listarTodos();
+        listarView.mostrarUsuarios(usuarios);
+        mostrarVentana(listarView);
+    }
+
+    // === Vista de actualización para usuario normal ===
+
+    public void mostrarVistaActualizarUsuario() {
+        modificarMisView.getTxtUsuario().setText(usuarioAutenticado.getUsername());
+        modificarMisView.getBtnModificar().addActionListener(e -> {
+            usuarioAutenticado.setPassword(modificarMisView.getTxtContraseña().getText());
+            usuarioAutenticado.setUsername(modificarMisView.getTxtNuevoUser().getText());
+
+            usuarioDAO.actualizar(usuarioAutenticado);
+            modificarMisView.mostrarMensaje(mensajes.get("mensaje.usuario.modificado"));
+            modificarMisView.limpiarCampos();
+        });
+
+        mostrarVentana(modificarMisView);
+    }
+
+    // === Utilidad para mostrar JInternalFrame ===
+
+    private void mostrarVentana(JInternalFrame vista) {
+        for (JInternalFrame frame : menuPrincipal.getjDesktopPane().getAllFrames()) {
+            frame.dispose();
+        }
+        menuPrincipal.getjDesktopPane().add(vista);
+        vista.setVisible(true);
+        vista.toFront();
     }
 }

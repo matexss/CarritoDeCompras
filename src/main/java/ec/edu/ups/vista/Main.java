@@ -45,9 +45,10 @@ public class Main {
                         // Internacionalización por defecto
                         MensajeInternacionalizacionHandler mensajes = new MensajeInternacionalizacionHandler("es", "EC");
 
+                        mensajes.verificarClavesFaltantes("claves_requeridas.txt");
+
                         // Controladores
-                        // Nota: paso productoDAO también al carritoController para buscar productos
-                        CarritoController carritoController = new CarritoController(carritoService, productoDAO, carritoDAO, usuarioAutenticado);
+                        CarritoController carritoController = new CarritoController(carritoDAO, productoDAO, usuarioController);
 
                         // Vistas de producto
                         ProductoAnadirView productoAnadirView = new ProductoAnadirView();
@@ -57,16 +58,12 @@ public class Main {
 
                         // Vistas de carrito
                         CarritoAnadirView carritoAnadirView = new CarritoAnadirView(carritoController);
-                        carritoAnadirView.getBtnGuardar().addActionListener(n -> {
-                            System.out.println("EVENTO DIRECTO DESDE MAIN");
-                            JOptionPane.showMessageDialog(null, "Evento desde Main");
-                        });
-
                         CarritoEliminarView carritoEliminarView = new CarritoEliminarView(carritoController, mensajes);
                         CarritoModificarView carritoModificarView = new CarritoModificarView(carritoController);
-                        CarritoListarMisView carritoListarView = new CarritoListarMisView(carritoController);
+                        CarritoListarView carritoListarView = new CarritoListarView(carritoController);
+                        CarritoListarMisView carritoListarMisView = new CarritoListarMisView(carritoController);
 
-                        // Controlador de producto —> AÑADIR carritoController como parámetro
+                        // Controlador de producto
                         new ProductoController(
                                 productoDAO,
                                 productoAnadirView,
@@ -75,7 +72,7 @@ public class Main {
                                 productoModificarView,
                                 carritoAnadirView,
                                 carritoDAO,
-                                carritoController   // <== Aquí lo agregamos para que el productoController pueda usarlo
+                                carritoController
                         );
 
                         // Menú principal
@@ -83,9 +80,19 @@ public class Main {
                         principalView.setVisible(true);
                         principalView.mostrarMensaje("Bienvenido: " + usuarioAutenticado.getUsername());
 
-                        // Si el usuario NO es administrador, deshabilitar funciones de admin
+                        // Configuración de internacionalización y vistas en el controlador de usuario
+                        usuarioController.setInternacionalizacionYVistas(mensajes, principalView);
+
+                        // Vistas de usuario en el menú
+                        principalView.getMenuItemCrearUsuario().addActionListener(ev -> usuarioController.mostrarVistaCrearUsuario());
+                        principalView.getMenuItemEliminarUsuario().addActionListener(ev -> usuarioController.mostrarVistaEliminarUsuario());
+                        principalView.getMenuItemModificarUsuario().addActionListener(ev -> usuarioController.mostrarVistaModificarUsuario());
+                        principalView.getMenuItemListarUsuarios().addActionListener(ev -> usuarioController.mostrarVistaListarUsuarios());
+
+                        // Deshabilitar funciones admin si es usuario normal
                         if (usuarioAutenticado.getRol().equals(Rol.USUARIO)) {
                             principalView.deshabilitarMenusAdministrador();
+                            principalView.ocultarMenusAdministrador();
                         }
 
                         // CONEXIÓN DE MENÚ CON VISTAS
@@ -101,22 +108,23 @@ public class Main {
                         principalView.getMenuItemEliminarCarrito().addActionListener(ev -> mostrarVentana(carritoEliminarView, principalView));
                         principalView.getMenuItemModificarCarrito().addActionListener(ev -> mostrarVentana(carritoModificarView, principalView));
                         principalView.getMenuItemListarCarritos().addActionListener(ev -> mostrarVentana(carritoListarView, principalView));
+                        principalView.getMenuItemListarMisCarritos().addActionListener(ev -> mostrarVentana(carritoListarMisView, principalView));
+
+                        // Actualizar datos personales
+                        principalView.getMenuItemActualizarDatos().addActionListener(eg -> usuarioController.mostrarVistaActualizarUsuario());
 
                         // Idiomas
                         principalView.getMenuItemIdiomaEspanol().addActionListener(t -> principalView.cambiarIdioma("es", "EC"));
                         principalView.getMenuItemIdiomaIngles().addActionListener(t -> principalView.cambiarIdioma("en", "US"));
                         principalView.getMenuItemIdiomaFrances().addActionListener(t -> principalView.cambiarIdioma("fr", "FR"));
 
-                        // Cerrar sesión y salir
+                        // Salir
                         principalView.getMenuItemSalir().addActionListener(r -> {
                             int opcion = JOptionPane.showConfirmDialog(principalView, "¿Deseas salir de la aplicación?", "Salir", JOptionPane.YES_NO_OPTION);
                             if (opcion == JOptionPane.YES_OPTION) System.exit(0);
                         });
-                        carritoAnadirView.getBtnGuardar().addActionListener(p -> {
-                            JOptionPane.showMessageDialog(null, "PRUEBA DIRECTA DESDE MAIN");
-                        });
 
-
+                        // Cerrar sesión
                         principalView.getMenuItemCerrarSesion().addActionListener(r -> {
                             int opcion = JOptionPane.showConfirmDialog(principalView, "¿Deseas cerrar sesión?", "Cerrar Sesión", JOptionPane.YES_NO_OPTION);
                             if (opcion == JOptionPane.YES_OPTION) {
@@ -133,11 +141,16 @@ public class Main {
     }
 
     private static void mostrarVentana(JInternalFrame ventana, MenuPrincipalView principalView) {
-        for (JInternalFrame frame : principalView.getjDesktopPane().getAllFrames()) {
-            frame.dispose();
+        JDesktopPane escritorio = principalView.getjDesktopPane();
+
+        for (JInternalFrame frame : escritorio.getAllFrames()) {
+            frame.setVisible(false);
+            escritorio.remove(frame);
         }
-        principalView.getjDesktopPane().add(ventana);
+
+        escritorio.add(ventana);
         ventana.setVisible(true);
         ventana.toFront();
     }
+
 }

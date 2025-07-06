@@ -1,10 +1,11 @@
 package ec.edu.ups.controlador;
-import ec.edu.ups.controlador.CarritoController;
+
 import ec.edu.ups.dao.ProductoDAO;
 import ec.edu.ups.dao.CarritoDAO;
 import ec.edu.ups.modelo.Producto;
 import ec.edu.ups.vista.*;
 import ec.edu.ups.modelo.Carrito;
+
 import javax.swing.*;
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
@@ -21,8 +22,7 @@ public class ProductoController {
     private final CarritoAnadirView carritoAnadirView;
     private final ProductoDAO productoDAO;
     private final CarritoDAO carritoDAO;
-    private final CarritoController carritoController;  // NUEVO
-
+    private final CarritoController carritoController;
 
     public ProductoController(ProductoDAO productoDAO,
                               ProductoAnadirView productoAnadirView,
@@ -31,7 +31,7 @@ public class ProductoController {
                               ProductoModificarView productoModificarView,
                               CarritoAnadirView carritoAnadirView,
                               CarritoDAO carritoDAO,
-                              CarritoController carritoController) { // RECIBIMOS CarritoController
+                              CarritoController carritoController) {
         this.productoDAO = productoDAO;
         this.productoAnadirView = productoAnadirView;
         this.productoListaView = productoListaView;
@@ -39,10 +39,10 @@ public class ProductoController {
         this.productoModificarView = productoModificarView;
         this.carritoAnadirView = carritoAnadirView;
         this.carritoDAO = carritoDAO;
-        this.carritoController = carritoController; // Guardamos instancia
-
+        this.carritoController = carritoController;
         configurarEventos();
     }
+
     private void configurarEventos() {
 
         productoAnadirView.getBtnAceptar().addActionListener(e -> guardarProducto());
@@ -85,27 +85,35 @@ public class ProductoController {
         });
 
         carritoAnadirView.getBtnAñadir().addActionListener(e -> {
+            String codigoTxt = carritoAnadirView.getTxtCodigo().getText();
             String nombre = carritoAnadirView.getTxtNombre().getText();
             String precioTexto = carritoAnadirView.getTxtPrecio().getText();
             String cantidadTexto = carritoAnadirView.getTxtCantidad().getText();
 
-            if (nombre.isEmpty() || precioTexto.isEmpty() || cantidadTexto.isEmpty()) {
+            if (codigoTxt.isEmpty() || nombre.isEmpty() || precioTexto.isEmpty() || cantidadTexto.isEmpty()) {
                 mostrarMensaje("Todos los campos deben estar llenos.");
                 return;
             }
 
+            int codigo = Integer.parseInt(codigoTxt);
             double precio = Double.parseDouble(precioTexto);
             int cantidad = Integer.parseInt(cantidadTexto);
 
-            Producto producto = new Producto(); // Se puede usar uno temporal
-            producto.setNombre(nombre);
-            producto.setPrecio(precio);
+            Producto producto = productoDAO.buscarPorCodigo(codigo);
+            if (producto == null) {
+                producto = new Producto(codigo, nombre, precio);
+            }
 
-            carritoDAO.agregarProducto(producto, cantidad); // Guarda en DAO
+            carritoController.agregarProducto(producto, cantidad);
 
             DefaultTableModel modelo = (DefaultTableModel) carritoAnadirView.getTable1().getModel();
-            double subtotalItem = precio * cantidad;
-            modelo.addRow(new Object[]{nombre, precio, cantidad, subtotalItem});
+            modelo.addRow(new Object[]{
+                    producto.getCodigo(),
+                    producto.getNombre(),
+                    String.format("%.2f", producto.getPrecio()),
+                    cantidad,
+                    String.format("%.2f", producto.getPrecio() * cantidad)
+            });
 
             calcularTotales(modelo);
 
@@ -134,7 +142,7 @@ public class ProductoController {
 
         carritoAnadirView.getBtnGuardar().addActionListener(e -> {
             System.out.println("Botón Guardar presionado");
-            JOptionPane.showMessageDialog(null, "Botón Guardar presionado");
+
             int filas = carritoAnadirView.getTable1().getRowCount();
             if (filas == 0) {
                 JOptionPane.showMessageDialog(null, "No hay productos en el carrito.");
@@ -142,17 +150,19 @@ public class ProductoController {
             }
 
             Carrito carrito = new Carrito();
-            for (int i = 0; i < filas; i++) {
-                String nombre = carritoAnadirView.getTable1().getValueAt(i, 0).toString();
-                double precio = Double.parseDouble(carritoAnadirView.getTable1().getValueAt(i, 1).toString().replace("$", "").replace(",", ""));
-                int cantidad = Integer.parseInt(carritoAnadirView.getTable1().getValueAt(i, 2).toString());
 
-                List<Producto> productosEncontrados = productoDAO.buscarPorNombre(nombre);
-                Producto producto;
-                if (productosEncontrados != null && !productosEncontrados.isEmpty()) {
-                    producto = productosEncontrados.get(0); // Tomamos el primero encontrado
-                } else {
+            for (int i = 0; i < filas; i++) {
+                int codigo = Integer.parseInt(carritoAnadirView.getTable1().getValueAt(i, 0).toString()); // columna 0: código
+                String nombre = carritoAnadirView.getTable1().getValueAt(i, 1).toString(); // columna 1: nombre
+                String precioStr = carritoAnadirView.getTable1().getValueAt(i, 2).toString().replace("$", "").replace(",", "").trim();
+                double precio = Double.parseDouble(precioStr); // columna 2: precio
+                int cantidad = Integer.parseInt(carritoAnadirView.getTable1().getValueAt(i, 3).toString()); // columna 3: cantidad
+
+                Producto producto = productoDAO.buscarPorCodigo(codigo);
+                if (producto == null) {
+                    // Producto temporal si no existe (no recomendable, pero posible)
                     producto = new Producto();
+                    producto.setCodigo(codigo);
                     producto.setNombre(nombre);
                     producto.setPrecio(precio);
                 }
@@ -161,17 +171,17 @@ public class ProductoController {
             }
 
             carritoController.guardarCarrito(carrito);
-
             JOptionPane.showMessageDialog(null, "Carrito guardado correctamente.");
 
-            // Limpiar tabla y campos de totales
+            // Limpiar tabla y totales
             DefaultTableModel modelo = (DefaultTableModel) carritoAnadirView.getTable1().getModel();
             modelo.setRowCount(0);
             carritoAnadirView.getTxtSubtotal().setText("");
             carritoAnadirView.getTxtIva().setText("");
             carritoAnadirView.getTxtTotal().setText("");
-        });
 
+            carritoController.imprimirTodosCarritosDebug();
+        });
 
         productoModificarView.getBuscarButton().addActionListener(e -> {
             String textoCodigo = productoModificarView.getTxtCodigo().getText();
@@ -242,10 +252,6 @@ public class ProductoController {
                     nuevo.setNombre(original.getNombre());
                     nuevo.setPrecio(Double.parseDouble(valorMod));
                 }
-                default -> {
-                    productoModificarView.mostrarMensaje("Opción inválida.");
-                    return;
-                }
             }
 
             productoDAO.eliminar(codigoOriginal);
@@ -294,7 +300,9 @@ public class ProductoController {
     private void calcularTotales(DefaultTableModel modelo) {
         double subtotal = 0;
         for (int i = 0; i < modelo.getRowCount(); i++) {
-            subtotal += (double) modelo.getValueAt(i, 3);
+            int cantidad = Integer.parseInt(modelo.getValueAt(i, 3).toString());
+            double precio = Double.parseDouble(modelo.getValueAt(i, 2).toString().replace(",", "").replace("$", ""));
+            subtotal += cantidad * precio;
         }
         double iva = subtotal * 0.12;
         double total = subtotal + iva;

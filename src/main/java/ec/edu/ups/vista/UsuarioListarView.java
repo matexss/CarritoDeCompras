@@ -6,36 +6,63 @@ import ec.edu.ups.util.MensajeInternacionalizacionHandler;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import java.net.URL;
+import java.awt.*;
 import java.util.List;
 import java.util.Locale;
 
 public class UsuarioListarView extends JInternalFrame {
-    protected JPanel panelPrincipal;
+
+    private JPanel panelPrincipal;
     private JButton btnListar;
     private JTable tblUsuarios;
     private JLabel lblListado;
     private JTextField txtUsuario;
     private JButton btnBuscar;
+    private JTextField textField1;
     private JLabel lblTitulo;
     private DefaultTableModel tableModel;
     private Locale locale;
     private List<Usuario> listaActual;
     private MensajeInternacionalizacionHandler mensajes;
-    private JTextField textField1;
 
     public UsuarioListarView(MensajeInternacionalizacionHandler mensajes) {
-
         super("", true, true, false, true);
         this.mensajes = mensajes;
-        setContentPane(panelPrincipal);
-        setSize(600, 400);
-        URL urlBuscar = getClass().getResource("/search.png");
-        URL urlListar = getClass().getResource("/list.png");
-        btnBuscar.setIcon(new ImageIcon(urlBuscar));
-        btnListar.setIcon(new ImageIcon(urlListar));
+        initComponents();
         configurarTabla();
         actualizarTextos();
+    }
+
+    private void initComponents() {
+        setSize(600, 400);
+        panelPrincipal = new JPanel(new BorderLayout(10, 10));
+        setContentPane(panelPrincipal);
+
+        lblTitulo = new JLabel("", SwingConstants.CENTER);
+        lblTitulo.setFont(new Font("Arial", Font.BOLD, 16));
+        panelPrincipal.add(lblTitulo, BorderLayout.NORTH);
+
+        JPanel panelCentro = new JPanel(new BorderLayout(10, 10));
+        JPanel panelSuperior = new JPanel(new FlowLayout());
+
+        lblListado = new JLabel("Usuario:");
+        txtUsuario = new JTextField(15);
+        btnBuscar = new JButton("Buscar");
+        btnListar = new JButton("Listar");
+
+        panelSuperior.add(lblListado);
+        panelSuperior.add(txtUsuario);
+        panelSuperior.add(btnBuscar);
+        panelSuperior.add(btnListar);
+
+        panelCentro.add(panelSuperior, BorderLayout.NORTH);
+
+        tableModel = new DefaultTableModel();
+        tblUsuarios = new JTable(tableModel);
+        JScrollPane scrollPane = new JScrollPane(tblUsuarios);
+
+        panelCentro.add(scrollPane, BorderLayout.CENTER);
+        panelPrincipal.add(panelCentro, BorderLayout.CENTER);
     }
 
     private void configurarTabla() {
@@ -47,7 +74,7 @@ public class UsuarioListarView extends JInternalFrame {
         this.locale = new Locale(mensajes.get("locale.language"), mensajes.get("locale.country"));
         setTitle(mensajes.get("usuario.listar.titulo.app"));
         lblTitulo.setText(mensajes.get("usuario.listar.titulo.app"));
-        lblListado.setText(mensajes.get("global.usuario"));
+        lblListado.setText(mensajes.get("global.usuario") + ":");
         btnListar.setText(mensajes.get("menu.usuario.listar"));
         btnBuscar.setText(mensajes.get("global.boton.buscar"));
         txtUsuario.setToolTipText(mensajes.get("mensaje.usuario.buscar.vacio"));
@@ -62,14 +89,11 @@ public class UsuarioListarView extends JInternalFrame {
     public void mostrarUsuarios(List<Usuario> usuarios) {
         this.listaActual = usuarios;
         tableModel.setRowCount(0);
-        if(usuarios==null) return;
+        if (usuarios == null) return;
         for (Usuario usuario : usuarios) {
-            String rolTraducido = "";
-            if (usuario.getRol() == Rol.ADMINISTRADOR) {
-                rolTraducido = mensajes.get("global.rol.admin");
-            } else if (usuario.getRol() == Rol.USUARIO) {
-                rolTraducido = mensajes.get("global.rol.user");
-            }
+            String rolTraducido = usuario.getRol() == Rol.ADMINISTRADOR
+                    ? mensajes.get("global.rol.admin")
+                    : mensajes.get("global.rol.user");
 
             tableModel.addRow(new Object[]{
                     usuario.getUsername(),

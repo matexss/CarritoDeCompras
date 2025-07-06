@@ -16,7 +16,7 @@
         <properties/>
         <border type="none"/>
         <children>
-          <component id="4176d" class="javax.swing.JLabel" binding="lblContraseña">
+          <component id="4176d" class="javax.swing.JLabel">
             <constraints>
               <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -24,7 +24,7 @@
               <text value="Label"/>
             </properties>
           </component>
-          <component id="a77ad" class="javax.swing.JLabel" binding="lblRol">
+          <component id="a77ad" class="javax.swing.JLabel">
             <constraints>
               <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -32,7 +32,7 @@
               <text value="Label"/>
             </properties>
           </component>
-          <component id="62806" class="javax.swing.JTextField" binding="txtUsuario">
+          <component id="62806" class="javax.swing.JTextField">
             <constraints>
               <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                 <preferred-size width="150" height="-1"/>
@@ -40,7 +40,7 @@
             </constraints>
             <properties/>
           </component>
-          <component id="faf81" class="javax.swing.JComboBox" binding="cbxRoles">
+          <component id="faf81" class="javax.swing.JComboBox">
             <constraints>
               <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -51,7 +51,7 @@
               </model>
             </properties>
           </component>
-          <component id="5c22a" class="javax.swing.JLabel" binding="lblUsuarioA">
+          <component id="5c22a" class="javax.swing.JLabel">
             <constraints>
               <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -67,7 +67,7 @@
               <text value="Label"/>
             </properties>
           </component>
-          <component id="458ef" class="javax.swing.JTextField" binding="txtContraseña">
+          <component id="458ef" class="javax.swing.JTextField">
             <constraints>
               <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                 <preferred-size width="150" height="-1"/>
@@ -75,7 +75,7 @@
             </constraints>
             <properties/>
           </component>
-          <component id="32a1d" class="javax.swing.JButton" binding="btnCrear">
+          <component id="32a1d" class="javax.swing.JButton">
             <constraints>
               <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>

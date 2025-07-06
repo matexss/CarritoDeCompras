@@ -1,5 +1,6 @@
 package ec.edu.ups.controlador;
 
+import ec.edu.ups.modelo.servicio.CarritoServiceImpl;
 import ec.edu.ups.modelo.Carrito;
 import ec.edu.ups.modelo.ItemCarrito;
 import ec.edu.ups.modelo.Producto;
@@ -10,21 +11,19 @@ import ec.edu.ups.dao.CarritoDAO;
 import ec.edu.ups.dao.ProductoDAO;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class CarritoController {
 
-    private CarritoService carritoService;
-    private CarritoDAO carritoDAO;
-    private Usuario usuarioActual;
-    private ProductoDAO productoDAO;
+    private final CarritoService carritoService;
+    private final CarritoDAO carritoDAO;
+    private final ProductoDAO productoDAO;
+    private final UsuarioController usuarioController;
 
-
-    public CarritoController(CarritoService carritoService, ProductoDAO productoDAO,CarritoDAO carritoDAO, Usuario usuarioActual) {
-        this.carritoService = carritoService;
+    public CarritoController(CarritoDAO carritoDAO, ProductoDAO productoDAO, UsuarioController usuarioController) {
         this.carritoDAO = carritoDAO;
         this.productoDAO = productoDAO;
-        this.usuarioActual = usuarioActual;
+        this.usuarioController = usuarioController;
+        this.carritoService = new CarritoServiceImpl();
     }
 
     // Agregar producto al carrito temporal
@@ -57,43 +56,88 @@ public class CarritoController {
         return carritoService.estaVacio();
     }
 
-    // Guardar el carrito actual (temporal) como definitivo
+    // Guardar el carrito actual como definitivo
     public void guardarCarrito(Carrito carrito) {
-        carrito.setUsuario(usuarioActual);
+        // Agregamos los productos del carrito temporal al carrito real
+        for (ItemCarrito item : carritoService.obtenerItems()) {
+            carrito.agregarProducto(item.getProducto(), item.getCantidad());
+        }
+
+        // Asignamos el usuario autenticado
+        carrito.setUsuario(usuarioController.getUsuarioAutenticado());
+
+        // Guardamos el carrito en el DAO
         carritoDAO.guardar(carrito);
+
+        // Limpieza del carrito temporal
+        carritoService.vaciarCarrito();
+
+        // Trazas para depuración
+        System.out.println(">>> Carrito guardado con código: " + carrito.getCodigo());
+        System.out.println(">>> Total productos: " + carrito.obtenerItems().size());
+        System.out.println(">>> Usuario: " + carrito.getUsuario().getUsername());
     }
 
-    // Buscar un carrito por su código
+    public void imprimirTodosCarritosDebug() {
+        List<Carrito> lista = carritoDAO.listarCarritos();
+        System.out.println(">>> LISTA DE CARRITOS");
+        for (Carrito c : lista) {
+            System.out.println("- Código: " + c.getCodigo() + " | Usuario: " +
+                    (c.getUsuario() != null ? c.getUsuario().getUsername() : "null") +
+                    " | Productos: " + c.obtenerItems().size());
+        }
+    }
+
+    // Buscar un carrito por código
     public Carrito buscarCarrito(int codigoCarrito) {
         return carritoDAO.buscarPorCodigo(codigoCarrito);
     }
 
-    // Eliminar un carrito por su código
+    // Eliminar un carrito
     public void eliminarCarrito(int codigoCarrito) {
         carritoDAO.eliminarPorCodigo(codigoCarrito);
     }
 
-    // Listar todos los carritos (solo para administradores)
+    // Listar todos los carritos (solo admin)
     public List<Carrito> listarTodosCarritos() {
-        if (usuarioActual.getRol() == Rol.ADMINISTRADOR) {
+        Usuario usuario = usuarioController.getUsuarioAutenticado();
+        System.out.println(">>> Usuario autenticado: " + (usuario != null ? usuario.getUsername() : "null"));
+        if (usuario != null && usuario.getRol() == Rol.ADMINISTRADOR) {
+            System.out.println(">>> Retornando todos los carritos...");
+            return carritoDAO.listarCarritos();
+        }
+        System.out.println(">>> Usuario no autorizado para ver todos los carritos.");
+        return null;
+    }
+
+    // Listar carritos del usuario actual
+    public List<Carrito> listarMisCarritos() {
+        Usuario usuario = usuarioController.getUsuarioAutenticado();
+        if (usuario != null && usuario.getRol() == Rol.ADMINISTRADOR) {
             return carritoDAO.listarCarritos();
         }
         return null;
     }
 
-    // Listar los carritos propios del usuario actual
-    public List<Carrito> listarMisCarritos() {
+    public List<Carrito> listarCarritosSinFiltro() {
+        return carritoDAO.listarCarritos();
+    }
+
+
+    // Listar carritos de un usuario específico
+    public List<Carrito> listarMisCarritos(Usuario usuario) {
         return carritoDAO.listarCarritos().stream()
-                .filter(c -> c.getUsuario() != null && c.getUsuario().getUsername().equals(usuarioActual.getUsername()))
-                .collect(Collectors.toList());
+                .filter(c -> c.getUsuario() != null && c.getUsuario().getUsername().equals(usuario.getUsername()))
+                .toList();
+    }
+
+    // Buscar producto por código
+    public Producto buscarProductoPorCodigo(int codigo) {
+        return productoDAO.buscarPorCodigo(codigo);
     }
 
     // Modificar cantidad de un producto en un carrito ya guardado
     public void modificarCantidad(Carrito carrito, int codigoProducto, int nuevaCantidad) {
         carrito.actualizarCantidadProducto(codigoProducto, nuevaCantidad);
     }
-    public Producto buscarProductoPorCodigo(int codigo) {
-        return productoDAO.buscarPorCodigo(codigo);
-    }
-
 }

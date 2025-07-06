@@ -12,10 +12,8 @@ import java.awt.*;
 import java.util.Locale;
 
 public class CarritoAnadirView extends JInternalFrame {
-   //NO TOCAR NI BORRAR
     private JPanel panelPrincipal;
     private JPanel panel1;
-    // NO TOCAR NI BORRAR
     private JTextField txtCodigo;
     private JTextField txtNombre;
     private JTextField txtPrecio;
@@ -28,6 +26,7 @@ public class CarritoAnadirView extends JInternalFrame {
     private JTextField txtIva;
     private JTextField txtTotal;
     private DefaultTableModel modelo;
+
 
     private CarritoController carritoController;
     private Locale locale;
@@ -45,7 +44,6 @@ public class CarritoAnadirView extends JInternalFrame {
         setSize(750, 550);
         setLayout(new BorderLayout());
 
-        // Panel de búsqueda
         JPanel panelBusqueda = new JPanel(new GridLayout(2, 5, 10, 10));
         txtCodigo = new JTextField();
         txtNombre = new JTextField();
@@ -70,13 +68,11 @@ public class CarritoAnadirView extends JInternalFrame {
 
         add(panelBusqueda, BorderLayout.NORTH);
 
-        // Tabla
-        String[] columnas = {"Nombre", "Precio", "Cantidad", "Subtotal"};
+        String[] columnas = {"Código", "Nombre", "Precio", "Cantidad", "Subtotal"};
         modelo = new DefaultTableModel(columnas, 0);
         table = new JTable(modelo);
         add(new JScrollPane(table), BorderLayout.CENTER);
 
-        // Panel inferior: totales + botón guardar
         JPanel panelInferior = new JPanel(new BorderLayout());
 
         JPanel panelTotales = new JPanel(new GridLayout(3, 2, 10, 5));
@@ -108,54 +104,61 @@ public class CarritoAnadirView extends JInternalFrame {
         btnBuscar.addActionListener(e -> {
             String codigoTexto = txtCodigo.getText().trim();
             if (!codigoTexto.isEmpty()) {
+                if (codigoTexto.isBlank()) {
+                    mostrarMensaje("Por favor ingrese el código del producto.");
+                    return;
+                }
+                if (!codigoTexto.matches("\\d+")) {
+                    mostrarMensaje("Código inválido. Use solo números.");
+                    return;
+                }
                 int codigo = Integer.parseInt(codigoTexto);
                 Producto producto = carritoController.buscarProductoPorCodigo(codigo);
+
                 if (producto != null) {
                     txtNombre.setText(producto.getNombre());
                     txtPrecio.setText(String.valueOf(producto.getPrecio()));
                 } else {
                     mostrarMensaje("Producto no encontrado.");
+                    txtNombre.setText("");
+                    txtPrecio.setText("");
                 }
             }
         });
 
-
-
         btnAñadir.addActionListener(e -> {
+            String codigoTexto = txtCodigo.getText().trim();
             String nombre = txtNombre.getText().trim();
             String precioTexto = txtPrecio.getText().trim();
             String cantidadTexto = txtCantidad.getText().trim();
 
-            // Validar campos vacíos
-            if (nombre.isEmpty() || precioTexto.isEmpty() || cantidadTexto.isEmpty()) {
+            // Validaciones
+            if (codigoTexto.isEmpty() || nombre.isEmpty() || precioTexto.isEmpty() || cantidadTexto.isEmpty()) {
                 mostrarMensaje("Todos los campos deben estar llenos.");
                 return;
             }
 
-            // Validar que precio y cantidad sean numéricos válidos
-            if (!precioTexto.matches("\\d+(\\.\\d+)?")) {
-                mostrarMensaje("Precio inválido. Usa solo números, por ejemplo: 10.50");
-                return;
-            }
-
-            if (!cantidadTexto.matches("\\d+")) {
-                mostrarMensaje("Cantidad inválida. Usa solo números enteros.");
+            int codigo;
+            try {
+                codigo = Integer.parseInt(codigoTexto);
+            } catch (NumberFormatException ex) {
+                mostrarMensaje("Código inválido.");
                 return;
             }
 
             double precio = Double.parseDouble(precioTexto);
             int cantidad = Integer.parseInt(cantidadTexto);
 
-            // Crear el producto
             Producto producto = new Producto();
+            producto.setCodigo(codigo); // ✅ ASIGNAR CÓDIGO CORRECTAMENTE
             producto.setNombre(nombre);
             producto.setPrecio(precio);
 
-            // Agregar al carrito
             carritoController.agregarProducto(producto, cantidad);
 
             double subtotal = cantidad * precio;
             modelo.addRow(new Object[]{
+                    codigo,
                     nombre,
                     FormateadorUtils.formatearMoneda(precio, locale),
                     cantidad,
@@ -164,66 +167,37 @@ public class CarritoAnadirView extends JInternalFrame {
 
             actualizarTotales();
 
-            // Limpiar campos
+            // Limpiar
             txtCodigo.setText("");
             txtNombre.setText("");
             txtPrecio.setText("");
             txtCantidad.setText("1");
         });
 
-        btnGuardar.addActionListener(e -> {
-            int filas = table.getRowCount();
 
-            if (filas == 0) {
+        btnGuardar.addActionListener(e -> {
+            System.out.println(">>> [DEBUG] Botón Guardar presionado");
+
+            if (carritoController.obtenerItems().isEmpty()) {
                 mostrarMensaje("No hay productos en el carrito.");
                 return;
             }
 
             Carrito carrito = new Carrito();
+            System.out.println(">>> [DEBUG] Carrito creado, agregando productos");
 
-            for (int i = 0; i < filas; i++) {
-                String nombre = table.getValueAt(i, 0).toString().trim();
-                String precioTexto = table.getValueAt(i, 1).toString().replace("$", "").replace(",", "").trim();
-                String cantidadTexto = table.getValueAt(i, 2).toString().trim();
-
-                // Validar campos
-                if (nombre.isEmpty() || precioTexto.isEmpty() || cantidadTexto.isEmpty()) {
-                    mostrarMensaje("Hay un producto con datos incompletos en la tabla.");
-                    return;
-                }
-
-                if (!precioTexto.matches("\\d+(\\.\\d+)?")) {
-                    mostrarMensaje("Precio inválido en la tabla: " + precioTexto);
-                    return;
-                }
-
-                if (!cantidadTexto.matches("\\d+")) {
-                    mostrarMensaje("Cantidad inválida en la tabla: " + cantidadTexto);
-                    return;
-                }
-
-                double precio = Double.parseDouble(precioTexto);
-                int cantidad = Integer.parseInt(cantidadTexto);
-
-                Producto producto = new Producto();
-                producto.setNombre(nombre);
-                producto.setPrecio(precio);
-
-                carrito.agregarProducto(producto, cantidad);
+            for (ItemCarrito item : carritoController.obtenerItems()) {
+                carrito.agregarProducto(item.getProducto(), item.getCantidad());
             }
 
-            // Guardar carrito
             carritoController.guardarCarrito(carrito);
-
             mostrarMensaje("Carrito guardado correctamente.");
 
-            // Limpiar tabla y totales
             modelo.setRowCount(0);
             txtSubtotal.setText("");
             txtIva.setText("");
             txtTotal.setText("");
         });
-
     }
 
     private void actualizarTotales() {
@@ -238,7 +212,11 @@ public class CarritoAnadirView extends JInternalFrame {
         txtTotal.setText(FormateadorUtils.formatearMoneda(total, locale));
     }
 
-    // Getters para controlador
+    private void mostrarMensaje(String mensaje) {
+        JOptionPane.showMessageDialog(this, mensaje);
+    }
+
+    // Getters
     public JButton getBtnAñadir() {
         return btnAñadir;
     }
@@ -281,9 +259,5 @@ public class CarritoAnadirView extends JInternalFrame {
 
     public JTextField getTxtTotal() {
         return txtTotal;
-    }
-
-    private void mostrarMensaje(String mensaje) {
-        JOptionPane.showMessageDialog(this, mensaje);
     }
 }

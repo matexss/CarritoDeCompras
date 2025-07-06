@@ -15,6 +15,7 @@ public class Carrito {
     private List<ItemCarrito> items;
     private Usuario usuario; // NUEVO
 
+
     public Carrito() {
         codigo = contador++;
         items = new ArrayList<>();

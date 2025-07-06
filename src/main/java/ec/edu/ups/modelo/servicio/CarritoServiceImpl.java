@@ -1,58 +1,40 @@
 package ec.edu.ups.modelo.servicio;
-
+import ec.edu.ups.modelo.Carrito;
 import ec.edu.ups.modelo.ItemCarrito;
 import ec.edu.ups.modelo.Producto;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
+
 public class CarritoServiceImpl implements CarritoService {
+    private Carrito carritoTemporal = new Carrito();
 
-    private final List<ItemCarrito> items;
-
-    public CarritoServiceImpl() {
-        items = new ArrayList<>();
-    }
-
-    @Override
     public void agregarProducto(Producto producto, int cantidad) {
-        items.add(new ItemCarrito(producto, cantidad));
+        carritoTemporal.agregarProducto(producto, cantidad);
     }
 
-    @Override
     public void eliminarProducto(int codigoProducto) {
-        Iterator<ItemCarrito> it = items.iterator();
-        while (it.hasNext()) {
-            if (it.next().getProducto().getCodigo() == codigoProducto) {
-                it.remove();
-                break;
-            }
-        }
+        carritoTemporal.eliminarProducto(codigoProducto);
     }
 
-    @Override
     public void vaciarCarrito() {
-        items.clear();
+        carritoTemporal = new Carrito(); // nuevo carrito
     }
 
-    @Override
-    public double calcularTotal() {
-        double total = 0;
-        for (ItemCarrito item : items) {
-            total += item.getProducto().getPrecio() * item.getCantidad();
-        }
-        return total;
-    }
-
-    @Override
     public List<ItemCarrito> obtenerItems() {
-        return items;
+        return carritoTemporal.obtenerItems();
     }
 
-    @Override
+    public double calcularTotal() {
+        return carritoTemporal.calcularSubtotal() * 1.12; // subtotal + 12%
+    }
+
     public boolean estaVacio() {
-        return items.isEmpty();
+        return carritoTemporal.obtenerItems().isEmpty();
+    }
+
+    public Carrito getCarritoTemporal() {
+        return carritoTemporal;
     }
 }
-

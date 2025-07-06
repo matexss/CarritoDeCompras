@@ -71,4 +71,8 @@ public class LoginView extends JFrame {
     public JButton getBtnRecuperarContrasenia() {
         return btnRecuperarContrasenia;
     }
+    public void mostrarMensaje(String mensaje) {
+        JOptionPane.showMessageDialog(this, mensaje);
+    }
+
 }

@@ -3,71 +3,62 @@ package ec.edu.ups.vista;
 import ec.edu.ups.util.MensajeInternacionalizacionHandler;
 
 import javax.swing.*;
-import java.net.URL;
+import java.awt.*;
 
 public class UsuarioEliminarView extends JInternalFrame {
-    private JLabel lblUsuario;
-    private JButton btnBuscar;
-    private JTextField txtUsuario;
-    private JLabel lblContraseña;
-    private JLabel lblRol;
-    private JTextField txtContraseña;
-    private JButton btnEliminar;
-    private JTextField txtRol;
-    private JPanel paneltitulo;
-    private JPanel panelPrincipal;
-    private JTextField textField1;
-    private JTextField textField2;
-    private JTextField textField3;
+
     private JLabel lblTitulo;
+    private JLabel lblUsuario;
+    private JTextField txtUsuario;
+    private JButton btnEliminar;
 
     private MensajeInternacionalizacionHandler mensajes;
 
     public UsuarioEliminarView(MensajeInternacionalizacionHandler mensajes) {
-
-        super("", true, true, false, true);
+        super(mensajes.get("usuario.eliminar.titulo.app"), true, true, true, true);
         this.mensajes = mensajes;
 
-        setSize(600, 400);
-        setContentPane(panelPrincipal);
-        URL urlBuscar = getClass().getResource("/search.png");
-        btnBuscar.setIcon(new ImageIcon(urlBuscar));
-        URL urlEliminar = getClass().getResource("/trash.png");
-        btnEliminar.setIcon(new ImageIcon(urlEliminar));
-
-
+        initComponents();
         actualizarTextos();
     }
 
-    public void actualizarTextos() {
+    private void initComponents() {
+        setSize(400, 200);
+        setLayout(new BorderLayout());
+
+        lblTitulo = new JLabel("", SwingConstants.CENTER);
+        lblTitulo.setFont(new Font("Arial", Font.BOLD, 16));
+        add(lblTitulo, BorderLayout.NORTH);
+
+        JPanel panelCentro = new JPanel(new GridLayout(2, 2, 10, 10));
+        panelCentro.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+
+        lblUsuario = new JLabel();
+        txtUsuario = new JTextField();
+        btnEliminar = new JButton();
+
+        panelCentro.add(lblUsuario);
+        panelCentro.add(txtUsuario);
+        panelCentro.add(new JLabel()); // Espacio vacío
+        panelCentro.add(btnEliminar);
+
+        add(panelCentro, BorderLayout.CENTER);
+    }
+
+    private void actualizarTextos() {
         setTitle(mensajes.get("usuario.eliminar.titulo.app"));
         lblTitulo.setText(mensajes.get("usuario.eliminar.titulo.app"));
         lblUsuario.setText(mensajes.get("global.usuario") + ":");
-        lblContraseña.setText(mensajes.get("global.contraseña") + ":");
-        lblRol.setText(mensajes.get("global.rol") + ":");
-        txtUsuario.setToolTipText(mensajes.get("usuario.crear.nombre"));
-        btnBuscar.setText(mensajes.get("global.boton.buscar"));
+        txtUsuario.setToolTipText(mensajes.get("mensaje.usuario.buscar.vacio"));
         btnEliminar.setText(mensajes.get("global.boton.eliminar"));
-    }
-
-    public JButton getBtnBuscar() {
-        return btnBuscar;
     }
 
     public JTextField getTxtUsuario() {
         return txtUsuario;
     }
 
-    public JTextField getTxtContraseña() {
-        return txtContraseña;
-    }
-
     public JButton getBtnEliminar() {
         return btnEliminar;
-    }
-
-    public JTextField getTxtRol() {
-        return txtRol;
     }
 
     public void mostrarMensaje(String mensaje) {
@@ -76,12 +67,5 @@ public class UsuarioEliminarView extends JInternalFrame {
 
     public void limpiarCampos() {
         txtUsuario.setText("");
-        txtContraseña.setText("");
-        txtRol.setText("");
-        btnEliminar.setEnabled(false);
-        txtContraseña.setEnabled(false);
-        txtRol.setEnabled(false);
-        txtUsuario.setEditable(true);
-        btnBuscar.setEnabled(true);
     }
 }

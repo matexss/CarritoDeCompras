@@ -15,10 +15,17 @@ public class CarritoListarView extends JInternalFrame {
     private DefaultTableModel modeloTabla;
     private JPanel panelPrincipal;
 
+
     public CarritoListarView(CarritoController carritoController) {
         super("Listado General de Carritos", true, true, true, true); // Título, resizable, closable, maximizable, iconifiable
         this.carritoController = carritoController;
         initComponents();
+        addInternalFrameListener(new javax.swing.event.InternalFrameAdapter() {
+            @Override
+            public void internalFrameActivated(javax.swing.event.InternalFrameEvent e) {
+                cargarCarritos();  // recarga cada vez que se activa la ventana
+            }
+        });
     }
 
     private void initComponents() {
@@ -40,9 +47,15 @@ public class CarritoListarView extends JInternalFrame {
 
     private void cargarCarritos() {
         modeloTabla.setRowCount(0);
-        List<Carrito> carritos = carritoController.listarTodosCarritos();
+        List<Carrito> carritos = carritoController.listarCarritosSinFiltro();
+        System.out.println(">>> Carritos encontrados: " + (carritos != null ? carritos.size() : "null"));
+
         if (carritos != null) {
             for (Carrito c : carritos) {
+                System.out.println("- Código: " + c.getCodigo() + " | Usuario: " +
+                        (c.getUsuario() != null ? c.getUsuario().getUsername() : "null") +
+                        " | Productos: " + c.obtenerItems().size());
+
                 Object[] fila = {
                         c.getCodigo(),
                         c.getFechaCreacion().getTime(),
