@@ -53,7 +53,6 @@ public class UsuarioListarView extends JInternalFrame {
         panelSuperior.add(lblListado);
         panelSuperior.add(txtUsuario);
         panelSuperior.add(btnBuscar);
-        panelSuperior.add(btnListar);
 
         panelCentro.add(panelSuperior, BorderLayout.NORTH);
 

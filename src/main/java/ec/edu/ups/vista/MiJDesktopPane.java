@@ -5,68 +5,49 @@ import java.awt.*;
 
 public class MiJDesktopPane extends JDesktopPane {
 
-    public MiJDesktopPane() {
-        super();
-    }
-
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
+        Graphics2D g2 = (Graphics2D) g;
 
-        // Fondo degradado (cielo)
-        Graphics2D g2d = (Graphics2D) g;
-        Color color1 = new Color(135, 206, 235); // Azul claro
-        Color color2 = new Color(255, 255, 255); // Blanco
-        GradientPaint gradient = new GradientPaint(0, 0, color1, 0, getHeight(), color2);
-        g2d.setPaint(gradient);
-        g2d.fillRect(0, 0, getWidth(), getHeight() / 2);
+        // Activar antialiasing para suavizar bordes
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        // Césped en degradado
-        Color grassColor1 = new Color(34, 139, 34); // Verde pasto
-        Color grassColor2 = new Color(50, 205, 50); // Verde más claro
-        GradientPaint grassGradient = new GradientPaint(0, getHeight() / 2, grassColor1, 0, getHeight(), grassColor2);
-        g2d.setPaint(grassGradient);
-        g2d.fillRect(0, getHeight() / 2, getWidth(), getHeight() / 2);
+        int w = getWidth();
+        int h = getHeight();
 
-        // Dibuja el sol
-        g.setColor(Color.YELLOW);
-        g.fillOval(getWidth() / 2 - 75, 50, 150, 150);
+        // Fondo degradado moderno
+        GradientPaint fondo = new GradientPaint(0, 0, new Color(30, 30, 30), 0, h, new Color(60, 60, 60));
+        g2.setPaint(fondo);
+        g2.fillRect(0, 0, w, h);
 
-        // Dibuja nubes abstractas
-        g.setColor(Color.WHITE);
-        g.fillOval(100, 80, 120, 60);
-        g.fillOval(150, 50, 130, 70);
-        g.fillOval(300, 70, 150, 80);
+        // Figuras abstractas tipo "ondas suaves"
+        g2.setColor(new Color(100, 149, 237, 80)); // azul claro con transparencia
+        int[] x1 = {0, w / 2, w};
+        int[] y1 = {h / 3, h / 2 + 60, h / 3};
+        g2.fillPolygon(x1, y1, 3);
 
-        // Dibuja algunas montañas
-        g.setColor(new Color(139, 69, 19)); // Marrón oscuro
-        int[] xPoints = {0, getWidth() / 2, getWidth()};
-        int[] yPoints = {getHeight() / 2, 100, getHeight() / 2};
-        g.fillPolygon(xPoints, yPoints, 3);
+        g2.setColor(new Color(255, 255, 255, 30)); // blanco transparente
+        int[] x2 = {0, w / 3, w};
+        int[] y2 = {h - 100, h - 150, h - 80};
+        g2.fillPolygon(x2, y2, 3);
 
-        // Dibuja un árbol estilizado con círculos
-        g.setColor(new Color(139, 69, 19)); // Tronco marrón
-        g.fillRect(100, getHeight() / 2 - 80, 20, 60);
-        g.setColor(new Color(0, 128, 0)); // Hojas verdes
-        g.fillOval(90, getHeight() / 2 - 120, 50, 50); // Parte superior del árbol
-        g.fillOval(70, getHeight() / 2 - 90, 50, 50); // Parte media
-        g.fillOval(110, getHeight() / 2 - 60, 50, 50); // Parte inferior
+        // Círculos decorativos
+        g2.setColor(new Color(255, 105, 180, 90)); // rosa neón transparente
+        g2.fillOval(w - 200, 50, 120, 120);
 
-        // Dibuja un segundo árbol
-        g.setColor(new Color(139, 69, 19)); // Tronco marrón
-        g.fillRect(300, getHeight() / 2 - 100, 20, 60);
-        g.setColor(new Color(0, 128, 0)); // Hojas verdes
-        g.fillOval(290, getHeight() / 2 - 140, 50, 50);
-        g.fillOval(270, getHeight() / 2 - 110, 50, 50);
-        g.fillOval(310, getHeight() / 2 - 80, 50, 50);
-    }
+        g2.setColor(new Color(0, 255, 255, 60)); // cian
+        g2.fillOval(80, h - 180, 160, 160);
 
-    public static void main(String[] args) {
-        JFrame frame = new JFrame("Paisaje Creativo");
-        MiJDesktopPane panel = new MiJDesktopPane();
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(800, 600);
-        frame.add(panel);
-        frame.setVisible(true);
+        // Líneas diagonales modernas
+        g2.setColor(new Color(255, 255, 255, 25));
+        for (int i = -200; i < w + 200; i += 40) {
+            g2.drawLine(i, 0, i - 100, h);
+        }
+
+        // Texto decorativo (opcional)
+        g2.setFont(new Font("SansSerif", Font.BOLD, 36));
+        g2.setColor(new Color(255, 255, 255, 50));
+        g2.drawString("Carrito de Compras", 40, 60);
     }
 }

@@ -89,6 +89,18 @@ public class UsuarioDAOMemoria implements UsuarioDAO {
     }
 
     @Override
+    public List<Usuario> buscarPorNombre(String nombre) {
+        List<Usuario> resultado = new ArrayList<>();
+        for (Usuario usuario : usuarios) {
+            if (usuario.getUsername().toLowerCase().contains(nombre.toLowerCase())) {
+                resultado.add(usuario);
+            }
+        }
+        return resultado;
+    }
+
+
+    @Override
     public List<Usuario> listarTodos() {
         return usuarios;
     }

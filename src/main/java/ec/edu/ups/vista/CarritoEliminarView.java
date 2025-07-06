@@ -77,21 +77,6 @@ public class CarritoEliminarView extends JInternalFrame {
         JPanel panelInferior = new JPanel();
         panelInferior.add(btnEliminar);
 
-        // Añadir íconos si existen
-        URL urlBuscar = getClass().getResource("/search.png");
-        if (urlBuscar != null) {
-            btnBuscar.setIcon(new ImageIcon(urlBuscar));
-        } else {
-            System.err.println("⚠️ Imagen /search.png no encontrada.");
-        }
-
-        URL urlEliminar = getClass().getResource("/trash.webp");
-        if (urlEliminar != null) {
-            btnEliminar.setIcon(new ImageIcon(urlEliminar));
-        } else {
-            System.err.println("⚠️ Imagen /trash.webp no encontrada.");
-        }
-
         // Agregar componentes
         panelPrincipal.add(panelSuperior, BorderLayout.NORTH);
         panelPrincipal.add(scrollPane, BorderLayout.CENTER);

@@ -97,9 +97,12 @@ public class UsuarioCrearView extends JInternalFrame {
     private void cargarRoles() {
         cbxRoles.removeAllItems();
         for (Rol rol : Rol.values()) {
-            cbxRoles.addItem(rol);
+            if (rol == Rol.ADMINISTRADOR || rol == Rol.USUARIO) {
+                cbxRoles.addItem(rol);
+            }
         }
     }
+
 
     public JTextField getTxtUsuario() {
         return txtUsuario;

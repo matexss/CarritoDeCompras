@@ -44,6 +44,8 @@ public class UsuarioController {
         this.modificarView = new UsuarioModificarView(mensajes);
         this.listarView = new UsuarioListarView(mensajes);
         this.modificarMisView = new UsuarioModificarMisView(mensajes);
+        listarView.getBtnBuscar().addActionListener(e -> buscarUsuarioPorNombre());
+
     }
 
     public Usuario getUsuarioAutenticado() {
@@ -204,14 +206,33 @@ public class UsuarioController {
         mostrarVentana(modificarMisView);
     }
 
-    // === Utilidad para mostrar JInternalFrame ===
+    public void buscarUsuarioPorNombre() {
+        String nombre = listarView.getTxtUsuario().getText().trim();
+        if (nombre.isEmpty()) {
+            listarView.mostrarMensaje(mensajes.get("mensaje.usuario.buscar.vacio"));
+            return;
+        }
+        List<Usuario> usuarios = usuarioDAO.buscarPorNombre(nombre);
+        listarView.mostrarUsuarios(usuarios);
+    }
+
 
     private void mostrarVentana(JInternalFrame vista) {
-        for (JInternalFrame frame : menuPrincipal.getjDesktopPane().getAllFrames()) {
-            frame.dispose();
+        JDesktopPane desktop = menuPrincipal.getjDesktopPane();
+
+        for (JInternalFrame frame : desktop.getAllFrames()) {
+            frame.dispose();          // libera recursos
+            desktop.remove(frame);    // lo saca físicamente del contenedor
         }
-        menuPrincipal.getjDesktopPane().add(vista);
+        if (vista.getParent() == null) {
+            desktop.add(vista);
+        }
+
         vista.setVisible(true);
         vista.toFront();
+        try {
+            vista.setSelected(true);
+        } catch (java.beans.PropertyVetoException ignored) { }
     }
+
 }

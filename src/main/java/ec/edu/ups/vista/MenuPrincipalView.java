@@ -1,10 +1,8 @@
 package ec.edu.ups.vista;
 
 import ec.edu.ups.controlador.CarritoController;
-import ec.edu.ups.modelo.Rol;
-import ec.edu.ups.modelo.Usuario;
 import ec.edu.ups.util.MensajeInternacionalizacionHandler;
-
+import ec.edu.ups.util.IconUtil;
 import javax.swing.*;
 import java.awt.*;
 import java.util.Locale;
@@ -66,7 +64,7 @@ public class MenuPrincipalView extends JFrame {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
-        jDesktopPane = new JDesktopPane();
+        jDesktopPane = new MiJDesktopPane();
         setContentPane(jDesktopPane);
 
         menuBar = new JMenuBar();
@@ -77,6 +75,19 @@ public class MenuPrincipalView extends JFrame {
         menuUsuario = new JMenu("Usuarios");
         menuIdioma = new JMenu("Idioma");
         menuSesion = new JMenu("Sesión");
+
+
+// Inicialización
+        menuItemCrearProducto = new JMenuItem("Crear Producto");
+        menuItemBuscarProducto = new JMenuItem("Buscar Producto");
+        menuItemActualizarProducto = new JMenuItem("Actualizar Producto");
+        menuItemEliminarProducto = new JMenuItem("Eliminar Producto");
+
+// 🔧 ASIGNACIÓN DE ÍCONOS
+        menuItemCrearProducto.setIcon(IconUtil.icon("add.png", 18, 18));
+        menuItemBuscarProducto.setIcon(IconUtil.icon("search.png", 18, 18));
+        menuItemActualizarProducto.setIcon(IconUtil.icon("edit.png", 18, 18));
+        menuItemEliminarProducto.setIcon(IconUtil.icon("delete.png", 18, 18));
 
         // Productos
         menuItemCrearProducto = new JMenuItem("Crear Producto");
@@ -172,7 +183,6 @@ public class MenuPrincipalView extends JFrame {
     // --- Métodos para manipular el menú según el rol ---
     public void deshabilitarMenusAdministrador() {
         menuProducto.setEnabled(false);
-        menuUsuario.setEnabled(false);
         menuItemListarCarritos.setEnabled(false);
         menuItemEliminarCarrito.setEnabled(false);
         menuItemModificarCarrito.setEnabled(false);
@@ -180,11 +190,19 @@ public class MenuPrincipalView extends JFrame {
 
     public void ocultarMenusAdministrador() {
         menuProducto.setVisible(false);
-        menuUsuario.setVisible(false);
         menuItemListarCarritos.setVisible(false);
         menuItemEliminarCarrito.setVisible(false);
         menuItemModificarCarrito.setVisible(false);
+
+        // Modifica el menú "Usuarios" para llamarse "Cuenta" y dejar solo el ítem de actualizar
+        menuUsuario.setText("Cuenta");
+
+        // Limpia todos los ítems y solo agrega el necesario
+        menuUsuario.removeAll();
+        menuUsuario.add(menuItemActualizarDatos);
+        menuUsuario.setVisible(true);
     }
+
 
     // --- Método para cambiar idioma ---
     public void cambiarIdioma(String lang, String country) {
