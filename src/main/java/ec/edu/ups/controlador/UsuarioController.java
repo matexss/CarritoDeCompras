@@ -63,6 +63,7 @@ public class UsuarioController {
         }
     }
 
+
     // === Registro de nuevo usuario desde el Login ===
     private void mostrarVistaRegistro() {
         RegistroView registroView = new RegistroView(new PreguntaSeguridadService());
@@ -125,6 +126,11 @@ public class UsuarioController {
         });
         mostrarVentana(crearView);
     }
+    private boolean esAdmin() {
+        return usuarioAutenticado != null
+                && usuarioAutenticado.getRol() == Rol.ADMINISTRADOR;
+    }
+
 
     public void mostrarVistaEliminarUsuario() {
         eliminarView.getBtnEliminar().addActionListener(e -> {
@@ -138,6 +144,16 @@ public class UsuarioController {
 
     public void mostrarVistaModificarUsuario() {
         modificarView.getBtnBuscar().addActionListener(e -> {
+            if (!esAdmin()) {
+                JOptionPane.showMessageDialog(menuPrincipal,
+                        "Acceso denegado. Solo disponible para administradores.",
+                        "Permiso insuficiente",
+                        JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            List<Usuario> usuarios = usuarioDAO.listarTodos();
+            listarView.mostrarUsuarios(usuarios);
+            mostrarVentana(listarView);
             Usuario u = usuarioDAO.buscarPorUsername(modificarView.getTxtUsuario().getText());
             if (u != null) {
                 modificarView.getTxtContraseña().setText(u.getPassword());

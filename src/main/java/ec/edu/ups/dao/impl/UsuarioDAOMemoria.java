@@ -29,7 +29,7 @@ public class UsuarioDAOMemoria implements UsuarioDAO {
         // Usuario cliente
         Usuario cliente = new Usuario();
         cliente.setUsername("cliente");
-        cliente.setPassword("cliente123");
+        cliente.setPassword("123");
         cliente.setRol(Rol.USUARIO);
         cliente.setNombreCompleto("Cliente");
         cliente.setFechaNacimiento("1995-01-01");
