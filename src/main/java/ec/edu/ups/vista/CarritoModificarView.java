@@ -35,7 +35,6 @@ public class CarritoModificarView extends JInternalFrame {
         setResizable(true);
         setLayout(new BorderLayout());
 
-        // Panel superior de entrada
         JPanel panelEntrada = new JPanel(new GridLayout(4, 2, 10, 10));
         txtCodigoCarrito = new JTextField();
         txtCodigoProducto = new JTextField();
@@ -55,13 +54,27 @@ public class CarritoModificarView extends JInternalFrame {
 
         add(panelEntrada, BorderLayout.NORTH);
 
-        // Tabla de productos
-        modeloTabla = new DefaultTableModel(new String[]{"Código", "Nombre", "Cantidad", "Precio Unitario", "Subtotal"}, 0);
+        modeloTabla = new DefaultTableModel(new String[]{"Código", "Nombre", "Cantidad", "Precio Unitario", "Subtotal"}, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return column == 2; // Solo permitir editar la cantidad
+            }
+
+            @Override
+            public Class<?> getColumnClass(int columnIndex) {
+                if (columnIndex == 0 || columnIndex == 2) return Integer.class;
+                if (columnIndex == 3 || columnIndex == 4) return Double.class;
+                return String.class;
+            }
+        };
         tablaCarrito = new JTable(modeloTabla);
         JScrollPane scrollPane = new JScrollPane(tablaCarrito);
         add(scrollPane, BorderLayout.CENTER);
-
-        // Eventos
+        JButton btnGuardarCambios = new JButton("Guardar Cambios");
+        JPanel panelInferior = new JPanel();
+        panelInferior.add(btnGuardarCambios);
+        add(panelInferior, BorderLayout.SOUTH);
+        btnGuardarCambios.addActionListener(e -> guardarCambios());
         btnBuscarCarrito.addActionListener(e -> buscarCarrito());
         btnModificar.addActionListener(e -> modificarCantidad());
     }
@@ -77,7 +90,7 @@ public class CarritoModificarView extends JInternalFrame {
         if (carritoActual == null) {
             JOptionPane.showMessageDialog(this, "Carrito no encontrado.", "Información", JOptionPane.INFORMATION_MESSAGE);
             btnModificar.setEnabled(false);
-            modeloTabla.setRowCount(0); // Limpiar tabla
+            modeloTabla.setRowCount(0);
         } else {
             JOptionPane.showMessageDialog(this, "Carrito encontrado con " + carritoActual.obtenerItems().size() + " productos.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
             mostrarDetalleCarrito(carritoActual);
@@ -100,6 +113,20 @@ public class CarritoModificarView extends JInternalFrame {
                     cantidad * precio
             });
         }
+    }
+    private void guardarCambios() {
+        if (carritoActual == null) {
+            JOptionPane.showMessageDialog(this, "No hay carrito cargado.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        for (int i = 0; i < modeloTabla.getRowCount(); i++) {
+            int codigoProducto = (int) modeloTabla.getValueAt(i, 0);
+            int nuevaCantidad = (int) modeloTabla.getValueAt(i, 2);
+            carritoController.modificarCantidad(carritoActual, codigoProducto, nuevaCantidad);
+        }
+
+        JOptionPane.showMessageDialog(this, "Cambios guardados correctamente.");
     }
 
     private void modificarCantidad() {
@@ -125,10 +152,21 @@ public class CarritoModificarView extends JInternalFrame {
 
         carritoController.modificarCantidad(carritoActual, codigoProducto, nuevaCantidad);
         JOptionPane.showMessageDialog(this, "Cantidad modificada correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-        mostrarDetalleCarrito(carritoActual); // refrescar tabla
-
-        // Limpiar campos de producto y cantidad, pero dejar el carrito
+        mostrarDetalleCarrito(carritoActual);
         txtCodigoProducto.setText("");
         txtCantidad.setText("");
+    }
+    public void buscarCarritoDesdeExterno(int codigo) {
+        txtCodigoCarrito.setText(String.valueOf(codigo));
+        buscarCarrito();
+    }
+
+    public void setCarrito(Carrito carrito) {
+        this.carritoActual = carrito;
+        txtCodigoCarrito.setText(String.valueOf(carrito.getCodigo()));
+        txtCodigoCarrito.setEditable(false);
+        btnBuscarCarrito.setEnabled(false);  // ya no se necesita buscarlo
+        mostrarDetalleCarrito(carrito);
+        btnModificar.setEnabled(true);
     }
 }
