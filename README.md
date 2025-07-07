@@ -7,7 +7,7 @@ https://github.com/matexss/CarritoDeCompras
 
 A continuación, se presenta una captura de pantalla de la estructura del proyecto:
 
-![Captura de Pantalla](src/CAPTURA.png)
+![Captura de Pantalla](DIAGRAMA.png)
 
 # 🛒 Proyecto de Ejemplo - Carrito de Compras
 
