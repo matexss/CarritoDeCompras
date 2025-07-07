@@ -1,8 +1,13 @@
+## LINK DE YOUTUBE 
+https://youtu.be/1_usJMnFWPc?si=cS2Iu1CtWikrb3yi
+## REPOSITORIO EN GITHUB
+https://github.com/matexss/CarritoDeCompras
 
-## 📸 Captura de Pantalla del Diagrama del Proyecto
+## 📸 Captura de Pantalla del Proyecto
 
-A continuación, se presenta una captura de pantalla del Diagrama.
+A continuación, se presenta una captura de pantalla de la estructura del proyecto:
 
+![Captura de Pantalla](src/CAPTURA.png)
 
 # 🛒 Proyecto de Ejemplo - Carrito de Compras
 
