@@ -2,113 +2,106 @@ package ec.edu.ups.vista;
 
 import ec.edu.ups.controlador.CarritoController;
 import ec.edu.ups.modelo.Carrito;
-
+import ec.edu.ups.util.*;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.List;
+import java.util.Locale;
 
-public class CarritoListarMisView extends JInternalFrame {
+public class CarritoListarMisView extends JInternalFrame implements ActualizableConIdioma {
     private JPanel panelPrincipal;
+    private JPanel panel1;
     private final CarritoController carritoController;
-    private JTable tablaCarritos;
-    private DefaultTableModel modeloTabla;
+    private final MensajeInternacionalizacionHandler mensajes;
+    private Locale locale;
 
-    public CarritoListarMisView(CarritoController carritoController) {
-        this.carritoController = carritoController;
-        initComponents();
+    private final JTable tabla;
+    private final DefaultTableModel modelo;
+    private final JButton btnModificar, btnEliminar;
 
-        // ✅ Se actualiza la tabla cada vez que se abre la ventana
-        addInternalFrameListener(new javax.swing.event.InternalFrameAdapter() {
-            @Override
-            public void internalFrameActivated(javax.swing.event.InternalFrameEvent e) {
-                cargarCarritos();
-            }
-        });
-    }
+    public CarritoListarMisView(CarritoController cc, MensajeInternacionalizacionHandler msg) {
+        super("", true, true, false, true);
+        carritoController = cc;
+        mensajes = msg;
+        locale = msg.getLocale();
 
-    private void initComponents() {
-        setTitle("Mis Carritos");
         setSize(600, 400);
-        setClosable(true);
-        setResizable(true);
-        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setLayout(new BorderLayout());
 
-        String[] columnas = {"Código", "Fecha Creación", "Cantidad Productos"};
-        modeloTabla = new DefaultTableModel(columnas, 0);
-        tablaCarritos = new JTable(modeloTabla);
+        modelo = new DefaultTableModel();
+        tabla = new JTable(modelo);
+        add(new JScrollPane(tabla), BorderLayout.CENTER);
 
-        JScrollPane scrollPane = new JScrollPane(tablaCarritos);
-        add(scrollPane, BorderLayout.CENTER);
+        JPanel south = new JPanel();
+        btnModificar = new JButton(IconUtil.cargarIcono("carrito-editar.png",16,16));
+        btnEliminar  = new JButton(IconUtil.cargarIcono("carrito-eliminar.png",16,16));
+        south.add(btnModificar);
+        south.add(btnEliminar);
+        add(south, BorderLayout.SOUTH);
 
-        // 🔘 Botones de acción
-        JPanel panelBotones = new JPanel();
-        JButton btnModificar = new JButton("Modificar");
-        JButton btnEliminar = new JButton("Eliminar");
+        btnEliminar.addActionListener(e -> eliminar());
+        btnModificar.addActionListener(e -> modificar());
 
-        panelBotones.add(btnModificar);
-        panelBotones.add(btnEliminar);
-        add(panelBotones, BorderLayout.SOUTH);
-
-        // ⛓️ Eventos
-        btnEliminar.addActionListener(e -> eliminarCarritoSeleccionado());
-        btnModificar.addActionListener(e -> modificarCarritoSeleccionado());
-
-        cargarCarritos(); // Carga inicial
-    }
-
-    public void cargarCarritos() {
-        modeloTabla.setRowCount(0);
-        List<Carrito> carritos = carritoController.listarMisCarritos();
-
-        if (carritos != null && !carritos.isEmpty()) {
-            for (Carrito c : carritos) {
-                modeloTabla.addRow(new Object[]{
-                        c.getCodigo(),
-                        c.getFechaCreacion().getTime(),
-                        c.obtenerItems().size()
-                });
+        addInternalFrameListener(new javax.swing.event.InternalFrameAdapter() {
+            @Override public void internalFrameActivated(javax.swing.event.InternalFrameEvent e) {
+                cargarCarritos();          // <--- llamada interna
             }
-        } else {
-            System.out.println(">>> No hay carritos del usuario autenticado.");
+        });
+
+        actualizarTextos();
+    }
+
+    /* ==== internacionalización ==== */
+    @Override
+    public void actualizarTextos() {
+        setTitle(mensajes.get("menu.carrito.listarMis"));
+        btnModificar.setToolTipText(mensajes.get("menu.carrito.modificar"));
+        btnEliminar .setToolTipText(mensajes.get("menu.carrito.eliminar"));
+
+        modelo.setColumnIdentifiers(new String[]{
+                mensajes.get("global.codigo"),
+                mensajes.get("global.fecha"),
+                mensajes.get("global.cantidad")
+        });
+        cargarCarritos();                 // refresca texto de fechas, etc.
+    }
+
+    /* ==== método que vas a invocar desde Main ==== */
+    public void cargarCarritos() {
+        modelo.setRowCount(0);
+        List<Carrito> lista = carritoController.listarMisCarritos();
+        if (lista == null) return;
+
+        for (Carrito c : lista) {
+            modelo.addRow(new Object[]{
+                    c.getCodigo(),
+                    FormateadorUtils.formatearFecha(c.getFechaCreacion().getTime(), locale),
+                    c.obtenerItems().size()
+            });
         }
     }
 
-    private void eliminarCarritoSeleccionado() {
-        int filaSeleccionada = tablaCarritos.getSelectedRow();
-        if (filaSeleccionada == -1) {
-            JOptionPane.showMessageDialog(this, "Seleccione un carrito para eliminar.");
-            return;
-        }
+    /* ==== botones ================================================================= */
 
-        int codigo = (int) modeloTabla.getValueAt(filaSeleccionada, 0);
-        int confirmacion = JOptionPane.showConfirmDialog(this, "¿Desea eliminar el carrito?", "Confirmar", JOptionPane.YES_NO_OPTION);
-
-        if (confirmacion == JOptionPane.YES_OPTION) {
-            carritoController.eliminarCarrito(codigo);
-            cargarCarritos();
-        }
+    private void eliminar() {
+        int row = tabla.getSelectedRow();
+        if (row == -1) return;
+        int cod = (int) modelo.getValueAt(row, 0);
+        carritoController.eliminarCarrito(cod);
+        cargarCarritos();
     }
 
-    private void modificarCarritoSeleccionado() {
-        int filaSeleccionada = tablaCarritos.getSelectedRow();
-        if (filaSeleccionada == -1) {
-            JOptionPane.showMessageDialog(this, "Seleccione un carrito para modificar.");
-            return;
-        }
+    private void modificar() {
+        int row = tabla.getSelectedRow();
+        if (row == -1) return;
+        int cod = (int) modelo.getValueAt(row, 0);
 
-        int codigo = (int) modeloTabla.getValueAt(filaSeleccionada, 0);
-        Carrito carrito = carritoController.buscarCarrito(codigo);
+        CarritoModificarView v = new CarritoModificarView(carritoController, mensajes);
+        v.buscarCarritoDesdeExterno(cod);
 
-        if (carrito != null) {
-            CarritoModificarView modificarView = new CarritoModificarView(carritoController);
-            modificarView.buscarCarritoDesdeExterno(codigo);
-            modificarView.setVisible(true);
-            this.getParent().add(modificarView); // Agrega la vista al escritorio si aún no se ha hecho
-            modificarView.toFront();
-        } else {
-            JOptionPane.showMessageDialog(this, "No se pudo cargar el carrito seleccionado.");
-        }
+        getParent().add(v);
+        v.setVisible(true);
+        v.toFront();
     }
 }

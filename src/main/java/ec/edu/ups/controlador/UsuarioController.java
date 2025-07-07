@@ -25,12 +25,13 @@ public class UsuarioController {
     private MensajeInternacionalizacionHandler mensajes;
     private MenuPrincipalView menuPrincipal;
 
-    public UsuarioController(UsuarioDAO usuarioDAO, LoginView loginView) {
+    public UsuarioController(UsuarioDAO usuarioDAO, LoginView loginView, MensajeInternacionalizacionHandler mensajes) {
         this.usuarioDAO = usuarioDAO;
         this.loginView = loginView;
+        this.mensajes = mensajes;
 
+        // Eventos de login
         this.loginView.getBtnLogin().addActionListener(e -> autenticar());
-
         this.loginView.getBtnRegistrarse().addActionListener(e -> mostrarVistaRegistro());
         this.loginView.getBtnRecuperarContrasenia().addActionListener(e -> mostrarVistaRecuperarContrasenia());
     }
@@ -44,8 +45,8 @@ public class UsuarioController {
         this.modificarView = new UsuarioModificarView(mensajes);
         this.listarView = new UsuarioListarView(mensajes);
         this.modificarMisView = new UsuarioModificarMisView(mensajes);
-        listarView.getBtnBuscar().addActionListener(e -> buscarUsuarioPorNombre());
 
+        listarView.getBtnBuscar().addActionListener(e -> buscarUsuarioPorNombre());
     }
 
     public Usuario getUsuarioAutenticado() {
@@ -61,66 +62,104 @@ public class UsuarioController {
             this.usuarioAutenticado = usuario;
             loginView.dispose();
         } else {
-            loginView.mostrarMensaje("Credenciales incorrectas.");
+            loginView.mostrarMensaje(mensajes.get("login.error"));
         }
     }
 
-
-    // === Registro de nuevo usuario desde el Login ===
     private void mostrarVistaRegistro() {
-        RegistroView registroView = new RegistroView(new PreguntaSeguridadService());
+        RegistroView registroView = new RegistroView(mensajes, PreguntaSeguridadService.obtenerTodasLasPreguntas());
         registroView.setVisible(true);
 
         registroView.getBtnRegistrar().addActionListener(e -> {
             if (!registroView.validarCampos()) return;
 
             Usuario usuario = new Usuario();
-            usuario.setUsername(registroView.getTxtUsername().getText());
+            usuario.setUsername(registroView.getTxtUsername().getText().trim());
             usuario.setPassword(new String(registroView.getTxtContrasenia().getPassword()));
-            usuario.setRol(Rol.USUARIO); // Fijo a USUARIO
+            usuario.setRol(Rol.USUARIO);
+
+            usuario.setNombreCompleto(registroView.getNombreCompleto());
+            usuario.setFechaNacimiento(registroView.getFechaNacimiento());
+            usuario.setCorreo(registroView.getCorreo());
+            usuario.setTelefono(registroView.getTelefono());
+            usuario.setPreguntasSeguridad(registroView.getPreguntasSeleccionadas());
+            usuario.setRespuestasSeguridad(registroView.getRespuestasSeleccionadas());
 
             usuarioDAO.crear(usuario);
-            registroView.mostrarMensaje("Usuario registrado correctamente");
+            registroView.mostrarMensaje(mensajes.get("mensaje.usuario.creado"));
             registroView.dispose();
         });
     }
 
-    // === Recuperación de contraseña desde el Login ===
+
     private void mostrarVistaRecuperarContrasenia() {
-        String pregunta = "¿Cuál es tu película favorita?"; // 🔁 puedes elegir otra pregunta también
-        RecuperarContraseniaView recuperarView = new RecuperarContraseniaView(pregunta);
+        String username = JOptionPane.showInputDialog(null, mensajes.get("recuperar.usuario"));
+        if (username == null || username.trim().isEmpty()) return;
+
+        Usuario usuario = usuarioDAO.buscarPorUsername(username.trim());
+        if (usuario == null) {
+            JOptionPane.showMessageDialog(null, mensajes.get("mensaje.usuario.no.encontrado"));
+            return;
+        }
+
+        List<String> preguntas = usuario.getPreguntasSeguridad();
+        List<String> respuestas = usuario.getRespuestasSeguridad();
+
+        if (preguntas == null || respuestas == null || preguntas.isEmpty() || respuestas.isEmpty()) {
+            JOptionPane.showMessageDialog(null, mensajes.get("recuperar.error.sin.preguntas"));
+            return;
+        }
+
+        int indice = (int) (Math.random() * preguntas.size());
+        String pregunta = preguntas.get(indice);
+        String respuestaCorrecta = respuestas.get(indice);
+
+        RecuperarContraseniaView recuperarView = new RecuperarContraseniaView(mensajes, pregunta);
         recuperarView.setVisible(true);
 
         recuperarView.getBtnVerificarRespuestas().addActionListener(e -> {
             String respuesta = recuperarView.getRespuesta();
-
-            // Aquí deberías hacer la verificación contra base de datos real
-            if (respuesta.equalsIgnoreCase("respuestaCorrecta")) {
+            if (respuesta.equalsIgnoreCase(respuestaCorrecta)) {
                 recuperarView.habilitarCambioContrasenia();
-                recuperarView.mostrarMensaje("Respuesta correcta");
+                recuperarView.mostrarMensaje(mensajes.get("recuperar.msg.ok"));
             } else {
-                recuperarView.mostrarMensaje("Respuesta incorrecta");
+                recuperarView.mostrarMensaje(mensajes.get("recuperar.msg.fail"));
             }
         });
 
         recuperarView.getBtnCambiarContrasenia().addActionListener(e -> {
             String nueva = recuperarView.getNuevaContrasenia();
             if (!nueva.isEmpty()) {
-                // 🔁 Aquí deberías buscar al usuario y actualizarlo
-                recuperarView.mostrarMensaje("Contraseña actualizada correctamente");
+                usuario.setPassword(nueva);
+                usuarioDAO.actualizar(usuario);
+                recuperarView.mostrarMensaje(mensajes.get("recuperar.msg.actualizada"));
                 recuperarView.dispose();
             }
         });
     }
 
-    // === Métodos del menú principal para admin ===
+
 
     public void mostrarVistaCrearUsuario() {
         crearView.getBtnCrear().addActionListener(e -> {
+            String username = crearView.getTxtUsuario().getText().trim();
+            String password = crearView.getTxtContraseña().getText().trim();
+            Rol rol = (Rol) crearView.getCbxRoles().getSelectedItem();
+
+            if (username.isEmpty() || password.isEmpty() || rol == null) {
+                crearView.mostrarMensaje(mensajes.get("mensaje.usuario.campos.vacios"));
+                return;
+            }
+
+            if (usuarioDAO.buscarPorUsername(username) != null) {
+                crearView.mostrarMensaje(mensajes.get("mensaje.usuario.yaExiste"));
+                return;
+            }
+
             Usuario usuario = new Usuario();
-            usuario.setUsername(crearView.getTxtUsuario().getText());
-            usuario.setPassword(crearView.getTxtContraseña().getText());
-            usuario.setRol((Rol) crearView.getCbxRoles().getSelectedItem());
+            usuario.setUsername(username);
+            usuario.setPassword(password);
+            usuario.setRol(rol);
 
             usuarioDAO.crear(usuario);
             crearView.mostrarMensaje(mensajes.get("mensaje.usuario.creado"));
@@ -128,11 +167,11 @@ public class UsuarioController {
         });
         mostrarVentana(crearView);
     }
-    private boolean esAdmin() {
-        return usuarioAutenticado != null
-                && usuarioAutenticado.getRol() == Rol.ADMINISTRADOR;
-    }
 
+
+    private boolean esAdmin() {
+        return usuarioAutenticado != null && usuarioAutenticado.getRol() == Rol.ADMINISTRADOR;
+    }
 
     public void mostrarVistaEliminarUsuario() {
         eliminarView.getBtnEliminar().addActionListener(e -> {
@@ -148,14 +187,12 @@ public class UsuarioController {
         modificarView.getBtnBuscar().addActionListener(e -> {
             if (!esAdmin()) {
                 JOptionPane.showMessageDialog(menuPrincipal,
-                        "Acceso denegado. Solo disponible para administradores.",
-                        "Permiso insuficiente",
+                        mensajes.get("permiso.denegado"),
+                        mensajes.get("permiso.titulo"),
                         JOptionPane.WARNING_MESSAGE);
                 return;
             }
-            List<Usuario> usuarios = usuarioDAO.listarTodos();
-            listarView.mostrarUsuarios(usuarios);
-            mostrarVentana(listarView);
+
             Usuario u = usuarioDAO.buscarPorUsername(modificarView.getTxtUsuario().getText());
             if (u != null) {
                 modificarView.getTxtContraseña().setText(u.getPassword());
@@ -190,8 +227,6 @@ public class UsuarioController {
         mostrarVentana(listarView);
     }
 
-    // === Vista de actualización para usuario normal ===
-
     public void mostrarVistaActualizarUsuario() {
         modificarMisView.getTxtUsuario().setText(usuarioAutenticado.getUsername());
         modificarMisView.getBtnModificar().addActionListener(e -> {
@@ -216,14 +251,14 @@ public class UsuarioController {
         listarView.mostrarUsuarios(usuarios);
     }
 
-
     private void mostrarVentana(JInternalFrame vista) {
         JDesktopPane desktop = menuPrincipal.getjDesktopPane();
 
         for (JInternalFrame frame : desktop.getAllFrames()) {
-            frame.dispose();          // libera recursos
-            desktop.remove(frame);    // lo saca físicamente del contenedor
+            frame.dispose();
+            desktop.remove(frame);
         }
+
         if (vista.getParent() == null) {
             desktop.add(vista);
         }
@@ -232,7 +267,6 @@ public class UsuarioController {
         vista.toFront();
         try {
             vista.setSelected(true);
-        } catch (java.beans.PropertyVetoException ignored) { }
+        } catch (java.beans.PropertyVetoException ignored) {}
     }
-
 }

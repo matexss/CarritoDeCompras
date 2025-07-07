@@ -13,8 +13,7 @@ public class Carrito {
     private int codigo;
     private GregorianCalendar fechaCreacion;
     private List<ItemCarrito> items;
-    private Usuario usuario; // NUEVO
-
+    private Usuario usuario;
 
     public Carrito() {
         codigo = contador++;
@@ -28,8 +27,8 @@ public class Carrito {
     public GregorianCalendar getFechaCreacion() { return fechaCreacion; }
     public void setFechaCreacion(GregorianCalendar fechaCreacion) { this.fechaCreacion = fechaCreacion; }
 
-    public Usuario getUsuario() { return usuario; } // NUEVO
-    public void setUsuario(Usuario usuario) { this.usuario = usuario; } // NUEVO
+    public Usuario getUsuario() { return usuario; }
+    public void setUsuario(Usuario usuario) { this.usuario = usuario; }
 
     public void agregarProducto(Producto producto, int cantidad) {
         items.add(new ItemCarrito(producto, cantidad));
@@ -81,7 +80,6 @@ public class Carrito {
             }
         }
     }
-
 
     @Override
     public String toString() {

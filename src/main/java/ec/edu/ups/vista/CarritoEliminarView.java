@@ -3,159 +3,126 @@ package ec.edu.ups.vista;
 import ec.edu.ups.controlador.CarritoController;
 import ec.edu.ups.modelo.Carrito;
 import ec.edu.ups.modelo.ItemCarrito;
-import ec.edu.ups.util.FormateadorUtils;
-import ec.edu.ups.util.MensajeInternacionalizacionHandler;
-
+import ec.edu.ups.util.*;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.net.URL;
 import java.util.Locale;
 
-public class CarritoEliminarView extends JInternalFrame {
+public class CarritoEliminarView extends JInternalFrame implements ActualizableConIdioma {
     private JPanel panelPrincipal;
-    private JTextField txtCodigo;
-    private JButton btnBuscar;
-    private JTable tblItems;
-    private JTextField txtUsuario;
-    private JTextField txtFecha;
-    private JButton btnEliminar;
-    private JLabel lblCodigo;
-    private JLabel lblUsuario;
-    private JLabel lblFecha;
-    private JLabel lblItems;
-
-    private DefaultTableModel modeloDetalles;
-    private Carrito carritoActual;
-    private CarritoController carritoController;
-    private MensajeInternacionalizacionHandler mensajes;
+    private final CarritoController carritoController;
+    private final MensajeInternacionalizacionHandler mensajes;
     private Locale locale;
 
-    public CarritoEliminarView(CarritoController carritoController, MensajeInternacionalizacionHandler mensajes) {
-        super("Eliminar Carrito", true, true, false, true);
+    private JTextField txtCodigo, txtUsuario, txtFecha;
+    private JButton btnBuscar, btnEliminar;
+    private JTable tblItems;
+    private DefaultTableModel modeloDetalles;
+    private Carrito carritoActual;
+
+    public CarritoEliminarView(CarritoController carritoController,
+                               MensajeInternacionalizacionHandler mensajes) {
+        super("", true, true, false, true);
         this.carritoController = carritoController;
         this.mensajes = mensajes;
-        this.locale = new Locale(mensajes.get("locale.language"), mensajes.get("locale.country"));
-
+        this.locale = mensajes.getLocale();
         initComponents();
         actualizarTextos();
     }
 
     private void initComponents() {
-        JPanel panelPrincipal = new JPanel(new BorderLayout());
+        setSize(600, 400);
+        setLayout(new BorderLayout());
 
-        // Panel superior
-        JPanel panelSuperior = new JPanel(new GridLayout(4, 2, 10, 10));
-        lblCodigo = new JLabel("Código:");
+        JPanel sup = new JPanel(new GridLayout(4, 2, 10, 8));
+        JLabel lblCodigo = new JLabel();
         txtCodigo = new JTextField();
-        btnBuscar = new JButton("Buscar");
+        btnBuscar = new JButton(IconUtil.cargarIcono("search.png"));
+        JLabel lblUsuario = new JLabel();
+        txtUsuario = new JTextField(); txtUsuario.setEditable(false);
+        JLabel lblFecha = new JLabel();
+        txtFecha = new JTextField();   txtFecha.setEditable(false);
 
-        lblUsuario = new JLabel("Usuario:");
-        txtUsuario = new JTextField();
-        txtUsuario.setEditable(false);
+        sup.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
+        sup.add(lblCodigo); sup.add(txtCodigo);
+        sup.add(new JLabel()); sup.add(btnBuscar);
+        sup.add(lblUsuario);  sup.add(txtUsuario);
+        sup.add(lblFecha);    sup.add(txtFecha);
+        add(sup, BorderLayout.NORTH);
 
-        lblFecha = new JLabel("Fecha:");
-        txtFecha = new JTextField();
-        txtFecha.setEditable(false);
-
-        panelSuperior.add(lblCodigo);
-        panelSuperior.add(txtCodigo);
-        panelSuperior.add(new JLabel()); // espacio
-        panelSuperior.add(btnBuscar);
-        panelSuperior.add(lblUsuario);
-        panelSuperior.add(txtUsuario);
-        panelSuperior.add(lblFecha);
-        panelSuperior.add(txtFecha);
-
-        // Panel central (tabla)
         modeloDetalles = new DefaultTableModel();
         tblItems = new JTable(modeloDetalles);
-        JScrollPane scrollPane = new JScrollPane(tblItems);
+        add(new JScrollPane(tblItems), BorderLayout.CENTER);
 
-        // Panel inferior (botón eliminar)
-        btnEliminar = new JButton("Eliminar");
-        JPanel panelInferior = new JPanel();
-        panelInferior.add(btnEliminar);
+        btnEliminar = new JButton(IconUtil.cargarIcono("carrito-eliminar.png"));
+        JPanel inf = new JPanel(); inf.add(btnEliminar);
+        add(inf, BorderLayout.SOUTH);
 
-        // Agregar componentes
-        panelPrincipal.add(panelSuperior, BorderLayout.NORTH);
-        panelPrincipal.add(scrollPane, BorderLayout.CENTER);
-        panelPrincipal.add(panelInferior, BorderLayout.SOUTH);
-
-        setContentPane(panelPrincipal);
-        setSize(600, 400);
-
-        // Eventos
         btnBuscar.addActionListener(e -> buscarCarrito());
         btnEliminar.addActionListener(e -> eliminarCarrito());
     }
 
     private void buscarCarrito() {
-        if (!txtCodigo.getText().isEmpty()) {
-            try {
-                int codigo = Integer.parseInt(txtCodigo.getText());
-                carritoActual = carritoController.buscarCarrito(codigo);
-                if (carritoActual != null) {
-                    txtUsuario.setText(carritoActual.getUsuario().getUsername());
-                    txtFecha.setText(FormateadorUtils.formatearFecha(carritoActual.getFechaCreacion().getTime(), locale));
-                    mostrarItemsCarrito(carritoActual);
-                } else {
-                    mostrarMensaje(mensajes.get("carrito.buscar.noencontrado"));
-                }
-            } catch (NumberFormatException ex) {
-                mostrarMensaje("Código inválido.");
+        try {
+            int codigo = Integer.parseInt(txtCodigo.getText().trim());
+            carritoActual = carritoController.buscarCarrito(codigo);
+            if (carritoActual == null) {
+                mostrarMensaje(mensajes.get("carrito.buscar.noencontrado"));
+                return;
             }
+            txtUsuario.setText(carritoActual.getUsuario().getUsername());
+            txtFecha.setText(FormateadorUtils.formatearFecha(
+                    carritoActual.getFechaCreacion().getTime(), locale));
+            mostrarItemsCarrito(carritoActual);
+        } catch (NumberFormatException ex) {
+            mostrarMensaje(mensajes.get("global.codigo") + " inválido.");
         }
     }
 
     private void eliminarCarrito() {
-        if (carritoActual != null) {
-            carritoController.eliminarCarrito(carritoActual.getCodigo());
-            mostrarMensaje(mensajes.get("carrito.eliminar.exito"));
-            modeloDetalles.setRowCount(0);
-            txtCodigo.setText("");
-            txtUsuario.setText("");
-            txtFecha.setText("");
-        }
+        if (carritoActual == null) return;
+        carritoController.eliminarCarrito(carritoActual.getCodigo());
+        mostrarMensaje(mensajes.get("carrito.eliminar.exito"));
+        modeloDetalles.setRowCount(0);
+        txtCodigo.setText(""); txtUsuario.setText(""); txtFecha.setText("");
+        carritoActual = null;
     }
 
-    public void actualizarTextos() {
-        locale = new Locale(mensajes.get("locale.language"), mensajes.get("locale.country"));
+    @Override public void actualizarTextos() {
+        locale = mensajes.getLocale();
         setTitle(mensajes.get("carrito.eliminar.titulo.app"));
-
-        lblCodigo.setText(mensajes.get("global.codigo"));
-        lblUsuario.setText(mensajes.get("global.usuario"));
-        lblFecha.setText(mensajes.get("global.fecha"));
-
-        btnBuscar.setText(mensajes.get("global.boton.buscar"));
+        ((JLabel)((JPanel)getContentPane().getComponent(0)).getComponent(0))
+                .setText(mensajes.get("global.codigo")+":");
+        ((JLabel)((JPanel)getContentPane().getComponent(0)).getComponent(4))
+                .setText(mensajes.get("global.usuario")+":");
+        ((JLabel)((JPanel)getContentPane().getComponent(0)).getComponent(6))
+                .setText(mensajes.get("global.fecha")+":");
+        btnBuscar.setToolTipText(mensajes.get("global.boton.buscar"));
         btnEliminar.setText(mensajes.get("global.boton.eliminar"));
-
-        Object[] columnas = {
+        modeloDetalles.setColumnIdentifiers(new Object[]{
                 mensajes.get("global.codigo"),
                 mensajes.get("global.nombre"),
                 mensajes.get("global.precio"),
                 mensajes.get("global.cantidad"),
                 mensajes.get("global.subtotal")
-        };
-        modeloDetalles.setColumnIdentifiers(columnas);
+        });
     }
 
-    public void mostrarItemsCarrito(Carrito carrito) {
+    private void mostrarItemsCarrito(Carrito c) {
         modeloDetalles.setRowCount(0);
-        if (carrito != null) {
-            for (ItemCarrito item : carrito.obtenerItems()) {
-                modeloDetalles.addRow(new Object[]{
-                        item.getProducto().getCodigo(),
-                        item.getProducto().getNombre(),
-                        FormateadorUtils.formatearMoneda(item.getProducto().getPrecio(), locale),
-                        item.getCantidad(),
-                        FormateadorUtils.formatearMoneda(item.getSubtotal(), locale)
-                });
-            }
+        for (ItemCarrito it : c.obtenerItems()) {
+            modeloDetalles.addRow(new Object[]{
+                    it.getProducto().getCodigo(),
+                    it.getProducto().getNombre(),
+                    FormateadorUtils.formatearMoneda(it.getProducto().getPrecio(), locale),
+                    it.getCantidad(),
+                    FormateadorUtils.formatearMoneda(it.getSubtotal(), locale)
+            });
         }
     }
-
-    public void mostrarMensaje(String mensaje) {
-        JOptionPane.showMessageDialog(this, mensaje, mensajes.get("yesNo.app.titulo"), JOptionPane.INFORMATION_MESSAGE);
+    private void mostrarMensaje(String m) {
+        JOptionPane.showMessageDialog(this, m, mensajes.get("yesNo.app.titulo"),
+                JOptionPane.INFORMATION_MESSAGE);
     }
 }

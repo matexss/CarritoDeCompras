@@ -54,7 +54,7 @@ public class CarritoController {
         for (ItemCarrito item : carritoService.obtenerItems()) {
             carrito.agregarProducto(item.getProducto(), item.getCantidad());
         }
-        carrito.setUsuario(usuarioController.getUsuarioAutenticado()); // ⚠️ CRUCIAL
+        carrito.setUsuario(usuarioController.getUsuarioAutenticado());
         carritoDAO.crear(carrito);
         System.out.println(">>> DAO: Carrito guardado con código " + carrito.getCodigo());
         carritoService.vaciarCarrito();
@@ -85,7 +85,7 @@ public class CarritoController {
                             c.getUsuario().getUsername().equals(usuario.getUsername()))
                     .toList();
         }
-        return List.of(); // devuelve lista vacía, NO null
+        return List.of();
 
     }
 

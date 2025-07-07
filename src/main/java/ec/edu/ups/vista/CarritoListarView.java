@@ -2,70 +2,69 @@ package ec.edu.ups.vista;
 
 import ec.edu.ups.controlador.CarritoController;
 import ec.edu.ups.modelo.Carrito;
-
+import ec.edu.ups.util.*;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.List;
+import java.util.Locale;
 
-public class CarritoListarView extends JInternalFrame {
-
-    private CarritoController carritoController;
-    private JTable tablaCarritos;
-    private DefaultTableModel modeloTabla;
+public class CarritoListarView extends JInternalFrame implements ActualizableConIdioma {
     private JPanel panelPrincipal;
+    private final CarritoController carritoController;
+    private final MensajeInternacionalizacionHandler mensajes;
+    private Locale locale;
 
-    public CarritoListarView(CarritoController carritoController) {
-        super("Listado General de Carritos", true, true, true, true);
-        this.carritoController = carritoController;
-        initComponents();
+    private final JTable tabla;
+    private final DefaultTableModel modelo;
 
+    public CarritoListarView(CarritoController cc, MensajeInternacionalizacionHandler msg) {
+        super("", true, true, true, true);
+        carritoController = cc;
+        mensajes = msg;
+        locale   = msg.getLocale();
 
-        // ✅ Listener para recargar los datos al activar la ventana
-        addInternalFrameListener(new javax.swing.event.InternalFrameAdapter() {
-            @Override
-            public void internalFrameActivated(javax.swing.event.InternalFrameEvent e) {
-                cargarCarritos(); // 🔄 Recarga datos cada vez que se abre
-            }
-        });
-    }
-
-    private void initComponents() {
         setSize(700, 400);
-        setClosable(true);
-        setResizable(true);
-        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setLayout(new BorderLayout());
 
-        String[] columnas = {"Código", "Fecha Creación", "Cantidad Productos", "Usuario"};
-        modeloTabla = new DefaultTableModel(columnas, 0);
-        tablaCarritos = new JTable(modeloTabla);
-        JScrollPane scrollPane = new JScrollPane(tablaCarritos);
+        modelo = new DefaultTableModel();
+        tabla  = new JTable(modelo);
+        add(new JScrollPane(tabla), BorderLayout.CENTER);
 
-        add(scrollPane, BorderLayout.CENTER);
+        addInternalFrameListener(new javax.swing.event.InternalFrameAdapter() {
+            @Override public void internalFrameActivated(javax.swing.event.InternalFrameEvent e) {
+                cargarCarritos();
+            }
+        });
 
-        cargarCarritos(); // Carga inicial (opcional)
+        actualizarTextos();
     }
 
+    @Override
+    public void actualizarTextos() {
+        setTitle(mensajes.get("menu.carrito.listar"));
+        modelo.setColumnIdentifiers(new String[]{
+                mensajes.get("global.codigo"),
+                mensajes.get("global.fecha"),
+                mensajes.get("global.cantidad"),
+                mensajes.get("global.usuario")
+        });
+        cargarCarritos();
+    }
+
+    /* === público para Main === */
     public void cargarCarritos() {
-        modeloTabla.setRowCount(0);
-        List<Carrito> carritos = carritoController.listarCarritosSinFiltro();
-        System.out.println(">>> Carritos encontrados: " + (carritos != null ? carritos.size() : "null"));
+        modelo.setRowCount(0);
+        List<Carrito> lista = carritoController.listarCarritosSinFiltro();
+        if (lista == null) return;
 
-        if (carritos != null) {
-            for (Carrito c : carritos) {
-                System.out.println("- Código: " + c.getCodigo() + " | Usuario: " +
-                        (c.getUsuario() != null ? c.getUsuario().getUsername() : "null") +
-                        " | Productos: " + c.obtenerItems().size());
-
-                Object[] fila = {
-                        c.getCodigo(),
-                        c.getFechaCreacion().getTime(),
-                        c.obtenerItems().size(),
-                        (c.getUsuario() != null ? c.getUsuario().getUsername() : "N/A")
-                };
-                modeloTabla.addRow(fila);
-            }
+        for (Carrito c : lista) {
+            modelo.addRow(new Object[]{
+                    c.getCodigo(),
+                    FormateadorUtils.formatearFecha(c.getFechaCreacion().getTime(), locale),
+                    c.obtenerItems().size(),
+                    c.getUsuario() != null ? c.getUsuario().getUsername() : "N/A"
+            });
         }
     }
 }

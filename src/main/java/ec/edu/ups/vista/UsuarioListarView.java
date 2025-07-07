@@ -2,7 +2,9 @@ package ec.edu.ups.vista;
 
 import ec.edu.ups.modelo.Rol;
 import ec.edu.ups.modelo.Usuario;
+import ec.edu.ups.util.ActualizableConIdioma;
 import ec.edu.ups.util.MensajeInternacionalizacionHandler;
+import ec.edu.ups.util.*;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -10,15 +12,15 @@ import java.awt.*;
 import java.util.List;
 import java.util.Locale;
 
-public class UsuarioListarView extends JInternalFrame {
+public class UsuarioListarView extends JInternalFrame implements ActualizableConIdioma {
 
     private JPanel panelPrincipal;
     private JButton btnListar;
     private JTable tblUsuarios;
     private JLabel lblListado;
     private JTextField txtUsuario;
-    private JButton btnBuscar;
     private JTextField textField1;
+    private JButton btnBuscar;
     private JLabel lblTitulo;
     private DefaultTableModel tableModel;
     private Locale locale;
@@ -45,10 +47,12 @@ public class UsuarioListarView extends JInternalFrame {
         JPanel panelCentro = new JPanel(new BorderLayout(10, 10));
         JPanel panelSuperior = new JPanel(new FlowLayout());
 
-        lblListado = new JLabel("Usuario:");
+        // ✅ Crear los botones UNA SOLA VEZ con texto e ícono
+        btnListar = new JButton("Listar", IconUtil.cargarIcono("user-list.png", 18, 18));
+        btnBuscar = new JButton("Buscar", IconUtil.cargarIcono("search.png", 18, 18));
+
+        lblListado = new JLabel();
         txtUsuario = new JTextField(15);
-        btnBuscar = new JButton("Buscar");
-        btnListar = new JButton("Listar");
 
         panelSuperior.add(lblListado);
         panelSuperior.add(txtUsuario);
@@ -64,13 +68,15 @@ public class UsuarioListarView extends JInternalFrame {
         panelPrincipal.add(panelCentro, BorderLayout.CENTER);
     }
 
+
     private void configurarTabla() {
         tableModel = new DefaultTableModel();
         tblUsuarios.setModel(tableModel);
     }
 
+    @Override
     public void actualizarTextos() {
-        this.locale = new Locale(mensajes.get("locale.language"), mensajes.get("locale.country"));
+        this.locale = mensajes.getLocale();
         setTitle(mensajes.get("usuario.listar.titulo.app"));
         lblTitulo.setText(mensajes.get("usuario.listar.titulo.app"));
         lblListado.setText(mensajes.get("global.usuario") + ":");

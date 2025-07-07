@@ -49,6 +49,7 @@ public class UsuarioDAOEnMemoria implements UsuarioDAO {
     public List<Usuario> listarTodos() {
         return usuarios;
     }
+
     @Override
     public List<Usuario> buscarPorNombre(String nombre) {
         List<Usuario> resultado = new ArrayList<>();
@@ -59,7 +60,6 @@ public class UsuarioDAOEnMemoria implements UsuarioDAO {
         }
         return resultado;
     }
-
 
     @Override
     public List<Usuario> listarPorRol(Rol rol) {

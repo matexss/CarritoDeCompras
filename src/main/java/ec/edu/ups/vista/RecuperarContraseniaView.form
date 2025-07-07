@@ -6,7 +6,7 @@
       <xy x="20" y="20" width="500" height="400"/>
     </constraints>
     <properties>
-      <foreground color="-2650042"/>
+      <foreground color="-2646097"/>
     </properties>
     <border type="none"/>
     <children>
@@ -20,7 +20,7 @@
         </properties>
         <border type="none"/>
         <children>
-          <component id="73c31" class="javax.swing.JTextField" binding="txtPregunta1">
+          <component id="73c31" class="javax.swing.JTextField">
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                 <preferred-size width="150" height="-1"/>
@@ -30,7 +30,7 @@
               <text value=""/>
             </properties>
           </component>
-          <component id="28bad" class="javax.swing.JTextField" binding="txtPregunta2">
+          <component id="28bad" class="javax.swing.JTextField">
             <constraints>
               <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                 <preferred-size width="150" height="-1"/>
@@ -38,7 +38,7 @@
             </constraints>
             <properties/>
           </component>
-          <component id="88f46" class="javax.swing.JTextField" binding="txtPregunta3">
+          <component id="88f46" class="javax.swing.JTextField">
             <constraints>
               <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                 <preferred-size width="150" height="-1"/>
@@ -48,7 +48,7 @@
               <text value=""/>
             </properties>
           </component>
-          <component id="d79d1" class="javax.swing.JButton" binding="btnVerificarRespuestas">
+          <component id="d79d1" class="javax.swing.JButton">
             <constraints>
               <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -56,7 +56,7 @@
               <text value="Verificar"/>
             </properties>
           </component>
-          <component id="a216a" class="javax.swing.JButton" binding="btnCambiarContrasenia">
+          <component id="a216a" class="javax.swing.JButton">
             <constraints>
               <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -74,7 +74,7 @@
           <text value="Nueva Contraseña"/>
         </properties>
       </component>
-      <component id="98f93" class="javax.swing.JPasswordField" binding="txtNuevaContrasenia">
+      <component id="98f93" class="javax.swing.JPasswordField">
         <constraints>
           <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
             <preferred-size width="150" height="-1"/>

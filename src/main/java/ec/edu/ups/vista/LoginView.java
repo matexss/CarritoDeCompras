@@ -1,5 +1,6 @@
 package ec.edu.ups.vista;
 
+import ec.edu.ups.util.IconUtil;
 import javax.swing.*;
 import java.awt.*;
 
@@ -14,13 +15,12 @@ public class LoginView extends JFrame {
 
     public LoginView() {
         setTitle("Login");
-        Color fondo = new Color(215, 144, 70);
+        Color fondo = new Color(215, 159, 175);
         getContentPane().setBackground(fondo);
-        setLayout(new BorderLayout());
+        setLayout(null);
         setSize(350, 250);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setLayout(null);
 
         JLabel lblUsuario = new JLabel("Usuario:");
         lblUsuario.setBounds(30, 30, 80, 25);
@@ -38,20 +38,20 @@ public class LoginView extends JFrame {
         txtContrasenia.setBounds(120, 70, 180, 25);
         add(txtContrasenia);
 
-        btnLogin = new JButton("Iniciar sesión");
+        btnLogin = new JButton("Iniciar sesión", IconUtil.cargarIcono("logout.png", 18, 18));
         btnLogin.setBounds(30, 120, 130, 30);
         add(btnLogin);
 
-        btnRegistrarse = new JButton("Registrarse");
+        btnRegistrarse = new JButton("Registrarse", IconUtil.cargarIcono("user-add.png", 18, 18));
         btnRegistrarse.setBounds(170, 120, 130, 30);
         add(btnRegistrarse);
 
-        btnRecuperarContrasenia = new JButton("¿Olvidó su contraseña?");
+        btnRecuperarContrasenia = new JButton("¿Olvidó su contraseña?", IconUtil.cargarIcono("search.png", 18, 18));
+        btnRecuperarContrasenia.setHorizontalTextPosition(SwingConstants.RIGHT);
         btnRecuperarContrasenia.setBounds(80, 170, 180, 25);
         add(btnRecuperarContrasenia);
     }
 
-    // Getters públicos para el controlador
     public JTextField getTxtUsuario() {
         return txtUsuario;
     }
@@ -71,8 +71,8 @@ public class LoginView extends JFrame {
     public JButton getBtnRecuperarContrasenia() {
         return btnRecuperarContrasenia;
     }
+
     public void mostrarMensaje(String mensaje) {
         JOptionPane.showMessageDialog(this, mensaje);
     }
-
 }

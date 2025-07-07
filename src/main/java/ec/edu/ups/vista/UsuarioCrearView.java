@@ -1,12 +1,14 @@
 package ec.edu.ups.vista;
 
 import ec.edu.ups.modelo.Rol;
+import ec.edu.ups.util.ActualizableConIdioma;
 import ec.edu.ups.util.MensajeInternacionalizacionHandler;
+import ec.edu.ups.util.*;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class UsuarioCrearView extends JInternalFrame {
+public class UsuarioCrearView extends JInternalFrame implements ActualizableConIdioma {
     private JPanel panelPrincipal;
     private JLabel lblTitulo;
     private JLabel lblUsuarioA;
@@ -33,12 +35,14 @@ public class UsuarioCrearView extends JInternalFrame {
         setSize(600, 400);
         setLayout(new BorderLayout());
 
-        // Título
+        // Crear el botón una sola vez con texto e ícono
+        btnCrear = new JButton("Crear", IconUtil.cargarIcono("user-add.png", 18, 18));
+        btnCrear.setBounds(30, 120, 130, 30);
+
         lblTitulo = new JLabel("", SwingConstants.CENTER);
         lblTitulo.setFont(new Font("Arial", Font.BOLD, 18));
         add(lblTitulo, BorderLayout.NORTH);
 
-        // Panel central del formulario
         JPanel formPanel = new JPanel(new GridLayout(4, 2, 10, 10));
         formPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
@@ -49,20 +53,22 @@ public class UsuarioCrearView extends JInternalFrame {
         txtUsuario = new JTextField();
         txtContraseña = new JTextField();
         cbxRoles = new JComboBox<>();
-        btnCrear = new JButton();
 
+        // Agregar los elementos al formulario
         formPanel.add(lblUsuarioA);
         formPanel.add(txtUsuario);
         formPanel.add(lblContraseña);
         formPanel.add(txtContraseña);
         formPanel.add(lblRol);
         formPanel.add(cbxRoles);
-        formPanel.add(new JLabel()); // Espacio vacío
-        formPanel.add(btnCrear);
+        formPanel.add(new JLabel()); // espacio vacío
+        formPanel.add(btnCrear);     // botón con ícono
 
         add(formPanel, BorderLayout.CENTER);
     }
 
+
+    @Override
     public void actualizarTextos() {
         setTitle(mensajes.get("usuario.crear.titulo.app"));
         lblTitulo.setText(mensajes.get("usuario.crear.titulo.app"));
@@ -102,7 +108,6 @@ public class UsuarioCrearView extends JInternalFrame {
             }
         }
     }
-
 
     public JTextField getTxtUsuario() {
         return txtUsuario;

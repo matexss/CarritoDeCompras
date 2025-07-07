@@ -15,7 +15,6 @@ public class UsuarioDAOMemoria implements UsuarioDAO {
     public UsuarioDAOMemoria() {
         usuarios = new ArrayList<>();
 
-        // Usuario administrador
         Usuario admin = new Usuario();
         admin.setUsername("admin");
         admin.setPassword("12345");
@@ -26,7 +25,6 @@ public class UsuarioDAOMemoria implements UsuarioDAO {
         admin.setTelefono("000000");
         admin.setRespuestasSeguridad(new ArrayList<>());
 
-        // Usuario cliente
         Usuario cliente = new Usuario();
         cliente.setUsername("cliente");
         cliente.setPassword("123");
@@ -98,7 +96,6 @@ public class UsuarioDAOMemoria implements UsuarioDAO {
         }
         return resultado;
     }
-
 
     @Override
     public List<Usuario> listarTodos() {

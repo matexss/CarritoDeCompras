@@ -1,16 +1,20 @@
 package ec.edu.ups.vista;
 
 import ec.edu.ups.servicio.PreguntaSeguridadService;
+import ec.edu.ups.util.MensajeInternacionalizacionHandler;
+import ec.edu.ups.util.IconUtil;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.text.SimpleDateFormat;
 import java.text.ParseException;
+
 public class RegistroView extends JFrame {
     private JPanel panel1;
-
     private JTextField txtUsuario;
     private JPasswordField txtContrasenia;
     private JTextField txtNombre;
@@ -18,66 +22,82 @@ public class RegistroView extends JFrame {
     private JTextField txtCorreo;
     private JTextField txtTelefono;
     private JComboBox<String> comboRol;
-
     private JComboBox<String> comboPregunta1;
     private JComboBox<String> comboPregunta2;
     private JComboBox<String> comboPregunta3;
-
     private JTextField txtRespuesta1;
     private JTextField txtRespuesta2;
     private JTextField txtRespuesta3;
-
     private JButton btnRegistrar;
 
-    public RegistroView(PreguntaSeguridadService servicio) {
-        setTitle("Registro de Usuario");
-        Color fondo = new Color(215, 144, 70);
-        getContentPane().setBackground(fondo);
-        setLayout(new BorderLayout());
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setSize(500, 600);
+    private MensajeInternacionalizacionHandler mensajes;
+
+    public RegistroView(MensajeInternacionalizacionHandler mensajes, List<String> preguntas) {
+        this.mensajes = mensajes;
+        setTitle(mensajes.get("registro.titulo"));
+        setSize(600, 650);
         setLocationRelativeTo(null);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setResizable(false);
+
+        Color fondo = new Color(255, 245, 230);
+        Color inputBg = new Color(255, 255, 255);
+        Color botonColor = new Color(186, 213, 255);
+        Color bordeColor = new Color(173, 216, 230);
+        Font fuente = new Font("Segoe UI", Font.PLAIN, 14);
 
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.setBackground(fondo);
+        panel.setBorder(new EmptyBorder(20, 30, 20, 30));
 
-        panel.add(createFieldPanel("Usuario:", txtUsuario = new JTextField(20)));
-        panel.add(createFieldPanel("Contraseña:", txtContrasenia = new JPasswordField(20)));
-        panel.add(createFieldPanel("Nombre completo:", txtNombre = new JTextField(20)));
-        panel.add(createFieldPanel("Fecha de nacimiento:", txtFechaNacimiento = new JTextField(20)));
-        panel.add(createFieldPanel("Correo:", txtCorreo = new JTextField(20)));
-        panel.add(createFieldPanel("Teléfono:", txtTelefono = new JTextField(20)));
-        panel.add(createComboBoxPanel("Rol:", comboRol = new JComboBox<>(new String[]{"USUARIO"})));
+        panel.add(createFieldPanel(mensajes.get("registro.usuario"), txtUsuario = crearCampo(inputBg, fuente, bordeColor)));
+        panel.add(createFieldPanel(mensajes.get("registro.contrasenia"), txtContrasenia = new JPasswordField(20)));
+        panel.add(createFieldPanel(mensajes.get("registro.nombre"), txtNombre = crearCampo(inputBg, fuente, bordeColor)));
+        panel.add(createFieldPanel(mensajes.get("registro.fecha"), txtFechaNacimiento = crearCampo(inputBg, fuente, bordeColor)));
+        panel.add(createFieldPanel(mensajes.get("registro.correo"), txtCorreo = crearCampo(inputBg, fuente, bordeColor)));
+        panel.add(createFieldPanel(mensajes.get("registro.telefono"), txtTelefono = crearCampo(inputBg, fuente, bordeColor)));
+        panel.add(createComboBoxPanel(mensajes.get("registro.rol"), comboRol = new JComboBox<>(new String[]{"USUARIO"})));
 
-        List<String> preguntas = servicio.obtenerTodasLasPreguntas();
         comboPregunta1 = new JComboBox<>(preguntas.toArray(new String[0]));
         comboPregunta2 = new JComboBox<>(preguntas.toArray(new String[0]));
         comboPregunta3 = new JComboBox<>(preguntas.toArray(new String[0]));
 
-        txtRespuesta1 = new JTextField(20);
-        txtRespuesta2 = new JTextField(20);
-        txtRespuesta3 = new JTextField(20);
+        txtRespuesta1 = crearCampo(inputBg, fuente, bordeColor);
+        txtRespuesta2 = crearCampo(inputBg, fuente, bordeColor);
+        txtRespuesta3 = crearCampo(inputBg, fuente, bordeColor);
 
-        panel.add(createComboBoxPanel("Pregunta 1:", comboPregunta1));
-        panel.add(createFieldPanel("Respuesta 1:", txtRespuesta1));
+        panel.add(createComboBoxPanel(mensajes.get("registro.pregunta1"), comboPregunta1));
+        panel.add(createFieldPanel(mensajes.get("registro.respuesta1"), txtRespuesta1));
+        panel.add(createComboBoxPanel(mensajes.get("registro.pregunta2"), comboPregunta2));
+        panel.add(createFieldPanel(mensajes.get("registro.respuesta2"), txtRespuesta2));
+        panel.add(createComboBoxPanel(mensajes.get("registro.pregunta3"), comboPregunta3));
+        panel.add(createFieldPanel(mensajes.get("registro.respuesta3"), txtRespuesta3));
 
-        panel.add(createComboBoxPanel("Pregunta 2:", comboPregunta2));
-        panel.add(createFieldPanel("Respuesta 2:", txtRespuesta2));
-
-        panel.add(createComboBoxPanel("Pregunta 3:", comboPregunta3));
-        panel.add(createFieldPanel("Respuesta 3:", txtRespuesta3));
-
-        btnRegistrar = new JButton("Registrar");
+        btnRegistrar = new JButton(mensajes.get("registro.btn.registrar"), IconUtil.cargarIcono("user-add.png", 18, 18));
+        btnRegistrar.setBackground(botonColor);
+        btnRegistrar.setFocusPainted(false);
+        btnRegistrar.setFont(fuente);
+        btnRegistrar.setBorder(new LineBorder(bordeColor));
         JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        btnPanel.setBackground(fondo);
         btnPanel.add(btnRegistrar);
         panel.add(btnPanel);
 
         setContentPane(panel);
     }
 
+    private JTextField crearCampo(Color fondo, Font fuente, Color borde) {
+        JTextField field = new JTextField(20);
+        field.setBackground(fondo);
+        field.setFont(fuente);
+        field.setBorder(new LineBorder(borde));
+        return field;
+    }
+
     private JPanel createFieldPanel(String labelText, JComponent field) {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        panel.setBackground(new Color(255, 245, 230));
         panel.add(new JLabel(labelText));
         panel.add(field);
         return panel;
@@ -85,17 +105,16 @@ public class RegistroView extends JFrame {
 
     private JPanel createComboBoxPanel(String labelText, JComboBox<String> comboBox) {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        panel.setBackground(new Color(255, 245, 230));
         panel.add(new JLabel(labelText));
         panel.add(comboBox);
         return panel;
     }
 
-    // Getters públicos
     public JTextField getTxtUsername() { return txtUsuario; }
     public JPasswordField getTxtContrasenia() { return txtContrasenia; }
     public JComboBox<String> getComboRol() { return comboRol; }
     public JButton getBtnRegistrar() { return btnRegistrar; }
-
     public String getNombreCompleto() { return txtNombre.getText().trim(); }
     public String getFechaNacimiento() { return txtFechaNacimiento.getText().trim(); }
     public String getCorreo() { return txtCorreo.getText().trim(); }
@@ -121,41 +140,38 @@ public class RegistroView extends JFrame {
         if (txtUsuario.getText().isEmpty() || txtContrasenia.getPassword().length == 0 ||
                 getNombreCompleto().isEmpty() || getFechaNacimiento().isEmpty() ||
                 getCorreo().isEmpty() || getTelefono().isEmpty()) {
-            mostrarMensaje("Todos los campos deben estar llenos.");
+            mostrarMensaje(mensajes.get("registro.error.campos.vacios"));
             return false;
         }
 
-        // Validar formato de fecha
         if (!esFechaValida(getFechaNacimiento())) {
-            mostrarMensaje("La fecha debe tener el formato dd/MM/yyyy.");
+            mostrarMensaje(mensajes.get("registro.error.fecha"));
             return false;
         }
 
         if (txtRespuesta1.getText().isEmpty() || txtRespuesta2.getText().isEmpty() || txtRespuesta3.getText().isEmpty()) {
-            mostrarMensaje("Debes responder todas las preguntas.");
+            mostrarMensaje(mensajes.get("registro.error.respuestas.vacias"));
             return false;
         }
 
         if (comboPregunta1.getSelectedItem().equals(comboPregunta2.getSelectedItem()) ||
                 comboPregunta1.getSelectedItem().equals(comboPregunta3.getSelectedItem()) ||
                 comboPregunta2.getSelectedItem().equals(comboPregunta3.getSelectedItem())) {
-            mostrarMensaje("Las preguntas de seguridad deben ser distintas.");
+            mostrarMensaje(mensajes.get("registro.error.preguntas.duplicadas"));
             return false;
         }
 
         return true;
     }
+
     private boolean esFechaValida(String fecha) {
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-        sdf.setLenient(false); // No permite fechas inválidas como 32/13/2000
         try {
-            sdf.parse(fecha);
+            new SimpleDateFormat("dd/MM/yyyy").parse(fecha);
             return true;
         } catch (ParseException e) {
             return false;
         }
     }
-
 
     public void mostrarMensaje(String mensaje) {
         JOptionPane.showMessageDialog(this, mensaje);

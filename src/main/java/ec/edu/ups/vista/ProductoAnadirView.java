@@ -1,8 +1,15 @@
+
 package ec.edu.ups.vista;
 
-import javax.swing.*;
+import ec.edu.ups.util.ActualizableConIdioma;
+import ec.edu.ups.util.IconUtil;
+import ec.edu.ups.util.MensajeInternacionalizacionHandler;
 
-public class ProductoAnadirView extends JInternalFrame {
+import javax.swing.*;
+import java.util.Locale;
+
+public class ProductoAnadirView extends JInternalFrame implements ActualizableConIdioma {
+
     private JPanel panelPrincipal;
     private JTextField txtCodigo;
     private JTextField txtNombre;
@@ -10,8 +17,22 @@ public class ProductoAnadirView extends JInternalFrame {
     private JButton btnAceptar;
     private JButton btnLimpiar;
 
-    public ProductoAnadirView() {
-        super("Añadir Producto", true, true, true, true);
+    private JLabel lblCodigo;
+    private JLabel lblNombre;
+    private JLabel lblPrecio;
+
+    private final MensajeInternacionalizacionHandler mensajes;
+    private Locale locale;
+
+    public ProductoAnadirView(MensajeInternacionalizacionHandler mensajes) {
+        super("", true, true, true, true);
+        this.mensajes = mensajes;
+        this.locale = mensajes.getLocale();
+        initComponents();
+        actualizarTextos();
+    }
+
+    private void initComponents() {
         setSize(400, 250);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setLocation(30, 30);
@@ -19,25 +40,25 @@ public class ProductoAnadirView extends JInternalFrame {
         panelPrincipal = new JPanel();
         panelPrincipal.setLayout(null);
 
-        JLabel lblCodigo = new JLabel("Código:");
+        lblCodigo = new JLabel();
         lblCodigo.setBounds(20, 20, 100, 25);
         txtCodigo = new JTextField();
         txtCodigo.setBounds(120, 20, 200, 25);
 
-        JLabel lblNombre = new JLabel("Nombre:");
+        lblNombre = new JLabel();
         lblNombre.setBounds(20, 60, 100, 25);
         txtNombre = new JTextField();
         txtNombre.setBounds(120, 60, 200, 25);
 
-        JLabel lblPrecio = new JLabel("Precio:");
+        lblPrecio = new JLabel();
         lblPrecio.setBounds(20, 100, 100, 25);
         txtPrecio = new JTextField();
         txtPrecio.setBounds(120, 100, 200, 25);
 
-        btnAceptar = new JButton("Aceptar");
+        btnAceptar = new JButton(IconUtil.cargarIcono("logout.png"));
         btnAceptar.setBounds(70, 150, 100, 30);
 
-        btnLimpiar = new JButton("Limpiar");
+        btnLimpiar = new JButton(IconUtil.cargarIcono("eliminar.png"));
         btnLimpiar.setBounds(210, 150, 100, 30);
 
         panelPrincipal.add(lblCodigo);
@@ -52,33 +73,27 @@ public class ProductoAnadirView extends JInternalFrame {
         setContentPane(panelPrincipal);
     }
 
-    // Getters para controlador
-    public JTextField getTxtCodigo() {
-        return txtCodigo;
+    @Override
+    public void actualizarTextos() {
+        locale = mensajes.getLocale();
+        setTitle(mensajes.get("producto.titulo.anadir"));
+        lblCodigo.setText(mensajes.get("global.codigo") + ":");
+        lblNombre.setText(mensajes.get("global.nombre") + ":");
+        lblPrecio.setText(mensajes.get("global.precio") + ":");
+        btnAceptar.setText(mensajes.get("global.boton.aceptar"));
+        btnLimpiar.setText(mensajes.get("global.boton.limpiar"));
     }
 
-    public JTextField getTxtNombre() {
-        return txtNombre;
-    }
+    public JTextField getTxtCodigo() { return txtCodigo; }
+    public JTextField getTxtNombre() { return txtNombre; }
+    public JTextField getTxtPrecio() { return txtPrecio; }
+    public JButton getBtnAceptar() { return btnAceptar; }
+    public JButton getBtnLimpiar() { return btnLimpiar; }
 
-    public JTextField getTxtPrecio() {
-        return txtPrecio;
-    }
-
-    public JButton getBtnAceptar() {
-        return btnAceptar;
-    }
-
-    public JButton getBtnLimpiar() {
-        return btnLimpiar;
-    }
-
-    // Mostrar mensajes emergentes
     public void mostrarMensaje(String mensaje) {
         JOptionPane.showMessageDialog(this, mensaje);
     }
 
-    // Limpiar campos
     public void limpiarCampos() {
         txtCodigo.setText("");
         txtNombre.setText("");

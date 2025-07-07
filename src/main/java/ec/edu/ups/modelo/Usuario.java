@@ -9,7 +9,6 @@ public class Usuario {
     private Rol rol;
     private List<String> preguntasSeguridad;
     private List<String> respuestasSeguridad;
-
     private String nombreCompleto;
     private String fechaNacimiento;
     private String correo;
@@ -18,7 +17,6 @@ public class Usuario {
     public Usuario() {
     }
 
-    // Getters y setters
     public String getUsername() { return username; }
     public void setUsername(String username) { this.username = username; }
 

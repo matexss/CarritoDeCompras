@@ -146,11 +146,10 @@ public class ProductoController {
                 return;
             }
 
-            Carrito carrito = new Carrito(); // carrito vacío
-            carritoController.guardarCarrito(carrito); // los productos vienen desde itemsTemporales
+            Carrito carrito = new Carrito();
+            carritoController.guardarCarrito(carrito);
             JOptionPane.showMessageDialog(null, "Carrito guardado correctamente.");
 
-            // Limpiar interfaz
             DefaultTableModel modelo = (DefaultTableModel) carritoAnadirView.getTable1().getModel();
             modelo.setRowCount(0);
             carritoAnadirView.getTxtSubtotal().setText("");
@@ -168,7 +167,7 @@ public class ProductoController {
             int codigo = Integer.parseInt(textoCodigo);
             Producto encontrado = productoDAO.buscarPorCodigo(codigo);
             if (encontrado == null) {
-                productoModificarView.mostrarMensaje("No existe.");
+                productoModificarView.mostrarMensaje("Producto no encontrado.");
             } else {
                 productoModificarView.getLblCodigo().setText(String.valueOf(encontrado.getCodigo()));
                 productoModificarView.getLblNombre().setText(encontrado.getNombre());
@@ -182,9 +181,9 @@ public class ProductoController {
             if (e.getStateChange() == ItemEvent.SELECTED) {
                 String tipo = (String) productoModificarView.getCbxOpciones().getSelectedItem();
                 switch (tipo) {
-                    case "Modificar Nombre" -> productoModificarView.getLblMensaje().setText("Nuevo Nombre");
-                    case "Modificar Codigo" -> productoModificarView.getLblMensaje().setText("Nuevo Código");
-                    case "Modificar Precio" -> productoModificarView.getLblMensaje().setText("Nuevo Precio");
+                    case "Modificar Nombre" -> productoModificarView.getLblMensaje().setText("Nuevo Nombre:");
+                    case "Modificar Codigo" -> productoModificarView.getLblMensaje().setText("Nuevo Código:");
+                    case "Modificar Precio" -> productoModificarView.getLblMensaje().setText("Nuevo Precio:");
                 }
             }
         });
@@ -199,46 +198,48 @@ public class ProductoController {
                 return;
             }
 
+            if (valorMod.isEmpty()) {
+                productoModificarView.mostrarMensaje("Debe ingresar un valor para modificar.");
+                return;
+            }
+
             int codigoOriginal = Integer.parseInt(codOriginalTxt);
             Producto original = productoDAO.buscarPorCodigo(codigoOriginal);
-            Producto nuevo = new Producto();
+            if (original == null) {
+                productoModificarView.mostrarMensaje("Producto no encontrado.");
+                return;
+            }
 
             switch (tipo) {
                 case "Modificar Nombre" -> {
-                    nuevo.setCodigo(original.getCodigo());
-                    nuevo.setNombre(valorMod);
-                    nuevo.setPrecio(original.getPrecio());
+                    original.setNombre(valorMod);
+                    productoDAO.actualizar(original);
                 }
                 case "Modificar Codigo" -> {
                     if (!valorMod.matches("\\d+")) {
                         productoModificarView.mostrarMensaje("Nuevo código inválido.");
                         return;
                     }
-                    nuevo.setCodigo(Integer.parseInt(valorMod));
-                    nuevo.setNombre(original.getNombre());
-                    nuevo.setPrecio(original.getPrecio());
+                    int nuevoCodigo = Integer.parseInt(valorMod);
+                    productoDAO.eliminar(original.getCodigo());
+                    original.setCodigo(nuevoCodigo);
+                    productoDAO.crear(original);
+                    productoModificarView.mostrarMensaje("Producto modificado correctamente (código actualizado).");
+                    limpiarVistaModificar();
+                    return;
                 }
                 case "Modificar Precio" -> {
                     if (!valorMod.matches("\\d+(\\.\\d+)?")) {
                         productoModificarView.mostrarMensaje("Nuevo precio inválido.");
                         return;
                     }
-                    nuevo.setCodigo(original.getCodigo());
-                    nuevo.setNombre(original.getNombre());
-                    nuevo.setPrecio(Double.parseDouble(valorMod));
+                    original.setPrecio(Double.parseDouble(valorMod));
+                    productoDAO.actualizar(original);
                 }
             }
 
-            productoDAO.eliminar(codigoOriginal);
-            productoDAO.crear(nuevo);
-
-            productoModificarView.mostrarMensaje("Modificado correctamente.");
-            productoModificarView.getTxtModificar().setText("");
-            productoModificarView.getCbxOpciones().setEnabled(false);
-            productoModificarView.getLblCodigo().setText("");
-            productoModificarView.getLblNombre().setText("");
-            productoModificarView.getLblPrecio().setText("");
-            productoModificarView.getTxtCodigo().setText("");
+            productoModificarView.mostrarMensaje("Producto modificado correctamente.");
+            limpiarVistaModificar();
         });
     }
 
@@ -277,17 +278,9 @@ public class ProductoController {
         for (int i = 0; i < modelo.getRowCount(); i++) {
             try {
                 int cantidad = Integer.parseInt(modelo.getValueAt(i, 3).toString());
-
-                String precioStr = modelo.getValueAt(i, 2).toString()
-                        .replace(".", "")   // elimina puntos de miles: "1.234,56" → "1234,56"
-                        .replace(",", ".")  // cambia coma por punto decimal
-                        .replace("$", "")   // quita símbolo $
-                        .trim();
-
+                String precioStr = modelo.getValueAt(i, 2).toString().replace(".", "").replace(",", ".").replace("$", "").trim();
                 double precio = Double.parseDouble(precioStr);
-
                 subtotal += cantidad * precio;
-
             } catch (Exception e) {
                 System.err.println("[ERROR] Al calcular totales: " + e.getMessage());
             }
@@ -301,9 +294,16 @@ public class ProductoController {
         carritoAnadirView.getTxtTotal().setText(String.format("%.2f", total));
     }
 
-
-
     private void mostrarMensaje(String mensaje) {
         JOptionPane.showMessageDialog(null, mensaje);
+    }
+
+    private void limpiarVistaModificar() {
+        productoModificarView.getTxtModificar().setText("");
+        productoModificarView.getCbxOpciones().setEnabled(false);
+        productoModificarView.getLblCodigo().setText("");
+        productoModificarView.getLblNombre().setText("");
+        productoModificarView.getLblPrecio().setText("");
+        productoModificarView.getTxtCodigo().setText("");
     }
 }

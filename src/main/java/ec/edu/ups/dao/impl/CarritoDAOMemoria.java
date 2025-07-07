@@ -19,7 +19,7 @@ public class CarritoDAOMemoria implements CarritoDAO {
 
     @Override
     public List<Carrito> listarTodos() {
-        return new ArrayList<>(lista); // evitar modificación externa
+        return new ArrayList<>(lista);
     }
 
     @Override

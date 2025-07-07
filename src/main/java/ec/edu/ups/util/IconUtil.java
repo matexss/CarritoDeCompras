@@ -2,24 +2,23 @@ package ec.edu.ups.util;
 
 import javax.swing.*;
 import java.awt.*;
+import java.net.URL;
 
-public final class IconUtil {
+public class IconUtil {
 
-    private IconUtil() {} // Constructor privado
+    public static ImageIcon cargarIcono(String nombreArchivo) {
+        return cargarIcono(nombreArchivo, 18, 18); // tamaño estándar
+    }
 
-    public static ImageIcon icon(String nombreArchivo, int ancho, int alto) {
-        java.net.URL url = IconUtil.class
-                .getClassLoader()
-                .getResource("imagenes/" + nombreArchivo);
-
-        if (url == null) {
-            System.err.println("No se encontró el ícono: " + nombreArchivo);
-            return null;
+    public static ImageIcon cargarIcono(String nombreArchivo, int ancho, int alto) {
+        URL recurso = IconUtil.class.getClassLoader().getResource("iconos/" + nombreArchivo);
+        if (recurso != null) {
+            ImageIcon iconoOriginal = new ImageIcon(recurso);
+            Image imagenEscalada = iconoOriginal.getImage().getScaledInstance(ancho, alto, Image.SCALE_SMOOTH);
+            return new ImageIcon(imagenEscalada);
+        } else {
+            System.err.println("❌ Icono no encontrado: " + nombreArchivo);
+            return new ImageIcon(); // icono vacío para evitar crash
         }
-
-        Image img = new ImageIcon(url).getImage()
-                .getScaledInstance(ancho, alto, Image.SCALE_SMOOTH);
-
-        return new ImageIcon(img);
     }
 }

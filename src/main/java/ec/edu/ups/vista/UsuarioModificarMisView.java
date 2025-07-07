@@ -1,22 +1,18 @@
 package ec.edu.ups.vista;
 
+import ec.edu.ups.util.ActualizableConIdioma;
+import ec.edu.ups.util.IconUtil;
 import ec.edu.ups.util.MensajeInternacionalizacionHandler;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class UsuarioModificarMisView extends JInternalFrame {
+public class UsuarioModificarMisView extends JInternalFrame implements ActualizableConIdioma {
     private JPanel panel1;
-    private JLabel lblUsuario;
-    private JLabel lblContraseña;
-    private JTextField txtContraseña;
-    private JButton btnModificar;
-    private JTextField txtUsuario;
     private JPanel panelPrincipal;
-    private JLabel lblTitulo;
-    private JTextField txtNuevoUser;
-    private JLabel lblNuevoUser;
-
+    private JLabel lblUsuario, lblContraseña, lblTitulo, lblNuevoUser;
+    private JTextField txtUsuario, txtContraseña, txtNuevoUser;
+    private JButton btnModificar;
     private MensajeInternacionalizacionHandler mensajes;
 
     public UsuarioModificarMisView(MensajeInternacionalizacionHandler mensajes) {
@@ -25,69 +21,79 @@ public class UsuarioModificarMisView extends JInternalFrame {
 
         inicializarComponentes();
         setContentPane(panelPrincipal);
-        setSize(600, 400);
+        setSize(500, 300);
         setClosable(true);
         setIconifiable(true);
         setResizable(true);
-
         txtUsuario.setEditable(false);
         actualizarTextos();
     }
 
     private void inicializarComponentes() {
-        panelPrincipal = new JPanel();
-        panelPrincipal.setLayout(new GridLayout(5, 2, 10, 10));
+        panelPrincipal = new JPanel(new BorderLayout());
+        JPanel formPanel = new JPanel(new GridBagLayout());
+        JPanel botonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 5, 10);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+
         lblTitulo = new JLabel();
-        lblNuevoUser = new JLabel();
+        lblTitulo.setFont(new Font("Arial", Font.BOLD, 16));
+        lblTitulo.setHorizontalAlignment(SwingConstants.CENTER);
+
         lblUsuario = new JLabel();
-        lblContraseña = new JLabel();
         txtUsuario = new JTextField();
+
+        lblNuevoUser = new JLabel();
         txtNuevoUser = new JTextField();
+
+        lblContraseña = new JLabel();
         txtContraseña = new JTextField();
-        btnModificar = new JButton();
 
-        panelPrincipal.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        btnModificar = new JButton(IconUtil.cargarIcono("user-update.png", 18, 18));
 
-        panelPrincipal.add(lblTitulo);
-        panelPrincipal.add(new JLabel()); // Espaciador
+        // Layout con GridBag
+        gbc.gridx = 0; gbc.gridy = 0;
+        formPanel.add(lblUsuario, gbc);
+        gbc.gridx = 1; gbc.gridy = 0;
+        formPanel.add(txtUsuario, gbc);
 
-        panelPrincipal.add(lblUsuario);
-        panelPrincipal.add(txtUsuario);
+        gbc.gridx = 0; gbc.gridy = 1;
+        formPanel.add(lblNuevoUser, gbc);
+        gbc.gridx = 1; gbc.gridy = 1;
+        formPanel.add(txtNuevoUser, gbc);
 
-        panelPrincipal.add(lblNuevoUser);
-        panelPrincipal.add(txtNuevoUser);
+        gbc.gridx = 0; gbc.gridy = 2;
+        formPanel.add(lblContraseña, gbc);
+        gbc.gridx = 1; gbc.gridy = 2;
+        formPanel.add(txtContraseña, gbc);
 
-        panelPrincipal.add(lblContraseña);
-        panelPrincipal.add(txtContraseña);
+        botonPanel.add(btnModificar);
 
-        panelPrincipal.add(new JLabel()); // Espaciador
-        panelPrincipal.add(btnModificar);
+        panelPrincipal.add(lblTitulo, BorderLayout.NORTH);
+        panelPrincipal.add(formPanel, BorderLayout.CENTER);
+        panelPrincipal.add(botonPanel, BorderLayout.SOUTH);
     }
 
+    @Override
     public void actualizarTextos() {
         setTitle(mensajes.get("menu.usuario.modificarMis"));
         lblTitulo.setText(mensajes.get("menu.usuario.modificarMis"));
         lblNuevoUser.setText(mensajes.get("global.nuevoUsuario") + ":");
         lblUsuario.setText(mensajes.get("global.usuario") + ":");
         lblContraseña.setText(mensajes.get("global.contraseña") + ":");
+
+        txtNuevoUser.setToolTipText(mensajes.get("usuario.modificar.usuario"));
+        txtContraseña.setToolTipText(mensajes.get("usuario.modificar.nuevaContraseña"));
+
         btnModificar.setText(mensajes.get("global.boton.modificar"));
     }
 
-    public JTextField getTxtNuevoUser() {
-        return txtNuevoUser;
-    }
-
-    public JTextField getTxtContraseña() {
-        return txtContraseña;
-    }
-
-    public JButton getBtnModificar() {
-        return btnModificar;
-    }
-
-    public JTextField getTxtUsuario() {
-        return txtUsuario;
-    }
+    public JTextField getTxtNuevoUser() { return txtNuevoUser; }
+    public JTextField getTxtContraseña() { return txtContraseña; }
+    public JButton getBtnModificar() { return btnModificar; }
+    public JTextField getTxtUsuario() { return txtUsuario; }
 
     public void mostrarMensaje(String mensaje) {
         JOptionPane.showMessageDialog(this, mensaje, mensajes.get("yesNo.app.titulo"), JOptionPane.INFORMATION_MESSAGE);

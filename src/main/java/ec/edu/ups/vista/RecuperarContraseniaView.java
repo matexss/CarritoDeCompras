@@ -1,29 +1,48 @@
 package ec.edu.ups.vista;
 
+import ec.edu.ups.util.ActualizableConIdioma;
+import ec.edu.ups.util.MensajeInternacionalizacionHandler;
+import ec.edu.ups.util.IconUtil;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.util.Locale;
 
-public class RecuperarContraseniaView extends JFrame {
+public class RecuperarContraseniaView extends JFrame implements ActualizableConIdioma {
     private JPanel panel1;
-    private JTextField txtPregunta1;
-    private JTextField txtPregunta2;
-    private JTextField txtPregunta3;
+    private JTextField textPregunta1;
     private JTextField txtRespuesta;
     private JPasswordField txtNuevaContrasenia;
     private JButton btnVerificarRespuestas;
     private JButton btnCambiarContrasenia;
     private String preguntaSeleccionada;
+    private MensajeInternacionalizacionHandler mensajes;
+    private Locale locale;
 
-    public RecuperarContraseniaView(String preguntaSeguridad) {
+    private JTextArea lblPregunta;
+    private JLabel lblNuevaContrasenia;
+
+    public RecuperarContraseniaView(MensajeInternacionalizacionHandler mensajes, String preguntaSeguridad) {
         this.preguntaSeleccionada = preguntaSeguridad;
+        this.mensajes = mensajes;
+        this.locale = mensajes.getLocale();
 
-        setTitle("Recuperación de Contraseña");
+        initComponents();
+        actualizarTextos();
+    }
+
+    private void initComponents() {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setSize(600, 300);
+        setSize(600, 320);
         setLocationRelativeTo(null);
+        setResizable(false);
 
-        Color fondo = new Color(215, 144, 70);
+        Color fondo = new Color(245, 222, 179);
+        Color primario = new Color(100, 149, 237);
+        Font fuenteLabel = new Font("Segoe UI", Font.PLAIN, 14);
+        Font fuenteBoton = new Font("Segoe UI", Font.BOLD, 13);
+
         getContentPane().setBackground(fondo);
         setLayout(new BorderLayout());
 
@@ -32,28 +51,33 @@ public class RecuperarContraseniaView extends JFrame {
         panelPrincipal.setLayout(new BoxLayout(panelPrincipal, BoxLayout.Y_AXIS));
         panelPrincipal.setBorder(new EmptyBorder(20, 40, 20, 40));
 
-        // Mostrar la pregunta
-        JTextArea lblPregunta = new JTextArea("Pregunta de seguridad:\n" + preguntaSeguridad);
+        lblPregunta = new JTextArea();
         lblPregunta.setWrapStyleWord(true);
         lblPregunta.setLineWrap(true);
         lblPregunta.setEditable(false);
         lblPregunta.setFocusable(false);
         lblPregunta.setBackground(fondo);
-        lblPregunta.setFont(new JLabel().getFont());
-        lblPregunta.setMaximumSize(new Dimension(1000, 60));
+        lblPregunta.setFont(fuenteLabel);
+        lblPregunta.setForeground(new Color(51, 51, 51));
         lblPregunta.setBorder(null);
+        lblPregunta.setMaximumSize(new Dimension(1000, 60));
 
         txtRespuesta = new JTextField(20);
         txtRespuesta.setMaximumSize(new Dimension(Integer.MAX_VALUE, 25));
+        txtRespuesta.setFont(fuenteLabel);
 
         panelPrincipal.add(lblPregunta);
         panelPrincipal.add(Box.createVerticalStrut(10));
         panelPrincipal.add(txtRespuesta);
         panelPrincipal.add(Box.createVerticalStrut(15));
 
-        // Botón verificar
-        btnVerificarRespuestas = new JButton("Verificar Respuesta");
+        btnVerificarRespuestas = new JButton(IconUtil.cargarIcono("search.png", 16, 16));
         btnVerificarRespuestas.setPreferredSize(new Dimension(180, 35));
+        btnVerificarRespuestas.setBackground(primario);
+        btnVerificarRespuestas.setForeground(Color.WHITE);
+        btnVerificarRespuestas.setFocusPainted(false);
+        btnVerificarRespuestas.setFont(fuenteBoton);
+
         JPanel panelVerificar = new JPanel(new FlowLayout(FlowLayout.CENTER));
         panelVerificar.setBackground(fondo);
         panelVerificar.add(btnVerificarRespuestas);
@@ -61,19 +85,25 @@ public class RecuperarContraseniaView extends JFrame {
 
         panelPrincipal.add(Box.createVerticalStrut(20));
 
-        // Nueva contraseña
         JPanel panelCambio = new JPanel(new FlowLayout(FlowLayout.LEFT));
         panelCambio.setBackground(fondo);
-        panelCambio.add(new JLabel("Nueva Contraseña:"));
+        lblNuevaContrasenia = new JLabel();
+        lblNuevaContrasenia.setFont(fuenteLabel);
+        panelCambio.add(lblNuevaContrasenia);
+
         txtNuevaContrasenia = new JPasswordField(20);
         txtNuevaContrasenia.setEnabled(false);
+        txtNuevaContrasenia.setFont(fuenteLabel);
         panelCambio.add(txtNuevaContrasenia);
-
         panelPrincipal.add(panelCambio);
 
-        // Botón cambiar contraseña
-        btnCambiarContrasenia = new JButton("Cambiar Contraseña");
+        btnCambiarContrasenia = new JButton(IconUtil.cargarIcono("user-update.png", 16, 16));
         btnCambiarContrasenia.setEnabled(false);
+        btnCambiarContrasenia.setBackground(new Color(60, 179, 113));
+        btnCambiarContrasenia.setForeground(Color.WHITE);
+        btnCambiarContrasenia.setFont(fuenteBoton);
+        btnCambiarContrasenia.setFocusPainted(false);
+
         JPanel panelCambiar = new JPanel(new FlowLayout(FlowLayout.CENTER));
         panelCambiar.setBackground(fondo);
         panelCambiar.add(btnCambiarContrasenia);
@@ -82,7 +112,16 @@ public class RecuperarContraseniaView extends JFrame {
         add(panelPrincipal, BorderLayout.CENTER);
     }
 
-    // Getters necesarios
+    @Override
+    public void actualizarTextos() {
+        locale = mensajes.getLocale();
+        setTitle(mensajes.get("recuperar.titulo"));
+        lblPregunta.setText(mensajes.get("recuperar.pregunta") + ":\n" + preguntaSeleccionada);
+        btnVerificarRespuestas.setText(mensajes.get("recuperar.boton.verificar"));
+        btnCambiarContrasenia.setText(mensajes.get("recuperar.boton.cambiar"));
+        lblNuevaContrasenia.setText(mensajes.get("recuperar.nueva") + ":");
+    }
+
     public String getRespuesta() {
         return txtRespuesta.getText().trim();
     }
@@ -110,13 +149,5 @@ public class RecuperarContraseniaView extends JFrame {
 
     public String getPreguntaSeleccionada() {
         return preguntaSeleccionada;
-    }
-
-    // Test opcional
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            RecuperarContraseniaView vista = new RecuperarContraseniaView("¿Cuál es tu película favorita?");
-            vista.setVisible(true);
-        });
     }
 }

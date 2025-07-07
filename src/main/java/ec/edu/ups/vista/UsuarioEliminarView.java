@@ -1,11 +1,12 @@
 package ec.edu.ups.vista;
 
+import ec.edu.ups.util.ActualizableConIdioma;
 import ec.edu.ups.util.MensajeInternacionalizacionHandler;
-
+import ec.edu.ups.util.IconUtil;
 import javax.swing.*;
 import java.awt.*;
 
-public class UsuarioEliminarView extends JInternalFrame {
+public class UsuarioEliminarView extends JInternalFrame implements ActualizableConIdioma {
 
     private JLabel lblTitulo;
     private JLabel lblUsuario;
@@ -15,9 +16,8 @@ public class UsuarioEliminarView extends JInternalFrame {
     private MensajeInternacionalizacionHandler mensajes;
 
     public UsuarioEliminarView(MensajeInternacionalizacionHandler mensajes) {
-        super(mensajes.get("usuario.eliminar.titulo.app"), true, true, true, true);
+        super("", true, true, true, true);
         this.mensajes = mensajes;
-
         initComponents();
         actualizarTextos();
     }
@@ -35,17 +35,20 @@ public class UsuarioEliminarView extends JInternalFrame {
 
         lblUsuario = new JLabel();
         txtUsuario = new JTextField();
-        btnEliminar = new JButton();
+
+        btnEliminar = new JButton("Eliminar", IconUtil.cargarIcono("user-delete.png", 18, 18));
 
         panelCentro.add(lblUsuario);
         panelCentro.add(txtUsuario);
-        panelCentro.add(new JLabel()); // Espacio vacío
+        panelCentro.add(new JLabel());
         panelCentro.add(btnEliminar);
 
         add(panelCentro, BorderLayout.CENTER);
     }
 
-    private void actualizarTextos() {
+
+    @Override
+    public void actualizarTextos() {
         setTitle(mensajes.get("usuario.eliminar.titulo.app"));
         lblTitulo.setText(mensajes.get("usuario.eliminar.titulo.app"));
         lblUsuario.setText(mensajes.get("global.usuario") + ":");
