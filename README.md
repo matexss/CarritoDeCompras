@@ -1,4 +1,11 @@
+
+## 📸 Captura de Pantalla del Diagrama del Proyecto
+
+A continuación, se presenta una captura de pantalla del Diagrama.
+
+
 # 🛒 Proyecto de Ejemplo - Carrito de Compras
+
 
 Este proyecto fue desarrollado como parte del **período 66** de la asignatura **Programación Orientada a Objetos** en la Universidad Politécnica Salesiana.  
 Su objetivo principal es demostrar el uso de **patrones de diseño** aplicados a una aplicación Java con interfaz gráfica construida con **Swing**.
@@ -40,10 +47,7 @@ Implementar un sistema educativo que simula un **carrito de compras**, utilizand
 - Usar IntelliJ IDEA para aprovechar el editor visual de formularios `.form`
 - Probar con diferentes implementaciones del DAO para observar la flexibilidad del patrón
 
----
-## LINK DE YOUTUBE Y GITHUB
-https://youtu.be/1_usJMnFWPc?si=cS2Iu1CtWikrb3yi
-https://github.com/matexss/CarritoDeCompras
+
 
 ## © Créditos
 
