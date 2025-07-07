@@ -52,7 +52,6 @@ public class CarritoListarView extends JInternalFrame implements ActualizableCon
         cargarCarritos();
     }
 
-    /* === público para Main === */
     public void cargarCarritos() {
         modelo.setRowCount(0);
         List<Carrito> lista = carritoController.listarCarritosSinFiltro();

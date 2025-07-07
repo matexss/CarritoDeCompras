@@ -47,7 +47,6 @@ public class UsuarioListarView extends JInternalFrame implements ActualizableCon
         JPanel panelCentro = new JPanel(new BorderLayout(10, 10));
         JPanel panelSuperior = new JPanel(new FlowLayout());
 
-        // ✅ Crear los botones UNA SOLA VEZ con texto e ícono
         btnListar = new JButton("Listar", IconUtil.cargarIcono("user-list.png", 18, 18));
         btnBuscar = new JButton("Buscar", IconUtil.cargarIcono("search.png", 18, 18));
 
@@ -67,7 +66,6 @@ public class UsuarioListarView extends JInternalFrame implements ActualizableCon
         panelCentro.add(scrollPane, BorderLayout.CENTER);
         panelPrincipal.add(panelCentro, BorderLayout.CENTER);
     }
-
 
     private void configurarTabla() {
         tableModel = new DefaultTableModel();

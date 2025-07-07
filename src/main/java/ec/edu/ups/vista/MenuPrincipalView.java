@@ -8,7 +8,6 @@ import javax.swing.*;
 
 public class MenuPrincipalView extends JFrame {
 
-    // ──────────────────── Componentes ────────────────────
     private final JMenuBar menuBar = new JMenuBar();
     private final JDesktopPane jDesktopPane = new MiJDesktopPane();
 
@@ -42,11 +41,9 @@ public class MenuPrincipalView extends JFrame {
     private final JMenuItem menuItemIdiomaIngles       = new JMenuItem();
     private final JMenuItem menuItemIdiomaFrances      = new JMenuItem();
 
-    // ──────────────────── Soporte ────────────────────
     private final MensajeInternacionalizacionHandler mensajes;
     private final CarritoController carritoController;
 
-    // ──────────────────── Constructor ────────────────────
     public MenuPrincipalView(MensajeInternacionalizacionHandler mensajes, CarritoController carritoController) {
         this.mensajes = mensajes;
         this.carritoController = carritoController;
@@ -54,7 +51,6 @@ public class MenuPrincipalView extends JFrame {
         configurarIdiomaListeners();
     }
 
-    // ──────────────────── Inicialización ────────────────────
     private void initComponents() {
         setTitle("Sistema de Gestión - Carrito de Compras");
         setSize(1000, 700);
@@ -62,7 +58,6 @@ public class MenuPrincipalView extends JFrame {
         setLocationRelativeTo(null);
         setContentPane(jDesktopPane);
 
-        // Armar menús
         menuProducto.add(menuItemCrearProducto);
         menuProducto.add(menuItemBuscarProducto);
         menuProducto.add(menuItemActualizarProducto);
@@ -98,7 +93,6 @@ public class MenuPrincipalView extends JFrame {
         actualizarTextos();
     }
 
-    // ──────────────────── Internacionalización ────────────────────
     private void configurarIdiomaListeners() {
         menuItemIdiomaEspanol.addActionListener(e -> cambiarIdioma("es", "EC"));
         menuItemIdiomaIngles .addActionListener(e -> cambiarIdioma("en", "US"));
@@ -147,7 +141,6 @@ public class MenuPrincipalView extends JFrame {
         menuItemIdiomaFrances     .setText(mensajes.get("menu.idioma.fr"));
     }
 
-    // ──────────────────── Roles ────────────────────
     public void deshabilitarMenusAdministrador() {
         menuProducto.setEnabled(false);
         menuItemListarCarritos.setEnabled(false);
@@ -167,7 +160,6 @@ public class MenuPrincipalView extends JFrame {
         menuUsuario.setVisible(true);
     }
 
-    // ──────────────────── Getters requeridos por Main ────────────────────
     public JMenuItem getMenuItemCrearUsuario()      { return menuItemCrearUsuario; }
     public JMenuItem getMenuItemEliminarUsuario()   { return menuItemEliminarUsuario; }
     public JMenuItem getMenuItemModificarUsuario()  { return menuItemModificarUsuario; }
@@ -194,7 +186,6 @@ public class MenuPrincipalView extends JFrame {
 
     public JDesktopPane getjDesktopPane()           { return jDesktopPane; }
 
-    // ──────────────────── Util ────────────────────
     public void mostrarMensaje(String mensaje) {
         JOptionPane.showMessageDialog(this, mensaje);
     }

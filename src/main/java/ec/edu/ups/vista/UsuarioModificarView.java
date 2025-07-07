@@ -53,7 +53,6 @@ public class UsuarioModificarView extends JInternalFrame implements Actualizable
         btnModificar = new JButton(IconUtil.cargarIcono("editar.png", 18, 18));
         btnModificar.setPreferredSize(new Dimension(160, 35));
 
-        // Campos
         gbc.gridx = 0; gbc.gridy = 0;
         formPanel.add(lblUsuario, gbc);
         gbc.gridx = 1;
@@ -71,14 +70,12 @@ public class UsuarioModificarView extends JInternalFrame implements Actualizable
 
         panelPrincipal.add(formPanel, BorderLayout.CENTER);
 
-        // Botones
         botonPanel.add(btnBuscar);
         botonPanel.add(btnModificar);
         panelPrincipal.add(botonPanel, BorderLayout.SOUTH);
 
         setContentPane(panelPrincipal);
 
-        // Render personalizado
         cbxRoles.setRenderer(new DefaultListCellRenderer() {
             @Override
             public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {

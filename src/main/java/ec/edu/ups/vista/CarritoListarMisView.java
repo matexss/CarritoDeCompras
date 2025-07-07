@@ -3,6 +3,7 @@ package ec.edu.ups.vista;
 import ec.edu.ups.controlador.CarritoController;
 import ec.edu.ups.modelo.Carrito;
 import ec.edu.ups.util.*;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
@@ -10,8 +11,7 @@ import java.util.List;
 import java.util.Locale;
 
 public class CarritoListarMisView extends JInternalFrame implements ActualizableConIdioma {
-    private JPanel panelPrincipal;
-    private JPanel panel1;
+
     private final CarritoController carritoController;
     private final MensajeInternacionalizacionHandler mensajes;
     private Locale locale;
@@ -34,8 +34,8 @@ public class CarritoListarMisView extends JInternalFrame implements Actualizable
         add(new JScrollPane(tabla), BorderLayout.CENTER);
 
         JPanel south = new JPanel();
-        btnModificar = new JButton(IconUtil.cargarIcono("carrito-editar.png",16,16));
-        btnEliminar  = new JButton(IconUtil.cargarIcono("carrito-eliminar.png",16,16));
+        btnModificar = new JButton(IconUtil.cargarIcono("carrito-editar.png", 16, 16));
+        btnEliminar  = new JButton(IconUtil.cargarIcono("carrito-eliminar.png", 16, 16));
         south.add(btnModificar);
         south.add(btnEliminar);
         add(south, BorderLayout.SOUTH);
@@ -45,44 +45,40 @@ public class CarritoListarMisView extends JInternalFrame implements Actualizable
 
         addInternalFrameListener(new javax.swing.event.InternalFrameAdapter() {
             @Override public void internalFrameActivated(javax.swing.event.InternalFrameEvent e) {
-                cargarCarritos();          // <--- llamada interna
+                cargarCarritos();
             }
         });
 
         actualizarTextos();
     }
 
-    /* ==== internacionalización ==== */
     @Override
     public void actualizarTextos() {
         setTitle(mensajes.get("menu.carrito.listarMis"));
         btnModificar.setToolTipText(mensajes.get("menu.carrito.modificar"));
         btnEliminar .setToolTipText(mensajes.get("menu.carrito.eliminar"));
 
-        modelo.setColumnIdentifiers(new String[]{
+        modelo.setColumnIdentifiers(new String[] {
                 mensajes.get("global.codigo"),
                 mensajes.get("global.fecha"),
                 mensajes.get("global.cantidad")
         });
-        cargarCarritos();                 // refresca texto de fechas, etc.
+        cargarCarritos();
     }
 
-    /* ==== método que vas a invocar desde Main ==== */
     public void cargarCarritos() {
         modelo.setRowCount(0);
         List<Carrito> lista = carritoController.listarMisCarritos();
         if (lista == null) return;
 
         for (Carrito c : lista) {
-            modelo.addRow(new Object[]{
+            modelo.addRow(new Object[] {
                     c.getCodigo(),
                     FormateadorUtils.formatearFecha(c.getFechaCreacion().getTime(), locale),
                     c.obtenerItems().size()
             });
         }
     }
-
-    /* ==== botones ================================================================= */
 
     private void eliminar() {
         int row = tabla.getSelectedRow();

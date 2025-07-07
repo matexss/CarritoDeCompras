@@ -35,7 +35,6 @@ public class UsuarioCrearView extends JInternalFrame implements ActualizableConI
         setSize(600, 400);
         setLayout(new BorderLayout());
 
-        // Crear el botón una sola vez con texto e ícono
         btnCrear = new JButton("Crear", IconUtil.cargarIcono("user-add.png", 18, 18));
         btnCrear.setBounds(30, 120, 130, 30);
 
@@ -54,15 +53,14 @@ public class UsuarioCrearView extends JInternalFrame implements ActualizableConI
         txtContraseña = new JTextField();
         cbxRoles = new JComboBox<>();
 
-        // Agregar los elementos al formulario
         formPanel.add(lblUsuarioA);
         formPanel.add(txtUsuario);
         formPanel.add(lblContraseña);
         formPanel.add(txtContraseña);
         formPanel.add(lblRol);
         formPanel.add(cbxRoles);
-        formPanel.add(new JLabel()); // espacio vacío
-        formPanel.add(btnCrear);     // botón con ícono
+        formPanel.add(new JLabel());
+        formPanel.add(btnCrear);
 
         add(formPanel, BorderLayout.CENTER);
     }

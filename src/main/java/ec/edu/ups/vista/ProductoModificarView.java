@@ -42,7 +42,6 @@ public class ProductoModificarView extends JInternalFrame implements Actualizabl
         gbc.insets = new Insets(12, 12, 12, 12);
         gbc.anchor = GridBagConstraints.WEST;
 
-        // Fila 1: Código
         gbc.gridx = 0; gbc.gridy = 0;
         panel.add(new JLabel("Código:"), gbc);
 
@@ -55,7 +54,6 @@ public class ProductoModificarView extends JInternalFrame implements Actualizabl
         buscarButton.setPreferredSize(new Dimension(140, 30));
         panel.add(buscarButton, gbc);
 
-        // Fila 2: Nombre actual
         gbc.gridx = 0; gbc.gridy++;
         panel.add(new JLabel("Nombre actual:"), gbc);
 
@@ -65,7 +63,6 @@ public class ProductoModificarView extends JInternalFrame implements Actualizabl
         panel.add(lblNombre, gbc);
         gbc.gridwidth = 1;
 
-        // Fila 3: Precio actual
         gbc.gridx = 0; gbc.gridy++;
         panel.add(new JLabel("Precio actual:"), gbc);
 
@@ -75,7 +72,6 @@ public class ProductoModificarView extends JInternalFrame implements Actualizabl
         panel.add(lblPrecio, gbc);
         gbc.gridwidth = 1;
 
-        // Fila 4: Opción a modificar
         gbc.gridx = 0; gbc.gridy++;
         lblMensaje = new JLabel("Seleccione qué desea modificar:");
         panel.add(lblMensaje, gbc);
@@ -85,7 +81,6 @@ public class ProductoModificarView extends JInternalFrame implements Actualizabl
         cbxOpciones.setEnabled(false);
         panel.add(cbxOpciones, gbc);
 
-        // Fila 5: Campo de modificación
         gbc.gridx = 0; gbc.gridy++;
         panel.add(new JLabel("Nuevo valor:"), gbc);
 
@@ -94,7 +89,6 @@ public class ProductoModificarView extends JInternalFrame implements Actualizabl
         txtModificar.setEditable(false);
         panel.add(txtModificar, gbc);
 
-        // Fila 6: Botón Modificar
         gbc.gridx = 0; gbc.gridy++;
         gbc.gridwidth = 3;
         gbc.anchor = GridBagConstraints.CENTER;
@@ -120,10 +114,9 @@ public class ProductoModificarView extends JInternalFrame implements Actualizabl
         cbxOpciones.addItem("Modificar Precio");
     }
 
-    // Getters para el controlador
     public JTextField getTxtCodigo() { return txtCodigo; }
     public JButton getBuscarButton() { return buscarButton; }
-    public JLabel getLblCodigo() { return lblCodigo; } // no se usa, por eso no está en UI
+    public JLabel getLblCodigo() { return lblCodigo; }
     public JTextField getTxtModificar() { return txtModificar; }
     public JLabel getLblNombre() { return lblNombre; }
     public JLabel getLblPrecio() { return lblPrecio; }

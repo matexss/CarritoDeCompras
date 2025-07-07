@@ -41,6 +41,9 @@ Implementar un sistema educativo que simula un **carrito de compras**, utilizand
 - Probar con diferentes implementaciones del DAO para observar la flexibilidad del patrón
 
 ---
+## LINK DE YOUTUBE Y GITHUB
+https://youtu.be/1_usJMnFWPc?si=cS2Iu1CtWikrb3yi
+https://github.com/matexss/CarritoDeCompras
 
 ## © Créditos
 
