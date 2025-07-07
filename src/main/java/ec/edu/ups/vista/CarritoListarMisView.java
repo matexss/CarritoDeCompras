@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Locale;
 
 public class CarritoListarMisView extends JInternalFrame implements ActualizableConIdioma {
-
+    private JPanel panelPrincipal;
     private final CarritoController carritoController;
     private final MensajeInternacionalizacionHandler mensajes;
     private Locale locale;
