@@ -43,6 +43,7 @@ public class Main {
                 if (usuarioAutenticado != null) {
                     CarritoServiceImpl carritoService = new CarritoServiceImpl();
                     CarritoController carritoController = new CarritoController(carritoDAO, productoDAO, usuarioController);
+                    System.out.println();
 
                     ProductoAnadirView productoAnadirView = new ProductoAnadirView(mensajes);
                     ProductoListaView productoListaView = new ProductoListaView(mensajes);
