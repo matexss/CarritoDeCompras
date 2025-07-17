@@ -1,7 +1,9 @@
 package ec.edu.ups.modelo;
 
+import java.io.Serializable;
 
-public class RespuestaSeguridad {
+public class RespuestaSeguridad implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     private Pregunta pregunta;
     private String respuesta;

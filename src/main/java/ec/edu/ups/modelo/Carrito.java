@@ -4,8 +4,9 @@ import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
-
-public class Carrito {
+import java.io.Serializable;
+public class Carrito implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     private final double IVA = 0.12;
     private static int contador = 1;

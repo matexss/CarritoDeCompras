@@ -1,7 +1,10 @@
 package ec.edu.ups.modelo;
 
-public enum Rol {
-    ADMINISTRADOR,
-    USUARIO,
+import java.io.Serializable;
 
+public enum Rol implements Serializable {
+    ADMINISTRADOR,
+    USUARIO;
+
+    private static final long serialVersionUID = 1L;
 }

@@ -1,6 +1,8 @@
 package ec.edu.ups.modelo;
+import java.io.Serializable;
 
-public class Producto {
+public class Producto implements Serializable {
+    private static final long serialVersionUID = 1L;
     private int codigo;
     private String nombre;
     private double precio;

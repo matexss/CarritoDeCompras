@@ -1,8 +1,11 @@
 package ec.edu.ups.modelo;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class Pregunta {
+public class Pregunta implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private int id;
     private String texto;

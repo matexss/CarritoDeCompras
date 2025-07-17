@@ -16,8 +16,8 @@ public class UsuarioDAOMemoria implements UsuarioDAO {
         usuarios = new ArrayList<>();
 
         Usuario admin = new Usuario();
-        admin.setUsername("admin");
-        admin.setPassword("12345");
+        admin.setUsername("0150268688");
+        admin.setPassword("Matemore_993");
         admin.setRol(Rol.ADMINISTRADOR);
         admin.setNombreCompleto("Admin");
         admin.setFechaNacimiento("1990-01-01");
