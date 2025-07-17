@@ -77,12 +77,22 @@ public class ProductoController {
             if (p == null) {
                 productoEliminarView.mostrarMensaje("Producto no encontrado.");
             } else {
-                productoDAO.eliminar(codigo);
-                productoEliminarView.mostrarMensaje("Producto eliminado.");
-                productoEliminarView.getTxtNombre().setText("");
-                productoEliminarView.mostrarProductos(productoDAO.listarTodos());
+                int opcion = JOptionPane.showConfirmDialog(
+                        null,
+                        "¿Está seguro que desea eliminar el producto con código " + codigo + "?",
+                        "Confirmar eliminación",
+                        JOptionPane.YES_NO_OPTION
+                );
+
+                if (opcion == JOptionPane.YES_OPTION) {
+                    productoDAO.eliminar(codigo);
+                    productoEliminarView.mostrarMensaje("Producto eliminado.");
+                    productoEliminarView.getTxtNombre().setText("");
+                    productoEliminarView.mostrarProductos(productoDAO.listarTodos());
+                }
             }
         });
+
 
         carritoAnadirView.getBtnAñadir().addActionListener(e -> {
             String codigoTxt = carritoAnadirView.getTxtCodigo().getText();

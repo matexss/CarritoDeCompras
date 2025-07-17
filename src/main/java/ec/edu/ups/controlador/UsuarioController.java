@@ -1,13 +1,16 @@
 package ec.edu.ups.controlador;
 
 import ec.edu.ups.dao.UsuarioDAO;
+import ec.edu.ups.modelo.RespuestaSeguridad;
 import ec.edu.ups.modelo.Rol;
 import ec.edu.ups.modelo.Usuario;
+import ec.edu.ups.modelo.Pregunta;
 import ec.edu.ups.servicio.PreguntaSeguridadService;
 import ec.edu.ups.util.MensajeInternacionalizacionHandler;
 import ec.edu.ups.vista.*;
 
 import javax.swing.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class UsuarioController {
@@ -30,7 +33,6 @@ public class UsuarioController {
         this.loginView = loginView;
         this.mensajes = mensajes;
 
-        // Eventos de login
         this.loginView.getBtnLogin().addActionListener(e -> autenticar());
         this.loginView.getBtnRegistrarse().addActionListener(e -> mostrarVistaRegistro());
         this.loginView.getBtnRecuperarContrasenia().addActionListener(e -> mostrarVistaRecuperarContrasenia());
@@ -67,7 +69,9 @@ public class UsuarioController {
     }
 
     private void mostrarVistaRegistro() {
-        RegistroView registroView = new RegistroView(mensajes, PreguntaSeguridadService.obtenerTodasLasPreguntas());
+        List<Pregunta> listaPreguntas = PreguntaSeguridadService.obtenerTodasLasPreguntas();
+
+        RegistroView registroView = new RegistroView(mensajes, listaPreguntas);
         registroView.setVisible(true);
 
         registroView.getBtnRegistrar().addActionListener(e -> {
@@ -77,19 +81,29 @@ public class UsuarioController {
             usuario.setUsername(registroView.getTxtUsername().getText().trim());
             usuario.setPassword(new String(registroView.getTxtContrasenia().getPassword()));
             usuario.setRol(Rol.USUARIO);
-
             usuario.setNombreCompleto(registroView.getNombreCompleto());
             usuario.setFechaNacimiento(registroView.getFechaNacimiento());
             usuario.setCorreo(registroView.getCorreo());
             usuario.setTelefono(registroView.getTelefono());
-            usuario.setPreguntasSeguridad(registroView.getPreguntasSeleccionadas());
-            usuario.setRespuestasSeguridad(registroView.getRespuestasSeleccionadas());
 
+            List<Pregunta> preguntasSeleccionadas = registroView.getPreguntasSeleccionadas();
+            List<String> respuestasSeleccionadas = registroView.getRespuestasSeleccionadas();
+
+            List<RespuestaSeguridad> respuestas = new ArrayList<>();
+            for (int i = 0; i < preguntasSeleccionadas.size(); i++) {
+                Pregunta pregunta = preguntasSeleccionadas.get(i);
+                String respuesta = respuestasSeleccionadas.get(i);
+                respuestas.add(new RespuestaSeguridad(pregunta, respuesta));
+            }
+
+            usuario.setRespuestasSeguridad(respuestas);
             usuarioDAO.crear(usuario);
             registroView.mostrarMensaje(mensajes.get("mensaje.usuario.creado"));
             registroView.dispose();
         });
     }
+
+
 
 
     private void mostrarVistaRecuperarContrasenia() {
@@ -102,17 +116,16 @@ public class UsuarioController {
             return;
         }
 
-        List<String> preguntas = usuario.getPreguntasSeguridad();
-        List<String> respuestas = usuario.getRespuestasSeguridad();
-
-        if (preguntas == null || respuestas == null || preguntas.isEmpty() || respuestas.isEmpty()) {
+        List<RespuestaSeguridad> lista = usuario.getRespuestasSeguridad();
+        if (lista == null || lista.isEmpty()) {
             JOptionPane.showMessageDialog(null, mensajes.get("recuperar.error.sin.preguntas"));
             return;
         }
 
-        int indice = (int) (Math.random() * preguntas.size());
-        String pregunta = preguntas.get(indice);
-        String respuestaCorrecta = respuestas.get(indice);
+        int indice = (int) (Math.random() * lista.size());
+        RespuestaSeguridad rs = lista.get(indice);
+        String pregunta = rs.getPregunta().getTexto();
+        String respuestaCorrecta = rs.getRespuesta();
 
         RecuperarContraseniaView recuperarView = new RecuperarContraseniaView(mensajes, pregunta);
         recuperarView.setVisible(true);
@@ -137,8 +150,6 @@ public class UsuarioController {
             }
         });
     }
-
-
 
     public void mostrarVistaCrearUsuario() {
         crearView.getBtnCrear().addActionListener(e -> {
@@ -168,18 +179,32 @@ public class UsuarioController {
         mostrarVentana(crearView);
     }
 
-
     private boolean esAdmin() {
-        return usuarioAutenticado != null && usuarioAutenticado.getRol() == Rol.ADMINISTRADOR;
+        return usuarioAutenticado != null && Rol.ADMINISTRADOR.equals(usuarioAutenticado.getRol());
     }
 
     public void mostrarVistaEliminarUsuario() {
         eliminarView.getBtnEliminar().addActionListener(e -> {
             String user = eliminarView.getTxtUsuario().getText();
-            usuarioDAO.eliminar(user);
-            eliminarView.mostrarMensaje(mensajes.get("mensaje.usuario.eliminado"));
-            eliminarView.limpiarCampos();
+            if (user.isBlank()) {
+                eliminarView.mostrarMensaje(mensajes.get("mensaje.usuario.buscar.vacio"));
+                return;
+            }
+
+            int opcion = JOptionPane.showConfirmDialog(
+                    eliminarView,
+                    mensajes.get("usuario.eliminar.confirmacion") + ": " + user + "?",
+                    mensajes.get("usuario.eliminar.titulo.app"),
+                    JOptionPane.YES_NO_OPTION
+            );
+
+            if (opcion == JOptionPane.YES_OPTION) {
+                usuarioDAO.eliminar(user);
+                eliminarView.mostrarMensaje(mensajes.get("mensaje.usuario.eliminado"));
+                eliminarView.limpiarCampos();
+            }
         });
+
         mostrarVentana(eliminarView);
     }
 

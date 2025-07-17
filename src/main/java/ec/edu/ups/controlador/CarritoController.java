@@ -1,14 +1,14 @@
 package ec.edu.ups.controlador;
 
-import ec.edu.ups.modelo.servicio.CarritoServiceImpl;
+import ec.edu.ups.dao.CarritoDAO;
+import ec.edu.ups.dao.ProductoDAO;
 import ec.edu.ups.modelo.Carrito;
 import ec.edu.ups.modelo.ItemCarrito;
 import ec.edu.ups.modelo.Producto;
 import ec.edu.ups.modelo.Rol;
 import ec.edu.ups.modelo.Usuario;
 import ec.edu.ups.modelo.servicio.CarritoService;
-import ec.edu.ups.dao.CarritoDAO;
-import ec.edu.ups.dao.ProductoDAO;
+import ec.edu.ups.modelo.servicio.CarritoServiceImpl;
 
 import java.util.List;
 
@@ -54,12 +54,15 @@ public class CarritoController {
         for (ItemCarrito item : carritoService.obtenerItems()) {
             carrito.agregarProducto(item.getProducto(), item.getCantidad());
         }
-        carrito.setUsuario(usuarioController.getUsuarioAutenticado());
+
+        Usuario usuario = usuarioController.getUsuarioAutenticado();
+        carrito.setUsuario(usuario);
+
         carritoDAO.crear(carrito);
         System.out.println(">>> DAO: Carrito guardado con código " + carrito.getCodigo());
+
         carritoService.vaciarCarrito();
     }
-
 
     public Producto buscarProductoPorCodigo(int codigo) {
         return productoDAO.buscarPorCodigo(codigo);
@@ -71,7 +74,7 @@ public class CarritoController {
 
     public List<Carrito> listarTodosCarritos() {
         Usuario usuario = usuarioController.getUsuarioAutenticado();
-        if (usuario != null && usuario.getRol() == Rol.ADMINISTRADOR) {
+        if (usuario != null && Rol.ADMINISTRADOR.equals(usuario.getRol())) {
             return carritoDAO.listarTodos();
         }
         return null;
@@ -79,14 +82,13 @@ public class CarritoController {
 
     public List<Carrito> listarMisCarritos() {
         Usuario usuario = usuarioController.getUsuarioAutenticado();
-        if (usuario != null && usuario.getRol() == Rol.USUARIO) {
+        if (usuario != null && Rol.USUARIO.equals(usuario.getRol())) {
             return carritoDAO.listarTodos().stream()
                     .filter(c -> c.getUsuario() != null &&
                             c.getUsuario().getUsername().equals(usuario.getUsername()))
                     .toList();
         }
         return List.of();
-
     }
 
     public List<Carrito> listarCarritosSinFiltro() {
@@ -98,15 +100,11 @@ public class CarritoController {
     }
 
     public void modificarCantidad(Carrito carrito, int codigoProducto, int nuevaCantidad) {
-        for (ItemCarrito item : carrito.obtenerItems()) {
-            if (item.getProducto().getCodigo() == codigoProducto) {
-                item.setCantidad(nuevaCantidad);
-                return;
-            }
-        }
-        System.out.println(">>> Producto con código " + codigoProducto + " no encontrado en el carrito.");
-    }
+        if (carrito == null) return;
 
+        carrito.actualizarCantidadProducto(codigoProducto, nuevaCantidad);
+        System.out.println(">>> Cantidad modificada en el carrito " + carrito.getCodigo() + ": Producto " + codigoProducto + " → " + nuevaCantidad);
+    }
 
     public void imprimirTodosCarritosDebug() {
         System.out.println(">>> LISTA DE CARRITOS:");

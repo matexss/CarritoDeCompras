@@ -1,9 +1,9 @@
 package ec.edu.ups.vista;
 
-import ec.edu.ups.servicio.PreguntaSeguridadService;
+import ec.edu.ups.modelo.Pregunta;
 import ec.edu.ups.util.MensajeInternacionalizacionHandler;
 import ec.edu.ups.util.IconUtil;
-
+import ec.edu.ups.modelo.RespuestaSeguridad;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
@@ -22,17 +22,16 @@ public class RegistroView extends JFrame {
     private JTextField txtCorreo;
     private JTextField txtTelefono;
     private JComboBox<String> comboRol;
-    private JComboBox<String> comboPregunta1;
-    private JComboBox<String> comboPregunta2;
-    private JComboBox<String> comboPregunta3;
+    private JComboBox<Pregunta> comboPregunta1;
+    private JComboBox<Pregunta> comboPregunta2;
+    private JComboBox<Pregunta> comboPregunta3;
     private JTextField txtRespuesta1;
     private JTextField txtRespuesta2;
     private JTextField txtRespuesta3;
     private JButton btnRegistrar;
-
     private MensajeInternacionalizacionHandler mensajes;
 
-    public RegistroView(MensajeInternacionalizacionHandler mensajes, List<String> preguntas) {
+    public RegistroView(MensajeInternacionalizacionHandler mensajes, List<Pregunta> preguntas) {
         this.mensajes = mensajes;
         setTitle(mensajes.get("registro.titulo"));
         setSize(600, 650);
@@ -59,9 +58,9 @@ public class RegistroView extends JFrame {
         panel.add(createFieldPanel(mensajes.get("registro.telefono"), txtTelefono = crearCampo(inputBg, fuente, bordeColor)));
         panel.add(createComboBoxPanel(mensajes.get("registro.rol"), comboRol = new JComboBox<>(new String[]{"USUARIO"})));
 
-        comboPregunta1 = new JComboBox<>(preguntas.toArray(new String[0]));
-        comboPregunta2 = new JComboBox<>(preguntas.toArray(new String[0]));
-        comboPregunta3 = new JComboBox<>(preguntas.toArray(new String[0]));
+        comboPregunta1 = new JComboBox<>(preguntas.toArray(new Pregunta[0]));
+        comboPregunta2 = new JComboBox<>(preguntas.toArray(new Pregunta[0]));
+        comboPregunta3 = new JComboBox<>(preguntas.toArray(new Pregunta[0]));
 
         txtRespuesta1 = crearCampo(inputBg, fuente, bordeColor);
         txtRespuesta2 = crearCampo(inputBg, fuente, bordeColor);
@@ -103,7 +102,7 @@ public class RegistroView extends JFrame {
         return panel;
     }
 
-    private JPanel createComboBoxPanel(String labelText, JComboBox<String> comboBox) {
+    private JPanel createComboBoxPanel(String labelText, JComboBox<?> comboBox) {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         panel.setBackground(new Color(255, 245, 230));
         panel.add(new JLabel(labelText));
@@ -120,11 +119,11 @@ public class RegistroView extends JFrame {
     public String getCorreo() { return txtCorreo.getText().trim(); }
     public String getTelefono() { return txtTelefono.getText().trim(); }
 
-    public List<String> getPreguntasSeleccionadas() {
-        List<String> preguntas = new ArrayList<>();
-        preguntas.add((String) comboPregunta1.getSelectedItem());
-        preguntas.add((String) comboPregunta2.getSelectedItem());
-        preguntas.add((String) comboPregunta3.getSelectedItem());
+    public List<Pregunta> getPreguntasSeleccionadas() {
+        List<Pregunta> preguntas = new ArrayList<>();
+        preguntas.add((Pregunta) comboPregunta1.getSelectedItem());
+        preguntas.add((Pregunta) comboPregunta2.getSelectedItem());
+        preguntas.add((Pregunta) comboPregunta3.getSelectedItem());
         return preguntas;
     }
 

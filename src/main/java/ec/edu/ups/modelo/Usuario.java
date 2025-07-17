@@ -7,15 +7,13 @@ public class Usuario {
     private String username;
     private String password;
     private Rol rol;
-    private List<String> preguntasSeguridad;
-    private List<String> respuestasSeguridad;
+    private List<RespuestaSeguridad> respuestasSeguridad;
     private String nombreCompleto;
     private String fechaNacimiento;
     private String correo;
     private String telefono;
 
-    public Usuario() {
-    }
+    public Usuario() {}
 
     public String getUsername() { return username; }
     public void setUsername(String username) { this.username = username; }
@@ -26,11 +24,13 @@ public class Usuario {
     public Rol getRol() { return rol; }
     public void setRol(Rol rol) { this.rol = rol; }
 
-    public List<String> getPreguntasSeguridad() { return preguntasSeguridad; }
-    public void setPreguntasSeguridad(List<String> preguntasSeguridad) { this.preguntasSeguridad = preguntasSeguridad; }
+    public List<RespuestaSeguridad> getRespuestasSeguridad() {
+        return respuestasSeguridad;
+    }
 
-    public List<String> getRespuestasSeguridad() { return respuestasSeguridad; }
-    public void setRespuestasSeguridad(List<String> respuestasSeguridad) { this.respuestasSeguridad = respuestasSeguridad; }
+    public void setRespuestasSeguridad(List<RespuestaSeguridad> respuestasSeguridad) {
+        this.respuestasSeguridad = respuestasSeguridad;
+    }
 
     public String getNombreCompleto() { return nombreCompleto; }
     public void setNombreCompleto(String nombreCompleto) { this.nombreCompleto = nombreCompleto; }
