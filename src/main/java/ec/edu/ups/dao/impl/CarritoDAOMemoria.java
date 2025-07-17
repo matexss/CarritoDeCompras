@@ -12,7 +12,7 @@ public class CarritoDAOMemoria implements CarritoDAO {
     private int secuencia = 1;
 
     @Override
-    public void crear(Carrito carrito) {
+    public void guardar(Carrito carrito) {
         carrito.setCodigo(secuencia++);
         lista.add(carrito);
     }

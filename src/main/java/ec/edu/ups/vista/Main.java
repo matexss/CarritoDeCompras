@@ -6,31 +6,67 @@ import ec.edu.ups.controlador.UsuarioController;
 import ec.edu.ups.dao.CarritoDAO;
 import ec.edu.ups.dao.ProductoDAO;
 import ec.edu.ups.dao.UsuarioDAO;
-import ec.edu.ups.dao.impl.CarritoDAOMemoria;
-import ec.edu.ups.dao.impl.ProductoDAOMemoria;
-import ec.edu.ups.dao.impl.UsuarioDAOMemoria;
+import ec.edu.ups.dao.impl.*;
 import ec.edu.ups.modelo.Rol;
 import ec.edu.ups.modelo.Usuario;
 import ec.edu.ups.modelo.servicio.CarritoServiceImpl;
 import ec.edu.ups.util.MensajeInternacionalizacionHandler;
-import ec.edu.ups.vista.MenuPrincipalView;
+
 import javax.swing.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
 
 public class Main {
-
-    private static final UsuarioDAO usuarioDAO = new UsuarioDAOMemoria();
-    private static final ProductoDAO productoDAO = new ProductoDAOMemoria();
-    private static final CarritoDAO carritoDAO = new CarritoDAOMemoria();
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(Main::iniciarAplicacion);
     }
 
     public static void iniciarAplicacion() {
+        String[] opciones = {"Memoria", "Archivo Texto", "Archivo Binario"};
+        int seleccion = JOptionPane.showOptionDialog(null,
+                "Seleccione el tipo de almacenamiento",
+                "Tipo de Almacenamiento",
+                JOptionPane.DEFAULT_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                opciones,
+                opciones[0]);
+
+        UsuarioDAO usuarioDAO;
+        ProductoDAO productoDAO;
+        CarritoDAO carritoDAO;
+
+        if (seleccion == 1 || seleccion == 2) {
+            JFileChooser chooser = new JFileChooser();
+            chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+            int opcionRuta = chooser.showOpenDialog(null);
+            if (opcionRuta != JFileChooser.APPROVE_OPTION) {
+                JOptionPane.showMessageDialog(null, "No se seleccionó directorio. Cerrando aplicación.");
+                System.exit(0);
+            }
+            File carpeta = chooser.getSelectedFile();
+
+            if (seleccion == 1) { // Texto
+                usuarioDAO = new UsuarioDAOArchivoTexto(new File(carpeta, "usuarios.txt").getAbsolutePath());
+                productoDAO = new ProductoDAOArchivoTexto(new File(carpeta, "productos.txt").getAbsolutePath());
+                carritoDAO = new CarritoDAOArchivoTexto(new File(carpeta, "carritos.txt").getAbsolutePath());
+            } else { // Binario
+                usuarioDAO = new UsuarioDAOArchivoBinario(new File(carpeta, "usuarios.bin").getAbsolutePath());
+                productoDAO = new ProductoDAOArchivoBinario(new File(carpeta, "productos.bin").getAbsolutePath());
+                carritoDAO = new CarritoDAOArchivoBinario(new File(carpeta, "carritos.bin").getAbsolutePath());
+            }
+
+        } else {
+            usuarioDAO = new UsuarioDAOMemoria();
+            productoDAO = new ProductoDAOMemoria();
+            carritoDAO = new CarritoDAOMemoria();
+        }
+
         MensajeInternacionalizacionHandler mensajes = new MensajeInternacionalizacionHandler("es", "EC");
         mensajes.verificarClavesFaltantes("claves_requeridas.txt");
+
         LoginView loginView = new LoginView();
         UsuarioController usuarioController = new UsuarioController(usuarioDAO, loginView, mensajes);
         loginView.setVisible(true);
@@ -42,7 +78,6 @@ public class Main {
                 if (usuarioAutenticado != null) {
                     CarritoServiceImpl carritoService = new CarritoServiceImpl();
                     CarritoController carritoController = new CarritoController(carritoDAO, productoDAO, usuarioController);
-                    System.out.println();
 
                     ProductoAnadirView productoAnadirView = new ProductoAnadirView(mensajes);
                     ProductoListaView productoListaView = new ProductoListaView(mensajes);
@@ -63,7 +98,6 @@ public class Main {
 
                     usuarioController.setInternacionalizacionYVistas(mensajes, principalView);
 
-                    // Configuración de menús
                     principalView.getMenuItemCrearUsuario().addActionListener(ev -> usuarioController.mostrarVistaCrearUsuario());
                     principalView.getMenuItemEliminarUsuario().addActionListener(ev -> usuarioController.mostrarVistaEliminarUsuario());
                     principalView.getMenuItemModificarUsuario().addActionListener(ev -> usuarioController.mostrarVistaModificarUsuario());
@@ -75,13 +109,11 @@ public class Main {
                         principalView.ocultarMenusAdministrador();
                     }
 
-                    // Productos
                     principalView.getMenuItemCrearProducto().addActionListener(ev -> mostrarVentana(productoAnadirView, principalView));
                     principalView.getMenuItemBuscarProducto().addActionListener(ev -> mostrarVentana(productoListaView, principalView));
                     principalView.getMenuItemEliminarProducto().addActionListener(ev -> mostrarVentana(productoEliminarView, principalView));
                     principalView.getMenuItemActualizarProducto().addActionListener(ev -> mostrarVentana(productoModificarView, principalView));
 
-                    // Carritos
                     principalView.getMenuItemCrearCarrito().addActionListener(ev -> mostrarVentana(carritoAnadirView, principalView));
                     principalView.getMenuItemEliminarCarrito().addActionListener(ev -> mostrarVentana(carritoEliminarView, principalView));
                     principalView.getMenuItemModificarCarrito().addActionListener(ev -> mostrarVentana(carritoModificarView, principalView));
@@ -94,18 +126,15 @@ public class Main {
                     });
                     principalView.getMenuItemListarMisCarritos().addActionListener(ev -> mostrarVentana(carritoListarMisView, principalView));
 
-                    // Idioma
                     principalView.getMenuItemIdiomaEspanol().addActionListener(ev -> principalView.cambiarIdioma("es", "EC"));
                     principalView.getMenuItemIdiomaIngles().addActionListener(ev -> principalView.cambiarIdioma("en", "US"));
                     principalView.getMenuItemIdiomaFrances().addActionListener(ev -> principalView.cambiarIdioma("fr", "FR"));
 
-                    // Salir
                     principalView.getMenuItemSalir().addActionListener(ev -> {
                         int opcion = JOptionPane.showConfirmDialog(principalView, mensajes.get("menu.salir.confirmacion"), mensajes.get("menu.salir.titulo"), JOptionPane.YES_NO_OPTION);
                         if (opcion == JOptionPane.YES_OPTION) System.exit(0);
                     });
 
-                    // Cerrar sesión
                     principalView.getMenuItemCerrarSesion().addActionListener(ev -> {
                         int opcion = JOptionPane.showConfirmDialog(principalView, mensajes.get("menu.salir.cerrarConfirmacion"), mensajes.get("menu.salir.titulo"), JOptionPane.YES_NO_OPTION);
                         if (opcion == JOptionPane.YES_OPTION) {

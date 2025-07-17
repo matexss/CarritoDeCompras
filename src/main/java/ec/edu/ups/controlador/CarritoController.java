@@ -58,7 +58,7 @@ public class CarritoController {
         Usuario usuario = usuarioController.getUsuarioAutenticado();
         carrito.setUsuario(usuario);
 
-        carritoDAO.crear(carrito);
+        carritoDAO.guardar(carrito);
         System.out.println(">>> DAO: Carrito guardado con código " + carrito.getCodigo());
 
         carritoService.vaciarCarrito();
