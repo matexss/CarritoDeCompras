@@ -30,10 +30,7 @@ public class Pregunta {
 
     @Override
     public String toString() {
-        return "Pregunta{" +
-                "id=" + id +
-                ", texto='" + texto + '\'' +
-                '}';
+        return texto;
     }
 
     @Override

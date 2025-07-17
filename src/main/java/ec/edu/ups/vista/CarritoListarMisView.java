@@ -82,10 +82,25 @@ public class CarritoListarMisView extends JInternalFrame implements Actualizable
 
     private void eliminar() {
         int row = tabla.getSelectedRow();
-        if (row == -1) return;
+        if (row == -1) {
+            JOptionPane.showMessageDialog(this,
+                    mensajes.get("carrito.eliminar.seleccionar"),
+                    mensajes.get("global.error"),
+                    JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
         int cod = (int) modelo.getValueAt(row, 0);
-        carritoController.eliminarCarrito(cod);
-        cargarCarritos();
+
+        int opcion = JOptionPane.showConfirmDialog(this,
+                mensajes.get("carrito.eliminar.confirmacion") + " " + cod + "?",
+                mensajes.get("menu.carrito.eliminar"),
+                JOptionPane.YES_NO_OPTION);
+
+        if (opcion == JOptionPane.YES_OPTION) {
+            carritoController.eliminarCarrito(cod);
+            cargarCarritos();
+        }
     }
 
     private void modificar() {
