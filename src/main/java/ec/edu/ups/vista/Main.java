@@ -31,7 +31,6 @@ public class Main {
     public static void iniciarAplicacion() {
         MensajeInternacionalizacionHandler mensajes = new MensajeInternacionalizacionHandler("es", "EC");
         mensajes.verificarClavesFaltantes("claves_requeridas.txt");
-        System.out.println();
         LoginView loginView = new LoginView();
         UsuarioController usuarioController = new UsuarioController(usuarioDAO, loginView, mensajes);
         loginView.setVisible(true);

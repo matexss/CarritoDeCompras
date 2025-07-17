@@ -8,7 +8,9 @@ import ec.edu.ups.modelo.Pregunta;
 import ec.edu.ups.servicio.PreguntaSeguridadService;
 import ec.edu.ups.util.MensajeInternacionalizacionHandler;
 import ec.edu.ups.vista.*;
-
+import ec.edu.ups.excepciones.CedulaInvalidaException;
+import ec.edu.ups.excepciones.ContraseniaInvalidaException;
+import ec.edu.ups.util.ValidadorUsuario;
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -86,14 +88,26 @@ public class UsuarioController {
             usuario.setCorreo(registroView.getCorreo());
             usuario.setTelefono(registroView.getTelefono());
 
+            try {
+                ValidadorUsuario.validarCedula(usuario.getUsername());
+                ValidadorUsuario.validarContrasenia(usuario.getPassword());
+                ValidadorUsuario.validarCorreo(usuario.getCorreo());
+                ValidadorUsuario.validarTelefono(usuario.getTelefono());
+            } catch (CedulaInvalidaException | ContraseniaInvalidaException ex) {
+                registroView.mostrarMensaje(ex.getMessage());
+                return;
+            } catch (IllegalArgumentException ex) {
+                registroView.mostrarMensaje("Error en campos: " + ex.getMessage());
+                return;
+            }
+
+            // Procesar preguntas y respuestas
             List<Pregunta> preguntasSeleccionadas = registroView.getPreguntasSeleccionadas();
             List<String> respuestasSeleccionadas = registroView.getRespuestasSeleccionadas();
 
             List<RespuestaSeguridad> respuestas = new ArrayList<>();
             for (int i = 0; i < preguntasSeleccionadas.size(); i++) {
-                Pregunta pregunta = preguntasSeleccionadas.get(i);
-                String respuesta = respuestasSeleccionadas.get(i);
-                respuestas.add(new RespuestaSeguridad(pregunta, respuesta));
+                respuestas.add(new RespuestaSeguridad(preguntasSeleccionadas.get(i), respuestasSeleccionadas.get(i)));
             }
 
             usuario.setRespuestasSeguridad(respuestas);
@@ -102,6 +116,7 @@ public class UsuarioController {
             registroView.dispose();
         });
     }
+
 
 
 
