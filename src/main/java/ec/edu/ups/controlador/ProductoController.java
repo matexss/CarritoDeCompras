@@ -269,6 +269,9 @@ public class ProductoController {
         productoDAO.crear(new Producto(codigo, nombre, precio));
         productoAnadirView.mostrarMensaje("Producto guardado.");
         productoAnadirView.limpiarCampos();
+
+        productoListaView.mostrarProductos(productoDAO.listarTodos());
+        productoEliminarView.mostrarProductos(productoDAO.listarTodos());
     }
 
     private void buscarProducto() {

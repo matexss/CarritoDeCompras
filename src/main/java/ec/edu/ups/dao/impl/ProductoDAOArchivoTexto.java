@@ -93,19 +93,48 @@ public class ProductoDAOArchivoTexto implements ProductoDAO {
 
         try (BufferedReader reader = new BufferedReader(new FileReader(archivo))) {
             String linea;
+            int lineaActual = 0;
+
             while ((linea = reader.readLine()) != null) {
+                lineaActual++;
+                if (linea.trim().isEmpty()) continue;
+
                 String[] partes = linea.split(",");
-                if (partes.length == 3) {
-                    int codigo = Integer.parseInt(partes[0]);
-                    String nombre = partes[1];
-                    double precio = Double.parseDouble(partes[2]);
+                if (partes.length != 3) {
+                    System.err.println("[ADVERTENCIA] Línea malformada en archivo de productos (línea " + lineaActual + "): " + linea);
+                    continue;
+                }
+
+                try {
+                    int codigo = Integer.parseInt(partes[0].trim());
+                    String nombre = partes[1].trim();
+                    double precio = Double.parseDouble(partes[2].trim());
                     productos.add(new Producto(codigo, nombre, precio));
+                } catch (NumberFormatException e) {
+                    System.err.println("[ERROR] Error de formato numérico en línea " + lineaActual + ": " + e.getMessage());
                 }
             }
-        } catch (IOException | NumberFormatException e) {
+        } catch (IOException e) {
             throw new RuntimeException("Error al leer productos desde archivo: " + e.getMessage());
         }
 
         return productos;
+    }
+
+
+
+    public void listarPresentacion() {
+        List<Producto> productos = listarTodos();
+        System.out.println("=== Lista de Productos ===");
+        for (Producto p : productos) {
+            System.out.println(formatearProducto(p));
+        }
+        System.out.println("---");
+    }
+
+    private String formatearProducto(Producto producto) {
+        return "ProductoID: " + producto.getCodigo() +
+                " | Nombre: " + producto.getNombre() +
+                " | Precio: " + String.format("%.2f", producto.getPrecio());
     }
 }

@@ -98,7 +98,8 @@
                             carrito.setUsuario(u);
                         } else if (linea.startsWith("Fecha:")) {
                             GregorianCalendar fecha = new GregorianCalendar();
-                            fecha.setTime(formatoFecha.parse(linea.split(":")[1].trim()));
+                            String fechaTexto = linea.substring("Fecha:".length()).trim();
+                            fecha.setTime(formatoFecha.parse(fechaTexto));
                             carrito.setFechaCreacion(fecha);
                         } else if (linea.startsWith("  - Codigo:")) {
                             String[] partes = linea.split("\\|");
