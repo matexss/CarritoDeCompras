@@ -6,6 +6,7 @@ import ec.edu.ups.util.IconUtil;
 import ec.edu.ups.util.MensajeInternacionalizacionHandler;
 
 import javax.swing.*;
+import java.awt.*;
 import java.util.Locale;
 
 public class ProductoAnadirView extends JInternalFrame implements ActualizableConIdioma {
@@ -37,29 +38,39 @@ public class ProductoAnadirView extends JInternalFrame implements ActualizableCo
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setLocation(30, 30);
 
+        Color fondo = new Color(255, 228, 232);
+        Font fuente = new Font("Segoe UI", Font.PLAIN, 14);
+
         panelPrincipal = new JPanel();
         panelPrincipal.setLayout(null);
+        panelPrincipal.setBackground(fondo);
+
+        JLabel titulo = new JLabel("Añadir Producto");
+        titulo.setFont(new Font("Segoe UI", Font.BOLD, 22));
+        titulo.setForeground(new Color(80, 20, 60));
+        titulo.setBounds(120, 5, 200, 30);
+        panelPrincipal.add(titulo);
 
         lblCodigo = new JLabel();
-        lblCodigo.setBounds(20, 20, 100, 25);
+        lblCodigo.setBounds(20, 40, 100, 25);
         txtCodigo = new JTextField();
-        txtCodigo.setBounds(120, 20, 200, 25);
+        txtCodigo.setBounds(120, 40, 200, 25);
 
         lblNombre = new JLabel();
-        lblNombre.setBounds(20, 60, 100, 25);
+        lblNombre.setBounds(20, 75, 100, 25);
         txtNombre = new JTextField();
-        txtNombre.setBounds(120, 60, 200, 25);
+        txtNombre.setBounds(120, 75, 200, 25);
 
         lblPrecio = new JLabel();
-        lblPrecio.setBounds(20, 100, 100, 25);
+        lblPrecio.setBounds(20, 110, 100, 25);
         txtPrecio = new JTextField();
-        txtPrecio.setBounds(120, 100, 200, 25);
+        txtPrecio.setBounds(120, 110, 200, 25);
 
         btnAceptar = new JButton(IconUtil.cargarIcono("logout.png"));
-        btnAceptar.setBounds(70, 150, 100, 30);
+        btnAceptar.setBounds(70, 160, 100, 30);
 
         btnLimpiar = new JButton(IconUtil.cargarIcono("eliminar.png"));
-        btnLimpiar.setBounds(210, 150, 100, 30);
+        btnLimpiar.setBounds(210, 160, 100, 30);
 
         panelPrincipal.add(lblCodigo);
         panelPrincipal.add(txtCodigo);
@@ -72,6 +83,7 @@ public class ProductoAnadirView extends JInternalFrame implements ActualizableCo
 
         setContentPane(panelPrincipal);
     }
+
 
     @Override
     public void actualizarTextos(MensajeInternacionalizacionHandler mensajes) {

@@ -34,7 +34,7 @@ public class RecuperarContraseniaView extends JFrame implements ActualizableConI
 
     private void initComponents() {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setSize(600, 320);
+        setSize(600, 340);
         setLocationRelativeTo(null);
         setResizable(false);
 
@@ -50,6 +50,14 @@ public class RecuperarContraseniaView extends JFrame implements ActualizableConI
         panelPrincipal.setBackground(fondo);
         panelPrincipal.setLayout(new BoxLayout(panelPrincipal, BoxLayout.Y_AXIS));
         panelPrincipal.setBorder(new EmptyBorder(20, 40, 20, 40));
+
+        // 🔹 NUEVO: Título elegante
+        JLabel titulo = new JLabel("Recuperar Contraseña");
+        titulo.setFont(new Font("Segoe UI", Font.BOLD, 24));
+        titulo.setForeground(new Color(80, 20, 60));
+        titulo.setAlignmentX(Component.CENTER_ALIGNMENT);
+        titulo.setBorder(new EmptyBorder(0, 0, 15, 0));
+        panelPrincipal.add(titulo);
 
         lblPregunta = new JTextArea();
         lblPregunta.setWrapStyleWord(true);
@@ -111,6 +119,7 @@ public class RecuperarContraseniaView extends JFrame implements ActualizableConI
 
         add(panelPrincipal, BorderLayout.CENTER);
     }
+
 
     @Override
     public void actualizarTextos(MensajeInternacionalizacionHandler mensajes) {

@@ -69,7 +69,6 @@ public class Main {
         MensajeInternacionalizacionHandler mensajes = new MensajeInternacionalizacionHandler("es", "EC");
         mensajes.verificarClavesFaltantes("claves_requeridas.txt");
 
-        // 🔁 Versión corregida del LoginView
         LoginView loginView = new LoginView(mensajes);
         UsuarioController usuarioController = new UsuarioController(usuarioDAO, loginView, mensajes);
         loginView.setVisible(true);

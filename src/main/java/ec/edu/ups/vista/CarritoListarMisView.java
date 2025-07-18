@@ -26,14 +26,25 @@ public class CarritoListarMisView extends JInternalFrame implements Actualizable
         mensajes = msg;
         locale = msg.getLocale();
 
-        setSize(600, 400);
+        Color fondo = new Color(255, 228, 232);
+        Font fuenteTitulo = new Font("Segoe UI", Font.BOLD, 22);
+        JLabel titulo = new JLabel("Mis Carritos", SwingConstants.CENTER);
+        titulo.setFont(fuenteTitulo);
+        titulo.setForeground(new Color(80, 20, 60));
+        titulo.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+        getContentPane().setBackground(fondo);
         setLayout(new BorderLayout());
+        add(titulo, BorderLayout.NORTH);
+
+        setSize(600, 400);
 
         modelo = new DefaultTableModel();
         tabla = new JTable(modelo);
         add(new JScrollPane(tabla), BorderLayout.CENTER);
 
         JPanel south = new JPanel();
+        south.setBackground(fondo); // 👈 fondo también para la parte inferior
         btnModificar = new JButton(IconUtil.cargarIcono("carrito-editar.png", 16, 16));
         btnEliminar  = new JButton(IconUtil.cargarIcono("carrito-eliminar.png", 16, 16));
         south.add(btnModificar);
@@ -51,6 +62,7 @@ public class CarritoListarMisView extends JInternalFrame implements Actualizable
 
         actualizarTextos(mensajes);
     }
+
 
     @Override
     public void actualizarTextos(MensajeInternacionalizacionHandler mensajes) {
@@ -79,6 +91,8 @@ public class CarritoListarMisView extends JInternalFrame implements Actualizable
             });
         }
     }
+
+
 
     private void eliminar() {
         int row = tabla.getSelectedRow();

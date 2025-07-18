@@ -38,19 +38,27 @@ public class ProductoEliminarView extends JInternalFrame implements Actualizable
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setLocation(50, 50);
 
+        Color fondo = new Color(255, 228, 232);
         panelPrincipal = new JPanel(new BorderLayout());
 
         JPanel panelSuperior = new JPanel(null);
-        panelSuperior.setPreferredSize(new Dimension(600, 70));
+        panelSuperior.setPreferredSize(new Dimension(600, 90));
+        panelSuperior.setBackground(fondo);
+
+        JLabel titulo = new JLabel("Eliminar Producto");
+        titulo.setFont(new Font("Segoe UI", Font.BOLD, 22));
+        titulo.setForeground(new Color(80, 20, 60));
+        titulo.setBounds(200, 5, 300, 30);
+        panelSuperior.add(titulo);
 
         lblNombre = new JLabel();
-        lblNombre.setBounds(20, 20, 100, 25);
+        lblNombre.setBounds(20, 45, 100, 25);
 
         txtNombre = new JTextField();
-        txtNombre.setBounds(130, 20, 200, 25);
+        txtNombre.setBounds(130, 45, 200, 25);
 
         btnEliminar = new JButton(IconUtil.cargarIcono("eliminar.png"));
-        btnEliminar.setBounds(350, 20, 120, 25);
+        btnEliminar.setBounds(350, 45, 120, 25);
 
         panelSuperior.add(lblNombre);
         panelSuperior.add(txtNombre);
@@ -64,6 +72,7 @@ public class ProductoEliminarView extends JInternalFrame implements Actualizable
         panelPrincipal.add(scrollPane, BorderLayout.CENTER);
         setContentPane(panelPrincipal);
     }
+
 
     @Override
     public void actualizarTextos(MensajeInternacionalizacionHandler mensajes) {

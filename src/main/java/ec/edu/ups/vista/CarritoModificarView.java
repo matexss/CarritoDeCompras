@@ -41,12 +41,23 @@ public class CarritoModificarView extends JInternalFrame implements Actualizable
     }
 
     private void initComponents() {
+        Color fondo = new Color(255, 228, 232);
+        Font fuenteTitulo = new Font("Segoe UI", Font.BOLD, 22);
+        JLabel titulo = new JLabel("Modificar Carrito", SwingConstants.CENTER);
+        titulo.setFont(fuenteTitulo);
+        titulo.setForeground(new Color(80, 20, 60));
+        titulo.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+        getContentPane().setBackground(fondo);
+        setLayout(new BorderLayout());
+        add(titulo, BorderLayout.NORTH);
+
         setSize(700, 400);
         setClosable(true);
         setResizable(true);
-        setLayout(new BorderLayout());
 
         JPanel panelEntrada = new JPanel(new GridLayout(4, 2, 10, 10));
+        panelEntrada.setBackground(fondo);
 
         lblCarrito = new JLabel();
         lblProducto = new JLabel();
@@ -90,6 +101,7 @@ public class CarritoModificarView extends JInternalFrame implements Actualizable
 
         btnGuardarCambios = new JButton();
         JPanel panelInferior = new JPanel();
+        panelInferior.setBackground(fondo);
         panelInferior.add(btnGuardarCambios);
         add(panelInferior, BorderLayout.SOUTH);
 
@@ -97,6 +109,7 @@ public class CarritoModificarView extends JInternalFrame implements Actualizable
         btnBuscarCarrito.addActionListener(e -> buscarCarrito());
         btnModificar.addActionListener(e -> modificarCantidad());
     }
+
 
     public void actualizarTextos(MensajeInternacionalizacionHandler mensajes) {
         this.locale = new Locale(mensajes.get("locale.language"), mensajes.get("locale.country"));

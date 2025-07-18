@@ -1,22 +1,21 @@
 package ec.edu.ups.vista;
 
+import ec.edu.ups.modelo.Usuario;
 import ec.edu.ups.util.ActualizableConIdioma;
-import ec.edu.ups.util.MensajeInternacionalizacionHandler;
 import ec.edu.ups.util.IconUtil;
+import ec.edu.ups.util.MensajeInternacionalizacionHandler;
+
 import javax.swing.*;
 import java.awt.*;
 
 public class UsuarioEliminarView extends JInternalFrame implements ActualizableConIdioma {
 
-    private JLabel lblTitulo;
-    private JLabel lblUsuario;
+    private JLabel lblTitulo, lblUsuario;
     private JTextField txtUsuario;
-    private JButton btnEliminar;
-
-    private MensajeInternacionalizacionHandler mensajes;
-    private JButton button1;
+    private JButton btnEliminar, button1;
     private JTextField textField1;
     private JTextField textField2;
+    private MensajeInternacionalizacionHandler mensajes;
 
     public UsuarioEliminarView(MensajeInternacionalizacionHandler mensajes) {
         super("", true, true, true, true);
@@ -26,15 +25,19 @@ public class UsuarioEliminarView extends JInternalFrame implements ActualizableC
     }
 
     private void initComponents() {
-        setSize(400, 200);
+        setSize(400, 220);
         setLayout(new BorderLayout());
+        getContentPane().setBackground(new Color(255, 228, 232));
 
         lblTitulo = new JLabel("", SwingConstants.CENTER);
-        lblTitulo.setFont(new Font("Arial", Font.BOLD, 16));
+        lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 22));
+        lblTitulo.setForeground(new Color(80, 20, 60));
+        lblTitulo.setBorder(BorderFactory.createEmptyBorder(15, 10, 15, 10));
         add(lblTitulo, BorderLayout.NORTH);
 
         JPanel panelCentro = new JPanel(new GridLayout(2, 2, 10, 10));
-        panelCentro.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        panelCentro.setBorder(BorderFactory.createEmptyBorder(20, 40, 20, 40));
+        panelCentro.setOpaque(false);
 
         lblUsuario = new JLabel();
         txtUsuario = new JTextField();
@@ -48,7 +51,6 @@ public class UsuarioEliminarView extends JInternalFrame implements ActualizableC
 
         add(panelCentro, BorderLayout.CENTER);
     }
-
 
     @Override
     public void actualizarTextos(MensajeInternacionalizacionHandler mensajes) {

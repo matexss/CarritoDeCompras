@@ -6,8 +6,8 @@ import ec.edu.ups.modelo.ItemCarrito;
 import ec.edu.ups.modelo.Producto;
 import ec.edu.ups.util.ActualizableConIdioma;
 import ec.edu.ups.util.FormateadorUtils;
-import ec.edu.ups.util.MensajeInternacionalizacionHandler;
 import ec.edu.ups.util.IconUtil;
+import ec.edu.ups.util.MensajeInternacionalizacionHandler;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -21,21 +21,23 @@ public class CarritoAnadirView extends JInternalFrame implements ActualizableCon
     private JTextField txtNombre;
     private JTextField txtPrecio;
     private JTextField txtCantidad;
-    private JButton   btnBuscar;
-    private JButton   btnAñadir;
-    private JButton   btnGuardar;
-    private JTable    table;
+    private JButton btnBuscar;
+    private JButton btnAñadir;
+    private JButton btnGuardar;
+    private JTable table;
     private JTextField txtSubtotal;
     private JTextField txtIva;
     private JTextField txtTotal;
     private DefaultTableModel modelo;
 
+    private JLabel lblCodigo, lblNombre, lblPrecio, lblCantidad;
+    private JLabel lblSubtotal, lblIva, lblTotal;
+
     private final CarritoController carritoController;
     private final MensajeInternacionalizacionHandler mensajes;
     private Locale locale;
 
-    public CarritoAnadirView(MensajeInternacionalizacionHandler mensajes,
-                             CarritoController carritoController) {
+    public CarritoAnadirView(MensajeInternacionalizacionHandler mensajes, CarritoController carritoController) {
         super("", true, true, true, true);
         this.mensajes = mensajes;
         this.carritoController = carritoController;
@@ -48,53 +50,78 @@ public class CarritoAnadirView extends JInternalFrame implements ActualizableCon
     private void initComponents() {
         setSize(750, 550);
         setLayout(new BorderLayout());
+        Color fondo = new Color(255, 228, 232);
+        getContentPane().setBackground(fondo);
+
+        JLabel titulo = new JLabel("Añadir Carrito", SwingConstants.CENTER);
+        titulo.setFont(new Font("Segoe UI", Font.BOLD, 22));
+        titulo.setForeground(new Color(80, 20, 60));
+        titulo.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        add(titulo, BorderLayout.NORTH);
 
         JPanel panelBusqueda = new JPanel(new GridLayout(2, 5, 10, 10));
+        panelBusqueda.setBorder(BorderFactory.createEmptyBorder(15, 15, 10, 15));
+        panelBusqueda.setBackground(fondo);
 
-        txtCodigo   = new JTextField();
-        txtNombre   = new JTextField();  txtNombre.setEditable(false);
-        txtPrecio   = new JTextField();  txtPrecio.setEditable(false);
+        lblCodigo = new JLabel();
+        lblNombre = new JLabel();
+        lblPrecio = new JLabel();
+        lblCantidad = new JLabel();
+
+        txtCodigo = new JTextField();
+        txtNombre = new JTextField(); txtNombre.setEditable(false);
+        txtPrecio = new JTextField(); txtPrecio.setEditable(false);
         txtCantidad = new JTextField("1");
 
         btnBuscar = new JButton(IconUtil.cargarIcono("search.png", 18, 18));
         btnAñadir = new JButton(IconUtil.cargarIcono("carrito-añadir.png", 18, 18));
         btnGuardar = new JButton(IconUtil.cargarIcono("guardar.png", 18, 18));
 
-
-        panelBusqueda.add(new JLabel());
+        panelBusqueda.add(lblCodigo);
         panelBusqueda.add(txtCodigo);
-        panelBusqueda.add(new JLabel());
+        panelBusqueda.add(lblNombre);
         panelBusqueda.add(txtNombre);
         panelBusqueda.add(btnBuscar);
 
-        panelBusqueda.add(new JLabel());
+        panelBusqueda.add(lblPrecio);
         panelBusqueda.add(txtPrecio);
-        panelBusqueda.add(new JLabel());
+        panelBusqueda.add(lblCantidad);
         panelBusqueda.add(txtCantidad);
         panelBusqueda.add(btnAñadir);
 
         add(panelBusqueda, BorderLayout.NORTH);
 
         modelo = new DefaultTableModel(new String[]{"#", "#", "#", "#", "#"}, 0);
-        table  = new JTable(modelo);
+        table = new JTable(modelo);
         add(new JScrollPane(table), BorderLayout.CENTER);
 
         JPanel panelTotales = new JPanel(new GridLayout(3, 2, 10, 5));
-        txtSubtotal = new JTextField(); txtSubtotal.setEditable(false);
-        txtIva      = new JTextField(); txtIva.setEditable(false);
-        txtTotal    = new JTextField(); txtTotal.setEditable(false);
+        panelTotales.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
+        panelTotales.setBackground(fondo);
 
-        panelTotales.add(new JLabel());
+        lblSubtotal = new JLabel();
+        lblIva = new JLabel();
+        lblTotal = new JLabel();
+
+        txtSubtotal = new JTextField(); txtSubtotal.setEditable(false);
+        txtIva = new JTextField(); txtIva.setEditable(false);
+        txtTotal = new JTextField(); txtTotal.setEditable(false);
+
+        panelTotales.add(lblSubtotal);
         panelTotales.add(txtSubtotal);
-        panelTotales.add(new JLabel());
+        panelTotales.add(lblIva);
         panelTotales.add(txtIva);
-        panelTotales.add(new JLabel());
+        panelTotales.add(lblTotal);
         panelTotales.add(txtTotal);
 
-        btnGuardar = new JButton(IconUtil.cargarIcono("guardar.png"));
         JPanel panelPie = new JPanel(new BorderLayout());
+        panelPie.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        panelPie.setBackground(fondo);
         panelPie.add(panelTotales, BorderLayout.CENTER);
-        JPanel aux = new JPanel(); aux.add(btnGuardar);
+
+        JPanel aux = new JPanel();
+        aux.setBackground(fondo);
+        aux.add(btnGuardar);
         panelPie.add(aux, BorderLayout.EAST);
 
         add(panelPie, BorderLayout.SOUTH);
@@ -127,9 +154,9 @@ public class CarritoAnadirView extends JInternalFrame implements ActualizableCon
                 return;
             }
 
-            int codigo   = Integer.parseInt(txtCodigo.getText().trim());
-            String nombre= txtNombre.getText().trim();
-            double precio= Double.parseDouble(txtPrecio.getText().trim());
+            int codigo = Integer.parseInt(txtCodigo.getText().trim());
+            String nombre = txtNombre.getText().trim();
+            double precio = Double.parseDouble(txtPrecio.getText().trim());
             int cantidad = Integer.parseInt(txtCantidad.getText().trim());
 
             Producto prod = new Producto(codigo, nombre, precio);
@@ -177,11 +204,10 @@ public class CarritoAnadirView extends JInternalFrame implements ActualizableCon
         locale = mensajes.getLocale();
         setTitle(mensajes.get("carrito.titulo"));
 
-        JPanel p = (JPanel) getContentPane().getComponent(0);
-        ((JLabel) p.getComponent(0)).setText(mensajes.get("global.codigo") + ":");
-        ((JLabel) p.getComponent(2)).setText(mensajes.get("global.nombre") + ":");
-        ((JLabel) p.getComponent(5)).setText(mensajes.get("global.precio") + ":");
-        ((JLabel) p.getComponent(7)).setText(mensajes.get("global.cantidad") + ":");
+        lblCodigo.setText(mensajes.get("global.codigo") + ":");
+        lblNombre.setText(mensajes.get("global.nombre") + ":");
+        lblPrecio.setText(mensajes.get("global.precio") + ":");
+        lblCantidad.setText(mensajes.get("global.cantidad") + ":");
 
         btnBuscar.setText(mensajes.get("global.boton.buscar"));
         btnAñadir.setText(mensajes.get("carrito.boton.anadir"));
@@ -195,10 +221,9 @@ public class CarritoAnadirView extends JInternalFrame implements ActualizableCon
                 mensajes.get("global.subtotal")
         });
 
-        JPanel tot = (JPanel) ((JPanel) getContentPane().getComponent(2)).getComponent(0);
-        ((JLabel) tot.getComponent(0)).setText(mensajes.get("carrito.total.subtotal") + ":");
-        ((JLabel) tot.getComponent(2)).setText(mensajes.get("carrito.total.iva") + ":");
-        ((JLabel) tot.getComponent(4)).setText(mensajes.get("carrito.total.total") + ":");
+        lblSubtotal.setText(mensajes.get("carrito.total.subtotal") + ":");
+        lblIva.setText(mensajes.get("carrito.total.iva") + ":");
+        lblTotal.setText(mensajes.get("carrito.total.total") + ":");
 
         actualizarTotales();
     }

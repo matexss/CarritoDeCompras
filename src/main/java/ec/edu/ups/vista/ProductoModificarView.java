@@ -36,68 +36,68 @@ public class ProductoModificarView extends JInternalFrame implements Actualizabl
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocation(100, 100);
 
+        Color fondo = new Color(255, 228, 232);
         JPanel panel = new JPanel(new GridBagLayout());
-        panel.setBorder(BorderFactory.createTitledBorder("Modificar Producto"));
+        panel.setBackground(fondo);
+
+        JLabel titulo = new JLabel("Modificar Producto");
+        titulo.setFont(new Font("Segoe UI", Font.BOLD, 24));
+        titulo.setForeground(new Color(80, 20, 60));
+
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(12, 12, 12, 12);
+        gbc.insets = new Insets(10, 12, 10, 12);
         gbc.anchor = GridBagConstraints.WEST;
-
+        gbc.gridwidth = 3;
         gbc.gridx = 0; gbc.gridy = 0;
-        panel.add(new JLabel("Código:"), gbc);
+        panel.add(titulo, gbc);
 
+        gbc.gridwidth = 1;
+        gbc.gridy++;
+        panel.add(new JLabel("Código:"), gbc);
         gbc.gridx = 1;
         txtCodigo = new JTextField(12);
         panel.add(txtCodigo, gbc);
 
         gbc.gridx = 2;
         buscarButton = new JButton("Buscar", IconUtil.cargarIcono("search.png", 18, 18));
-        buscarButton.setPreferredSize(new Dimension(140, 30));
         panel.add(buscarButton, gbc);
 
         gbc.gridx = 0; gbc.gridy++;
         panel.add(new JLabel("Nombre actual:"), gbc);
-
         gbc.gridx = 1; gbc.gridwidth = 2;
         lblNombre = new JLabel("---");
         lblNombre.setFont(lblNombre.getFont().deriveFont(Font.BOLD));
         panel.add(lblNombre, gbc);
-        gbc.gridwidth = 1;
 
-        gbc.gridx = 0; gbc.gridy++;
+        gbc.gridwidth = 1; gbc.gridx = 0; gbc.gridy++;
         panel.add(new JLabel("Precio actual:"), gbc);
-
         gbc.gridx = 1; gbc.gridwidth = 2;
         lblPrecio = new JLabel("---");
         lblPrecio.setFont(lblPrecio.getFont().deriveFont(Font.BOLD));
         panel.add(lblPrecio, gbc);
-        gbc.gridwidth = 1;
 
-        gbc.gridx = 0; gbc.gridy++;
+        gbc.gridwidth = 1; gbc.gridx = 0; gbc.gridy++;
         lblMensaje = new JLabel("Seleccione qué desea modificar:");
         panel.add(lblMensaje, gbc);
-
         gbc.gridx = 1;
         cbxOpciones = new JComboBox<>();
-        cbxOpciones.setEnabled(false);
         panel.add(cbxOpciones, gbc);
 
         gbc.gridx = 0; gbc.gridy++;
         panel.add(new JLabel("Nuevo valor:"), gbc);
-
         gbc.gridx = 1;
         txtModificar = new JTextField(15);
-        txtModificar.setEditable(false);
         panel.add(txtModificar, gbc);
 
         gbc.gridx = 0; gbc.gridy++;
         gbc.gridwidth = 3;
         gbc.anchor = GridBagConstraints.CENTER;
         btnModificar = new JButton("Modificar", IconUtil.cargarIcono("editar.png", 18, 18));
-        btnModificar.setPreferredSize(new Dimension(150, 35));
         panel.add(btnModificar, gbc);
 
         setContentPane(panel);
     }
+
 
     @Override
     public void actualizarTextos(MensajeInternacionalizacionHandler mensajes) {

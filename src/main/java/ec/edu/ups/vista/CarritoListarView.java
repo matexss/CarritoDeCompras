@@ -24,8 +24,18 @@ public class CarritoListarView extends JInternalFrame implements ActualizableCon
         mensajes = msg;
         locale   = msg.getLocale();
 
-        setSize(700, 400);
+        Color fondo = new Color(255, 228, 232);
+        Font fuenteTitulo = new Font("Segoe UI", Font.BOLD, 22);
+        JLabel titulo = new JLabel("Listado General de Carritos", SwingConstants.CENTER);
+        titulo.setFont(fuenteTitulo);
+        titulo.setForeground(new Color(80, 20, 60));
+        titulo.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+        getContentPane().setBackground(fondo);
         setLayout(new BorderLayout());
+        add(titulo, BorderLayout.NORTH);
+
+        setSize(700, 400);
 
         modelo = new DefaultTableModel();
         tabla  = new JTable(modelo);

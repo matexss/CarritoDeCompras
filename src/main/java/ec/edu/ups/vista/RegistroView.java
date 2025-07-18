@@ -3,7 +3,7 @@ package ec.edu.ups.vista;
 import ec.edu.ups.modelo.Pregunta;
 import ec.edu.ups.util.MensajeInternacionalizacionHandler;
 import ec.edu.ups.util.IconUtil;
-import ec.edu.ups.modelo.RespuestaSeguridad;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
@@ -34,21 +34,29 @@ public class RegistroView extends JFrame {
     public RegistroView(MensajeInternacionalizacionHandler mensajes, List<Pregunta> preguntas) {
         this.mensajes = mensajes;
         setTitle(mensajes.get("registro.titulo"));
-        setSize(600, 650);
+        setSize(600, 700);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setResizable(false);
 
-        Color fondo = new Color(255, 245, 230);
-        Color inputBg = new Color(255, 255, 255);
+        Color fondo1 = new Color(255, 228, 232);
+        Color fondo2 = new Color(215, 159, 175);
+        Color inputBg = Color.WHITE;
         Color botonColor = new Color(186, 213, 255);
         Color bordeColor = new Color(173, 216, 230);
         Font fuente = new Font("Segoe UI", Font.PLAIN, 14);
 
+        JLabel titulo = new JLabel("Registro de Usuario");
+        titulo.setFont(new Font("Segoe UI", Font.BOLD, 24));
+        titulo.setForeground(new Color(80, 20, 60));
+        titulo.setAlignmentX(Component.CENTER_ALIGNMENT);
+        titulo.setBorder(new EmptyBorder(10, 10, 20, 10));
+
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        panel.setBackground(fondo);
-        panel.setBorder(new EmptyBorder(20, 30, 20, 30));
+        panel.setOpaque(false);
+        panel.setBorder(new EmptyBorder(10, 30, 10, 30));
+        panel.add(titulo);
 
         panel.add(createFieldPanel(mensajes.get("registro.usuario"), txtUsuario = crearCampo(inputBg, fuente, bordeColor)));
         panel.add(createFieldPanel(mensajes.get("registro.contrasenia"), txtContrasenia = new JPasswordField(20)));
@@ -78,25 +86,37 @@ public class RegistroView extends JFrame {
         btnRegistrar.setFocusPainted(false);
         btnRegistrar.setFont(fuente);
         btnRegistrar.setBorder(new LineBorder(bordeColor));
+
         JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        btnPanel.setBackground(fondo);
+        btnPanel.setOpaque(false);
         btnPanel.add(btnRegistrar);
         panel.add(btnPanel);
 
-        setContentPane(panel);
+        JPanel fondoPanel = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2d = (Graphics2D) g;
+                GradientPaint gp = new GradientPaint(0, 0, fondo1, 0, getHeight(), fondo2);
+                g2d.setPaint(gp);
+                g2d.fillRect(0, 0, getWidth(), getHeight());
+            }
+        };
+        fondoPanel.setLayout(new BorderLayout());
+        fondoPanel.add(panel, BorderLayout.CENTER);
+        setContentPane(fondoPanel);
     }
 
     private JTextField crearCampo(Color fondo, Font fuente, Color borde) {
-        JTextField field = new JTextField(20);
+        JTextField field = new JTextField(25);
         field.setBackground(fondo);
         field.setFont(fuente);
-        field.setBorder(new LineBorder(borde));
+        field.setBorder(BorderFactory.createCompoundBorder(new LineBorder(borde, 1), new EmptyBorder(5, 8, 5, 8)));
         return field;
     }
 
     private JPanel createFieldPanel(String labelText, JComponent field) {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        panel.setBackground(new Color(255, 245, 230));
+        panel.setOpaque(false);
         panel.add(new JLabel(labelText));
         panel.add(field);
         return panel;
@@ -104,7 +124,7 @@ public class RegistroView extends JFrame {
 
     private JPanel createComboBoxPanel(String labelText, JComboBox<?> comboBox) {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        panel.setBackground(new Color(255, 245, 230));
+        panel.setOpaque(false);
         panel.add(new JLabel(labelText));
         panel.add(comboBox);
         return panel;

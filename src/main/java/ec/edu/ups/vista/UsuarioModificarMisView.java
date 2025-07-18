@@ -8,8 +8,8 @@ import javax.swing.*;
 import java.awt.*;
 
 public class UsuarioModificarMisView extends JInternalFrame implements ActualizableConIdioma {
-    private JPanel panel1;
     private JPanel panelPrincipal;
+    private JPanel panel1;
     private JLabel lblUsuario, lblContraseña, lblTitulo, lblNuevoUser;
     private JTextField txtUsuario, txtContraseña, txtNuevoUser;
     private JButton btnModificar;
@@ -30,17 +30,26 @@ public class UsuarioModificarMisView extends JInternalFrame implements Actualiza
     }
 
     private void inicializarComponentes() {
+        Color fondo = new Color(255, 228, 232);
+        Font fuenteTitulo = new Font("Segoe UI", Font.BOLD, 22);
+
         panelPrincipal = new JPanel(new BorderLayout());
+        panelPrincipal.setBackground(fondo);
+
         JPanel formPanel = new JPanel(new GridBagLayout());
+        formPanel.setBackground(fondo);
+
         JPanel botonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        botonPanel.setBackground(fondo);
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 5, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
         lblTitulo = new JLabel();
-        lblTitulo.setFont(new Font("Arial", Font.BOLD, 16));
+        lblTitulo.setFont(fuenteTitulo);
         lblTitulo.setHorizontalAlignment(SwingConstants.CENTER);
+        lblTitulo.setForeground(new Color(80, 20, 60));
 
         lblUsuario = new JLabel();
         txtUsuario = new JTextField();
@@ -53,20 +62,19 @@ public class UsuarioModificarMisView extends JInternalFrame implements Actualiza
 
         btnModificar = new JButton(IconUtil.cargarIcono("user-update.png", 18, 18));
 
-        // Layout con GridBag
         gbc.gridx = 0; gbc.gridy = 0;
         formPanel.add(lblUsuario, gbc);
-        gbc.gridx = 1; gbc.gridy = 0;
+        gbc.gridx = 1;
         formPanel.add(txtUsuario, gbc);
 
         gbc.gridx = 0; gbc.gridy = 1;
         formPanel.add(lblNuevoUser, gbc);
-        gbc.gridx = 1; gbc.gridy = 1;
+        gbc.gridx = 1;
         formPanel.add(txtNuevoUser, gbc);
 
         gbc.gridx = 0; gbc.gridy = 2;
         formPanel.add(lblContraseña, gbc);
-        gbc.gridx = 1; gbc.gridy = 2;
+        gbc.gridx = 1;
         formPanel.add(txtContraseña, gbc);
 
         botonPanel.add(btnModificar);

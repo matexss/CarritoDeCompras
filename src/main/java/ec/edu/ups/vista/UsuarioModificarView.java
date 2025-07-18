@@ -16,6 +16,7 @@ public class UsuarioModificarView extends JInternalFrame implements Actualizable
     private JButton btnBuscar;
     private JButton btnModificar;
 
+    private JLabel lblTitulo;
     private JLabel lblUsuario;
     private JLabel lblContraseña;
     private JLabel lblRol;
@@ -31,9 +32,17 @@ public class UsuarioModificarView extends JInternalFrame implements Actualizable
 
     private void initComponents() {
         setSize(500, 300);
-        JPanel panelPrincipal = new JPanel(new BorderLayout());
+        setLayout(new BorderLayout());
+        getContentPane().setBackground(new Color(255, 228, 232));
+
+        lblTitulo = new JLabel("", SwingConstants.CENTER);
+        lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 22));
+        lblTitulo.setForeground(new Color(80, 20, 60));
+        lblTitulo.setBorder(BorderFactory.createEmptyBorder(10, 0, 20, 0));
+        add(lblTitulo, BorderLayout.NORTH);
+
         JPanel formPanel = new JPanel(new GridBagLayout());
-        JPanel botonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
+        formPanel.setOpaque(false);
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 5, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -68,13 +77,13 @@ public class UsuarioModificarView extends JInternalFrame implements Actualizable
         gbc.gridx = 1;
         formPanel.add(cbxRoles, gbc);
 
-        panelPrincipal.add(formPanel, BorderLayout.CENTER);
-
+        JPanel botonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
+        botonPanel.setOpaque(false);
         botonPanel.add(btnBuscar);
         botonPanel.add(btnModificar);
-        panelPrincipal.add(botonPanel, BorderLayout.SOUTH);
 
-        setContentPane(panelPrincipal);
+        add(formPanel, BorderLayout.CENTER);
+        add(botonPanel, BorderLayout.SOUTH);
 
         cbxRoles.setRenderer(new DefaultListCellRenderer() {
             @Override
@@ -94,6 +103,7 @@ public class UsuarioModificarView extends JInternalFrame implements Actualizable
     @Override
     public void actualizarTextos(MensajeInternacionalizacionHandler mensajes) {
         setTitle(mensajes.get("usuario.modificar.titulo.app"));
+        lblTitulo.setText(mensajes.get("usuario.modificar.titulo.app"));
 
         lblUsuario.setText(mensajes.get("global.usuario") + ":");
         lblContraseña.setText(mensajes.get("global.contraseña") + ":");

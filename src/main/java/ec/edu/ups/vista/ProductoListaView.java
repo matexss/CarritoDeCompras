@@ -36,22 +36,30 @@ public class ProductoListaView extends JInternalFrame implements ActualizableCon
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocation(60, 60);
 
+        Color fondo = new Color(255, 228, 232);
         JPanel panelPrincipal = new JPanel(new BorderLayout());
 
         JPanel panelSuperior = new JPanel(null);
-        panelSuperior.setPreferredSize(new Dimension(500, 70));
+        panelSuperior.setPreferredSize(new Dimension(500, 90));
+        panelSuperior.setBackground(fondo);
+
+        JLabel titulo = new JLabel("Lista de Productos");
+        titulo.setFont(new Font("Segoe UI", Font.BOLD, 22));
+        titulo.setForeground(new Color(80, 20, 60));
+        titulo.setBounds(150, 5, 300, 30);
+        panelSuperior.add(titulo);
 
         lblBuscar = new JLabel();
-        lblBuscar.setBounds(20, 20, 100, 25);
+        lblBuscar.setBounds(20, 45, 100, 25);
 
         txtBuscar = new JTextField();
-        txtBuscar.setBounds(120, 20, 150, 25);
+        txtBuscar.setBounds(120, 45, 150, 25);
 
         btnBuscar = new JButton(IconUtil.cargarIcono("search.png"));
-        btnBuscar.setBounds(290, 20, 80, 25);
+        btnBuscar.setBounds(290, 45, 80, 25);
 
         btnListar = new JButton(IconUtil.cargarIcono("user-list.png"));
-        btnListar.setBounds(380, 20, 80, 25);
+        btnListar.setBounds(380, 45, 80, 25);
 
         panelSuperior.add(lblBuscar);
         panelSuperior.add(txtBuscar);
@@ -66,6 +74,7 @@ public class ProductoListaView extends JInternalFrame implements ActualizableCon
         panelPrincipal.add(scrollPane, BorderLayout.CENTER);
         setContentPane(panelPrincipal);
     }
+
 
     @Override
     public void actualizarTextos(MensajeInternacionalizacionHandler mensajes) {
