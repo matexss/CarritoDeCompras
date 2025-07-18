@@ -9,12 +9,22 @@ import ec.edu.ups.modelo.Usuario;
 import java.io.*;
 import java.util.*;
 
+/**
+ * Implementación de UsuarioDAO que almacena usuarios en un archivo binario.
+ * Utiliza un Map con username como clave para acceso eficiente.
+ */
 public class UsuarioDAOArchivoBinario implements UsuarioDAO, Serializable {
 
     private static final long serialVersionUID = 1L;
     private final File archivo;
     private final Map<String, Usuario> usuarios = new HashMap<>();
 
+    /**
+     * Constructor que carga los usuarios desde el archivo binario.
+     * Si no existen usuarios, crea uno por defecto con rol ADMINISTRADOR.
+     *
+     * @param rutaArchivo Ruta del archivo binario.
+     */
     public UsuarioDAOArchivoBinario(String rutaArchivo) {
         this.archivo = new File(rutaArchivo);
         cargarDesdeArchivo();
@@ -28,13 +38,16 @@ public class UsuarioDAOArchivoBinario implements UsuarioDAO, Serializable {
             admin.setCorreo("admin@ups.edu.ec");
             admin.setTelefono("0999999999");
             admin.setFechaNacimiento("2000-01-01");
-            admin.setRespuestasSeguridad(new ArrayList<>()); // vacío pero funcional
+            admin.setRespuestasSeguridad(new ArrayList<>());
 
-            usuarios.put(admin.getUsername(), admin); // ✔️ correcto
+            usuarios.put(admin.getUsername(), admin);
             guardarEnArchivo();
         }
     }
 
+    /**
+     * Carga los usuarios desde el archivo binario.
+     */
     private void cargarDesdeArchivo() {
         if (!archivo.exists()) return;
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(archivo))) {
@@ -51,6 +64,9 @@ public class UsuarioDAOArchivoBinario implements UsuarioDAO, Serializable {
         }
     }
 
+    /**
+     * Guarda los usuarios actuales en el archivo binario.
+     */
     private void guardarEnArchivo() {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(archivo))) {
             oos.writeObject(usuarios);
@@ -59,34 +75,67 @@ public class UsuarioDAOArchivoBinario implements UsuarioDAO, Serializable {
         }
     }
 
+    /**
+     * Agrega un nuevo usuario o actualiza uno existente.
+     *
+     * @param usuario Usuario a guardar.
+     */
     @Override
     public void crear(Usuario usuario) {
         usuarios.put(usuario.getUsername(), usuario);
         guardarEnArchivo();
     }
 
+    /**
+     * Busca un usuario por su nombre de usuario (username).
+     *
+     * @param username Nombre de usuario.
+     * @return Usuario encontrado o null.
+     */
     @Override
     public Usuario buscarPorUsername(String username) {
         return usuarios.get(username);
     }
 
+    /**
+     * Actualiza un usuario existente.
+     *
+     * @param usuario Usuario actualizado.
+     */
     @Override
     public void actualizar(Usuario usuario) {
         usuarios.put(usuario.getUsername(), usuario);
         guardarEnArchivo();
     }
 
+    /**
+     * Elimina un usuario por su nombre de usuario.
+     *
+     * @param username Nombre de usuario.
+     */
     @Override
     public void eliminar(String username) {
         usuarios.remove(username);
         guardarEnArchivo();
     }
 
+    /**
+     * Lista todos los usuarios almacenados.
+     *
+     * @return Lista de usuarios.
+     */
     @Override
     public List<Usuario> listarTodos() {
         return new ArrayList<>(usuarios.values());
     }
 
+    /**
+     * Autentica un usuario con su username y contraseña.
+     *
+     * @param username Nombre de usuario.
+     * @param password Contraseña.
+     * @return Usuario autenticado o null si las credenciales no coinciden.
+     */
     @Override
     public Usuario autenticar(String username, String password) {
         Usuario usuario = usuarios.get(username);
@@ -96,6 +145,12 @@ public class UsuarioDAOArchivoBinario implements UsuarioDAO, Serializable {
         return null;
     }
 
+    /**
+     * Lista usuarios que tengan el rol especificado.
+     *
+     * @param rol Rol a filtrar.
+     * @return Lista de usuarios con el rol indicado.
+     */
     @Override
     public List<Usuario> listarPorRol(Rol rol) {
         List<Usuario> resultado = new ArrayList<>();
@@ -107,6 +162,12 @@ public class UsuarioDAOArchivoBinario implements UsuarioDAO, Serializable {
         return resultado;
     }
 
+    /**
+     * Busca usuarios por coincidencia parcial en su nombre completo.
+     *
+     * @param nombre Nombre o parte del nombre.
+     * @return Lista de usuarios encontrados.
+     */
     @Override
     public List<Usuario> buscarPorNombre(String nombre) {
         List<Usuario> resultado = new ArrayList<>();

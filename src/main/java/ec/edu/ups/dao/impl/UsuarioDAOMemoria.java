@@ -8,10 +8,17 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+/**
+ * Implementación de UsuarioDAO que almacena usuarios en memoria.
+ * Utilizado para pruebas o funcionamiento temporal sin persistencia en disco.
+ */
 public class UsuarioDAOMemoria implements UsuarioDAO {
 
     private List<Usuario> usuarios;
 
+    /**
+     * Constructor que inicializa la lista de usuarios con dos cuentas por defecto: administrador y cliente.
+     */
     public UsuarioDAOMemoria() {
         usuarios = new ArrayList<>();
 
@@ -39,6 +46,13 @@ public class UsuarioDAOMemoria implements UsuarioDAO {
         usuarios.add(cliente);
     }
 
+    /**
+     * Autentica a un usuario comparando username y contraseña.
+     *
+     * @param username Nombre de usuario.
+     * @param password Contraseña.
+     * @return Usuario autenticado o null si no coincide.
+     */
     @Override
     public Usuario autenticar(String username, String password) {
         for (Usuario usuario : usuarios) {
@@ -49,11 +63,22 @@ public class UsuarioDAOMemoria implements UsuarioDAO {
         return null;
     }
 
+    /**
+     * Agrega un nuevo usuario a la lista en memoria.
+     *
+     * @param usuario Usuario a registrar.
+     */
     @Override
     public void crear(Usuario usuario) {
         usuarios.add(usuario);
     }
 
+    /**
+     * Busca un usuario por su username.
+     *
+     * @param username Nombre de usuario.
+     * @return Usuario encontrado o null.
+     */
     @Override
     public Usuario buscarPorUsername(String username) {
         for (Usuario usuario : usuarios) {
@@ -64,6 +89,11 @@ public class UsuarioDAOMemoria implements UsuarioDAO {
         return null;
     }
 
+    /**
+     * Elimina un usuario de la lista por su username.
+     *
+     * @param username Nombre de usuario.
+     */
     @Override
     public void eliminar(String username) {
         Iterator<Usuario> iterator = usuarios.iterator();
@@ -76,6 +106,11 @@ public class UsuarioDAOMemoria implements UsuarioDAO {
         }
     }
 
+    /**
+     * Actualiza los datos de un usuario existente.
+     *
+     * @param usuario Usuario actualizado.
+     */
     @Override
     public void actualizar(Usuario usuario) {
         for (int i = 0; i < usuarios.size(); i++) {
@@ -86,6 +121,12 @@ public class UsuarioDAOMemoria implements UsuarioDAO {
         }
     }
 
+    /**
+     * Busca usuarios cuyo nombre de usuario contenga un texto dado.
+     *
+     * @param nombre Texto a buscar.
+     * @return Lista de usuarios encontrados.
+     */
     @Override
     public List<Usuario> buscarPorNombre(String nombre) {
         List<Usuario> resultado = new ArrayList<>();
@@ -97,11 +138,22 @@ public class UsuarioDAOMemoria implements UsuarioDAO {
         return resultado;
     }
 
+    /**
+     * Retorna la lista completa de usuarios almacenados en memoria.
+     *
+     * @return Lista de usuarios.
+     */
     @Override
     public List<Usuario> listarTodos() {
         return usuarios;
     }
 
+    /**
+     * Lista los usuarios que tienen un rol específico.
+     *
+     * @param rol Rol a filtrar.
+     * @return Lista de usuarios con el rol indicado.
+     */
     @Override
     public List<Usuario> listarPorRol(Rol rol) {
         List<Usuario> resultado = new ArrayList<>();

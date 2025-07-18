@@ -1,4 +1,3 @@
-
 package ec.edu.ups.vista;
 
 import ec.edu.ups.modelo.Producto;
@@ -12,7 +11,16 @@ import java.awt.*;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * Vista para listar y buscar productos registrados en el sistema.
+ * Muestra una tabla con los productos existentes, permite búsquedas por nombre
+ * y actualiza los textos con soporte de internacionalización.
+ *
+ * @author Mateo
+ * @version 1.0
+ */
 public class ProductoListaView extends JInternalFrame implements ActualizableConIdioma {
+
     private JPanel panelPrincipal;
     private JTextField txtBuscar;
     private JButton btnBuscar;
@@ -23,6 +31,11 @@ public class ProductoListaView extends JInternalFrame implements ActualizableCon
     private final MensajeInternacionalizacionHandler mensajes;
     private Locale locale;
 
+    /**
+     * Constructor de la vista.
+     *
+     * @param mensajes Manejador de internacionalización.
+     */
     public ProductoListaView(MensajeInternacionalizacionHandler mensajes) {
         super("", true, true, true, true);
         this.mensajes = mensajes;
@@ -31,6 +44,9 @@ public class ProductoListaView extends JInternalFrame implements ActualizableCon
         actualizarTextos(mensajes);
     }
 
+    /**
+     * Inicializa y configura los componentes gráficos de la vista.
+     */
     private void initComponents() {
         setSize(500, 500);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -75,7 +91,11 @@ public class ProductoListaView extends JInternalFrame implements ActualizableCon
         setContentPane(panelPrincipal);
     }
 
-
+    /**
+     * Actualiza los textos de los componentes según el idioma configurado.
+     *
+     * @param mensajes Manejador de internacionalización.
+     */
     @Override
     public void actualizarTextos(MensajeInternacionalizacionHandler mensajes) {
         locale = mensajes.getLocale();
@@ -91,22 +111,47 @@ public class ProductoListaView extends JInternalFrame implements ActualizableCon
         });
     }
 
+    /**
+     * Obtiene el campo de texto donde se ingresa el nombre a buscar.
+     *
+     * @return JTextField de búsqueda.
+     */
     public JTextField getTxtBuscar() {
         return txtBuscar;
     }
 
+    /**
+     * Obtiene el botón para ejecutar la búsqueda.
+     *
+     * @return JButton buscar.
+     */
     public JButton getBtnBuscar() {
         return btnBuscar;
     }
 
+    /**
+     * Obtiene el botón para listar todos los productos.
+     *
+     * @return JButton listar.
+     */
     public JButton getBtnListar() {
         return btnListar;
     }
 
+    /**
+     * Devuelve la tabla que contiene la lista de productos.
+     *
+     * @return JTable con los productos.
+     */
     public JTable getTblProductos() {
         return tblProductos;
     }
 
+    /**
+     * Muestra en la tabla los productos pasados como parámetro.
+     *
+     * @param productos Lista de productos a mostrar.
+     */
     public void mostrarProductos(List<Producto> productos) {
         modelo.setRowCount(0);
         for (Producto producto : productos) {

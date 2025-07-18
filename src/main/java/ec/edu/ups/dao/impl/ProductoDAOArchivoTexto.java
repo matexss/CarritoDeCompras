@@ -7,10 +7,19 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Implementación de ProductoDAO que gestiona productos almacenados en un archivo de texto plano CSV.
+ * Cada producto se guarda en una línea del archivo en formato: codigo,nombre,precio.
+ */
 public class ProductoDAOArchivoTexto implements ProductoDAO {
 
     private final File archivo;
 
+    /**
+     * Constructor que inicializa y crea el archivo si no existe.
+     *
+     * @param rutaArchivo Ruta del archivo de productos.
+     */
     public ProductoDAOArchivoTexto(String rutaArchivo) {
         this.archivo = new File(rutaArchivo);
         if (!archivo.exists()) {
@@ -22,6 +31,11 @@ public class ProductoDAOArchivoTexto implements ProductoDAO {
         }
     }
 
+    /**
+     * Guarda un nuevo producto en el archivo.
+     *
+     * @param producto Producto a registrar.
+     */
     @Override
     public void crear(Producto producto) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(archivo, true))) {
@@ -32,6 +46,12 @@ public class ProductoDAOArchivoTexto implements ProductoDAO {
         }
     }
 
+    /**
+     * Busca un producto por su código.
+     *
+     * @param codigo Código del producto.
+     * @return Producto encontrado o null si no existe.
+     */
     @Override
     public Producto buscarPorCodigo(int codigo) {
         return listarTodos().stream()
@@ -40,6 +60,12 @@ public class ProductoDAOArchivoTexto implements ProductoDAO {
                 .orElse(null);
     }
 
+    /**
+     * Busca productos cuyo nombre contenga el texto especificado (sin distinción de mayúsculas/minúsculas).
+     *
+     * @param nombre Nombre o parte del nombre del producto.
+     * @return Lista de productos encontrados.
+     */
     @Override
     public List<Producto> buscarPorNombre(String nombre) {
         List<Producto> encontrados = new ArrayList<>();
@@ -51,6 +77,11 @@ public class ProductoDAOArchivoTexto implements ProductoDAO {
         return encontrados;
     }
 
+    /**
+     * Actualiza un producto en el archivo. Reescribe todo el archivo reemplazando el producto existente.
+     *
+     * @param productoActualizado Producto con los nuevos datos.
+     */
     @Override
     public void actualizar(Producto productoActualizado) {
         List<Producto> productos = listarTodos();
@@ -72,6 +103,11 @@ public class ProductoDAOArchivoTexto implements ProductoDAO {
         }
     }
 
+    /**
+     * Elimina un producto del archivo con base en su código.
+     *
+     * @param codigo Código del producto a eliminar.
+     */
     @Override
     public void eliminar(int codigo) {
         List<Producto> productos = listarTodos();
@@ -86,6 +122,11 @@ public class ProductoDAOArchivoTexto implements ProductoDAO {
         }
     }
 
+    /**
+     * Lista todos los productos almacenados en el archivo CSV.
+     *
+     * @return Lista de productos.
+     */
     @Override
     public List<Producto> listarTodos() {
         List<Producto> productos = new ArrayList<>();
@@ -121,8 +162,9 @@ public class ProductoDAOArchivoTexto implements ProductoDAO {
         return productos;
     }
 
-
-
+    /**
+     * Muestra la lista de productos en consola con formato amigable.
+     */
     public void listarPresentacion() {
         List<Producto> productos = listarTodos();
         System.out.println("=== Lista de Productos ===");
@@ -132,6 +174,12 @@ public class ProductoDAOArchivoTexto implements ProductoDAO {
         System.out.println("---");
     }
 
+    /**
+     * Formatea un producto en texto legible para presentación.
+     *
+     * @param producto Producto a formatear.
+     * @return Cadena con información del producto.
+     */
     private String formatearProducto(Producto producto) {
         return "ProductoID: " + producto.getCodigo() +
                 " | Nombre: " + producto.getNombre() +

@@ -13,6 +13,15 @@ import java.util.List;
 import java.text.SimpleDateFormat;
 import java.text.ParseException;
 
+/**
+ * Vista para el registro de usuario, donde el usuario puede ingresar su información personal,
+ * responder preguntas de seguridad, y elegir su rol.
+ *
+ * Esta vista incluye validaciones de campos y garantiza que la información sea válida antes de registrarse.
+ *
+ * @author Mateo
+ * @version 1.0
+ */
 public class RegistroView extends JFrame {
     private JPanel panel1;
     private JTextField txtUsuario;
@@ -31,6 +40,13 @@ public class RegistroView extends JFrame {
     private JButton btnRegistrar;
     private MensajeInternacionalizacionHandler mensajes;
 
+    /**
+     * Constructor de la vista de registro de usuario.
+     * Inicializa los componentes gráficos y configura la interfaz según el idioma seleccionado.
+     *
+     * @param mensajes Manejador de internacionalización para actualizar los textos en la interfaz.
+     * @param preguntas Lista de preguntas de seguridad disponibles para el registro.
+     */
     public RegistroView(MensajeInternacionalizacionHandler mensajes, List<Pregunta> preguntas) {
         this.mensajes = mensajes;
         setTitle(mensajes.get("registro.titulo"));
@@ -46,6 +62,7 @@ public class RegistroView extends JFrame {
         Color bordeColor = new Color(173, 216, 230);
         Font fuente = new Font("Segoe UI", Font.PLAIN, 14);
 
+        // Título del formulario
         JLabel titulo = new JLabel("Registro de Usuario");
         titulo.setFont(new Font("Segoe UI", Font.BOLD, 24));
         titulo.setForeground(new Color(80, 20, 60));
@@ -106,6 +123,14 @@ public class RegistroView extends JFrame {
         setContentPane(fondoPanel);
     }
 
+    /**
+     * Crea un campo de texto con el formato especificado.
+     *
+     * @param fondo Color de fondo del campo.
+     * @param fuente Fuente del texto en el campo.
+     * @param borde Color del borde del campo.
+     * @return El campo de texto creado.
+     */
     private JTextField crearCampo(Color fondo, Font fuente, Color borde) {
         JTextField field = new JTextField(25);
         field.setBackground(fondo);
@@ -114,6 +139,13 @@ public class RegistroView extends JFrame {
         return field;
     }
 
+    /**
+     * Crea un panel con un campo de texto.
+     *
+     * @param labelText El texto que se mostrará en el label.
+     * @param field El campo de texto.
+     * @return El panel con el label y el campo de texto.
+     */
     private JPanel createFieldPanel(String labelText, JComponent field) {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         panel.setOpaque(false);
@@ -122,6 +154,13 @@ public class RegistroView extends JFrame {
         return panel;
     }
 
+    /**
+     * Crea un panel con un JComboBox.
+     *
+     * @param labelText El texto que se mostrará en el label.
+     * @param comboBox El JComboBox.
+     * @return El panel con el label y el combo box.
+     */
     private JPanel createComboBoxPanel(String labelText, JComboBox<?> comboBox) {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         panel.setOpaque(false);
@@ -130,15 +169,67 @@ public class RegistroView extends JFrame {
         return panel;
     }
 
+    /**
+     * Obtiene el nombre de usuario ingresado en el campo de texto.
+     *
+     * @return El nombre de usuario.
+     */
     public JTextField getTxtUsername() { return txtUsuario; }
+
+    /**
+     * Obtiene la contraseña ingresada en el campo de texto.
+     *
+     * @return La contraseña ingresada.
+     */
     public JPasswordField getTxtContrasenia() { return txtContrasenia; }
+
+    /**
+     * Obtiene el combo box que contiene el rol seleccionado por el usuario.
+     *
+     * @return El combo box de rol.
+     */
     public JComboBox<String> getComboRol() { return comboRol; }
+
+    /**
+     * Obtiene el botón de registrar.
+     *
+     * @return El botón de registrar.
+     */
     public JButton getBtnRegistrar() { return btnRegistrar; }
+
+    /**
+     * Obtiene el nombre completo ingresado en el campo de texto.
+     *
+     * @return El nombre completo.
+     */
     public String getNombreCompleto() { return txtNombre.getText().trim(); }
+
+    /**
+     * Obtiene la fecha de nacimiento ingresada en el campo de texto.
+     *
+     * @return La fecha de nacimiento.
+     */
     public String getFechaNacimiento() { return txtFechaNacimiento.getText().trim(); }
+
+    /**
+     * Obtiene el correo ingresado en el campo de texto.
+     *
+     * @return El correo.
+     */
     public String getCorreo() { return txtCorreo.getText().trim(); }
+
+    /**
+     * Obtiene el teléfono ingresado en el campo de texto.
+     *
+     * @return El teléfono.
+     */
     public String getTelefono() { return txtTelefono.getText().trim(); }
 
+    /**
+     * Obtiene las preguntas de seguridad seleccionadas por el usuario.
+     *
+     * @return Una lista de preguntas seleccionadas.
+     */
     public List<Pregunta> getPreguntasSeleccionadas() {
         List<Pregunta> preguntas = new ArrayList<>();
         preguntas.add((Pregunta) comboPregunta1.getSelectedItem());
@@ -147,6 +238,11 @@ public class RegistroView extends JFrame {
         return preguntas;
     }
 
+    /**
+     * Obtiene las respuestas a las preguntas de seguridad.
+     *
+     * @return Una lista de respuestas.
+     */
     public List<String> getRespuestasSeleccionadas() {
         List<String> respuestas = new ArrayList<>();
         respuestas.add(txtRespuesta1.getText().trim());
@@ -155,6 +251,11 @@ public class RegistroView extends JFrame {
         return respuestas;
     }
 
+    /**
+     * Valida los campos del formulario.
+     *
+     * @return Verdadero si todos los campos son válidos, falso en caso contrario.
+     */
     public boolean validarCampos() {
         if (txtUsuario.getText().isEmpty() || txtContrasenia.getPassword().length == 0 ||
                 getNombreCompleto().isEmpty() || getFechaNacimiento().isEmpty() ||
@@ -183,6 +284,12 @@ public class RegistroView extends JFrame {
         return true;
     }
 
+    /**
+     * Verifica si la fecha ingresada es válida.
+     *
+     * @param fecha La fecha a verificar.
+     * @return Verdadero si la fecha es válida, falso en caso contrario.
+     */
     private boolean esFechaValida(String fecha) {
         try {
             new SimpleDateFormat("dd/MM/yyyy").parse(fecha);
@@ -192,6 +299,11 @@ public class RegistroView extends JFrame {
         }
     }
 
+    /**
+     * Muestra un mensaje al usuario.
+     *
+     * @param mensaje El mensaje a mostrar.
+     */
     public void mostrarMensaje(String mensaje) {
         JOptionPane.showMessageDialog(this, mensaje);
     }

@@ -9,6 +9,14 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.util.Locale;
 
+/**
+ * Vista principal de inicio de sesión del sistema.
+ * Permite al usuario ingresar sus credenciales, registrarse o recuperar su contraseña.
+ * También incluye selección de idioma con soporte de internacionalización dinámica.
+ *
+ * @author Mateo
+ * @version 1.0
+ */
 public class LoginView extends JFrame implements ActualizableConIdioma {
 
     private JPanel panelPrincipal;
@@ -26,21 +34,28 @@ public class LoginView extends JFrame implements ActualizableConIdioma {
 
     private MensajeInternacionalizacionHandler mensajes;
 
+    /**
+     * Constructor de la vista Login.
+     *
+     * @param mensajes manejador de internacionalización.
+     */
     public LoginView(MensajeInternacionalizacionHandler mensajes) {
         this.mensajes = mensajes;
 
         setTitle("Login");
         setSize(380, 350);
         setLocationRelativeTo(null);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setResizable(false);
+
         JLabel titulo = new JLabel("Login");
         titulo.setFont(new Font("Segoe UI", Font.BOLD, 24));
         titulo.setForeground(new Color(80, 20, 60));
         titulo.setAlignmentX(Component.CENTER_ALIGNMENT);
         titulo.setBorder(new EmptyBorder(10, 10, 20, 10));
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setResizable(false);
 
         setLayout(new BorderLayout());
+
         JPanel fondoPanel = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
@@ -60,7 +75,6 @@ public class LoginView extends JFrame implements ActualizableConIdioma {
         panelPrincipal.setBounds(0, 0, 350, 300);
         panelPrincipal.setOpaque(false);
         panelPrincipal.add(titulo);
-
         fondoPanel.add(panelPrincipal);
 
         lblUsuario = new JLabel();
@@ -128,6 +142,11 @@ public class LoginView extends JFrame implements ActualizableConIdioma {
         actualizarTextos(mensajes);
     }
 
+    /**
+     * Obtiene el idioma seleccionado en el ComboBox.
+     *
+     * @return Locale correspondiente al idioma seleccionado.
+     */
     public Locale obtenerLocaleSeleccionado() {
         String seleccionado = (String) comboIdioma.getSelectedItem();
         switch (seleccionado) {
@@ -137,34 +156,74 @@ public class LoginView extends JFrame implements ActualizableConIdioma {
         }
     }
 
+    /**
+     * Devuelve el campo de texto del usuario.
+     *
+     * @return JTextField del nombre de usuario.
+     */
     public JTextField getTxtUsuario() {
         return txtUsuario;
     }
 
+    /**
+     * Devuelve el campo de texto de la contraseña.
+     *
+     * @return JPasswordField del usuario.
+     */
     public JPasswordField getTxtContrasenia() {
         return txtContrasenia;
     }
 
+    /**
+     * Devuelve el botón de inicio de sesión.
+     *
+     * @return JButton para login.
+     */
     public JButton getBtnLogin() {
         return btnLogin;
     }
 
+    /**
+     * Devuelve el botón para registrarse.
+     *
+     * @return JButton de registro.
+     */
     public JButton getBtnRegistrarse() {
         return btnRegistrarse;
     }
 
+    /**
+     * Devuelve el botón para recuperar contraseña.
+     *
+     * @return JButton de recuperación de contraseña.
+     */
     public JButton getBtnRecuperarContrasenia() {
         return btnRecuperarContrasenia;
     }
 
+    /**
+     * Devuelve el JComboBox para cambiar el idioma.
+     *
+     * @return JComboBox de idiomas.
+     */
     public JComboBox<String> getComboIdioma() {
         return comboIdioma;
     }
 
+    /**
+     * Muestra un mensaje al usuario en una ventana de diálogo.
+     *
+     * @param mensaje el mensaje a mostrar.
+     */
     public void mostrarMensaje(String mensaje) {
         JOptionPane.showMessageDialog(this, mensaje);
     }
 
+    /**
+     * Actualiza los textos de la interfaz según el idioma seleccionado.
+     *
+     * @param mensajes manejador de internacionalización.
+     */
     @Override
     public void actualizarTextos(MensajeInternacionalizacionHandler mensajes) {
         setTitle(mensajes.get("login.titulo"));

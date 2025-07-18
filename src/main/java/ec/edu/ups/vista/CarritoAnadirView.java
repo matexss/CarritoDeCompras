@@ -14,20 +14,26 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.Locale;
 
+/**
+ * Vista interna (JInternalFrame) para añadir productos al carrito de compras.
+ * Permite buscar productos por código, añadirlos al carrito con cantidad,
+ * mostrar los ítems en tabla y calcular totales con IVA incluido.
+ *
+ * <p>La interfaz es amigable, soporta internacionalización dinámica y se integra
+ * con el controlador {@link CarritoController}.</p>
+ *
+ * @author Mateo
+ * @version 1.0
+ */
 public class CarritoAnadirView extends JInternalFrame implements ActualizableConIdioma {
+
+    // Componentes de la interfaz
     private JPanel panelPrincipal;
     private JPanel panel1;
-    private JTextField txtCodigo;
-    private JTextField txtNombre;
-    private JTextField txtPrecio;
-    private JTextField txtCantidad;
-    private JButton btnBuscar;
-    private JButton btnAñadir;
-    private JButton btnGuardar;
+    private JTextField txtCodigo, txtNombre, txtPrecio, txtCantidad;
+    private JButton btnBuscar, btnAñadir, btnGuardar;
     private JTable table;
-    private JTextField txtSubtotal;
-    private JTextField txtIva;
-    private JTextField txtTotal;
+    private JTextField txtSubtotal, txtIva, txtTotal;
     private DefaultTableModel modelo;
 
     private JLabel lblCodigo, lblNombre, lblPrecio, lblCantidad;
@@ -37,6 +43,12 @@ public class CarritoAnadirView extends JInternalFrame implements ActualizableCon
     private final MensajeInternacionalizacionHandler mensajes;
     private Locale locale;
 
+    /**
+     * Constructor de la vista de añadir carrito.
+     *
+     * @param mensajes Manejador de internacionalización para traducir los textos.
+     * @param carritoController Controlador asociado a la lógica de carritos.
+     */
     public CarritoAnadirView(MensajeInternacionalizacionHandler mensajes, CarritoController carritoController) {
         super("", true, true, true, true);
         this.mensajes = mensajes;
@@ -47,6 +59,9 @@ public class CarritoAnadirView extends JInternalFrame implements ActualizableCon
         actualizarTextos(mensajes);
     }
 
+    /**
+     * Inicializa los componentes visuales de la vista.
+     */
     private void initComponents() {
         setSize(750, 550);
         setLayout(new BorderLayout());
@@ -77,16 +92,12 @@ public class CarritoAnadirView extends JInternalFrame implements ActualizableCon
         btnAñadir = new JButton(IconUtil.cargarIcono("carrito-añadir.png", 18, 18));
         btnGuardar = new JButton(IconUtil.cargarIcono("guardar.png", 18, 18));
 
-        panelBusqueda.add(lblCodigo);
-        panelBusqueda.add(txtCodigo);
-        panelBusqueda.add(lblNombre);
-        panelBusqueda.add(txtNombre);
+        panelBusqueda.add(lblCodigo);   panelBusqueda.add(txtCodigo);
+        panelBusqueda.add(lblNombre);   panelBusqueda.add(txtNombre);
         panelBusqueda.add(btnBuscar);
 
-        panelBusqueda.add(lblPrecio);
-        panelBusqueda.add(txtPrecio);
-        panelBusqueda.add(lblCantidad);
-        panelBusqueda.add(txtCantidad);
+        panelBusqueda.add(lblPrecio);   panelBusqueda.add(txtPrecio);
+        panelBusqueda.add(lblCantidad); panelBusqueda.add(txtCantidad);
         panelBusqueda.add(btnAñadir);
 
         add(panelBusqueda, BorderLayout.NORTH);
@@ -107,26 +118,24 @@ public class CarritoAnadirView extends JInternalFrame implements ActualizableCon
         txtIva = new JTextField(); txtIva.setEditable(false);
         txtTotal = new JTextField(); txtTotal.setEditable(false);
 
-        panelTotales.add(lblSubtotal);
-        panelTotales.add(txtSubtotal);
-        panelTotales.add(lblIva);
-        panelTotales.add(txtIva);
-        panelTotales.add(lblTotal);
-        panelTotales.add(txtTotal);
+        panelTotales.add(lblSubtotal); panelTotales.add(txtSubtotal);
+        panelTotales.add(lblIva);      panelTotales.add(txtIva);
+        panelTotales.add(lblTotal);    panelTotales.add(txtTotal);
 
         JPanel panelPie = new JPanel(new BorderLayout());
         panelPie.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         panelPie.setBackground(fondo);
         panelPie.add(panelTotales, BorderLayout.CENTER);
 
-        JPanel aux = new JPanel();
-        aux.setBackground(fondo);
-        aux.add(btnGuardar);
+        JPanel aux = new JPanel(); aux.setBackground(fondo); aux.add(btnGuardar);
         panelPie.add(aux, BorderLayout.EAST);
 
         add(panelPie, BorderLayout.SOUTH);
     }
 
+    /**
+     * Asocia los eventos de los botones con su lógica correspondiente.
+     */
     private void initListeners() {
         btnBuscar.addActionListener(e -> {
             String codigoTxt = txtCodigo.getText().trim();
@@ -172,6 +181,7 @@ public class CarritoAnadirView extends JInternalFrame implements ActualizableCon
                     break;
                 }
             }
+
             if (!actualizada) {
                 modelo.addRow(new Object[]{
                         codigo, nombre,
@@ -193,12 +203,16 @@ public class CarritoAnadirView extends JInternalFrame implements ActualizableCon
             Carrito c = new Carrito();
             carritoController.guardarCarrito(c);
             mostrarMensaje(mensajes.get("carrito.msg.guardado"));
-
             modelo.setRowCount(0);
             txtSubtotal.setText(""); txtIva.setText(""); txtTotal.setText("");
         });
     }
 
+    /**
+     * Actualiza los textos de la interfaz con base en el idioma seleccionado.
+     *
+     * @param mensajes manejador de traducción de textos
+     */
     @Override
     public void actualizarTextos(MensajeInternacionalizacionHandler mensajes) {
         locale = mensajes.getLocale();
@@ -228,6 +242,9 @@ public class CarritoAnadirView extends JInternalFrame implements ActualizableCon
         actualizarTotales();
     }
 
+    /**
+     * Calcula y actualiza los campos de subtotal, IVA y total del carrito.
+     */
     private void actualizarTotales() {
         double sub = carritoController.obtenerItems()
                 .stream()
@@ -241,11 +258,17 @@ public class CarritoAnadirView extends JInternalFrame implements ActualizableCon
         txtTotal.setText(FormateadorUtils.formatearMoneda(tot, locale));
     }
 
+    /**
+     * Muestra un mensaje informativo en una ventana emergente.
+     *
+     * @param msg mensaje a mostrar
+     */
     private void mostrarMensaje(String msg) {
         JOptionPane.showMessageDialog(this, msg, mensajes.get("yesNo.app.titulo"),
                 JOptionPane.INFORMATION_MESSAGE);
     }
 
+    // Getters públicos para pruebas o interacción externa
     public JButton getBtnAñadir() { return btnAñadir; }
     public JButton getBtnBuscar() { return btnBuscar; }
     public JButton getBtnGuardar() { return btnGuardar; }

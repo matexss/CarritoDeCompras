@@ -1,4 +1,3 @@
-
 package ec.edu.ups.vista;
 
 import ec.edu.ups.util.ActualizableConIdioma;
@@ -9,6 +8,14 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.Locale;
 
+/**
+ * Vista de la aplicación que permite añadir un nuevo producto.
+ * Implementa soporte de internacionalización y diseño personalizado.
+ * Esta clase pertenece al módulo de productos del sistema.
+ *
+ * @author Mateo
+ * @version 1.0
+ */
 public class ProductoAnadirView extends JInternalFrame implements ActualizableConIdioma {
 
     private JPanel panelPrincipal;
@@ -25,6 +32,11 @@ public class ProductoAnadirView extends JInternalFrame implements ActualizableCo
     private final MensajeInternacionalizacionHandler mensajes;
     private Locale locale;
 
+    /**
+     * Constructor que inicializa la vista de añadir producto con soporte de idioma.
+     *
+     * @param mensajes Objeto manejador de internacionalización.
+     */
     public ProductoAnadirView(MensajeInternacionalizacionHandler mensajes) {
         super("", true, true, true, true);
         this.mensajes = mensajes;
@@ -33,6 +45,9 @@ public class ProductoAnadirView extends JInternalFrame implements ActualizableCo
         actualizarTextos(mensajes);
     }
 
+    /**
+     * Método que inicializa todos los componentes de la interfaz gráfica.
+     */
     private void initComponents() {
         setSize(400, 250);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
@@ -84,7 +99,11 @@ public class ProductoAnadirView extends JInternalFrame implements ActualizableCo
         setContentPane(panelPrincipal);
     }
 
-
+    /**
+     * Método que actualiza todos los textos de la vista según el idioma actual.
+     *
+     * @param mensajes Manejador de internacionalización.
+     */
     @Override
     public void actualizarTextos(MensajeInternacionalizacionHandler mensajes) {
         locale = mensajes.getLocale();
@@ -96,16 +115,53 @@ public class ProductoAnadirView extends JInternalFrame implements ActualizableCo
         btnLimpiar.setText(mensajes.get("global.boton.limpiar"));
     }
 
+    /**
+     * Devuelve el campo de texto para el código del producto.
+     *
+     * @return JTextField del código.
+     */
     public JTextField getTxtCodigo() { return txtCodigo; }
+
+    /**
+     * Devuelve el campo de texto para el nombre del producto.
+     *
+     * @return JTextField del nombre.
+     */
     public JTextField getTxtNombre() { return txtNombre; }
+
+    /**
+     * Devuelve el campo de texto para el precio del producto.
+     *
+     * @return JTextField del precio.
+     */
     public JTextField getTxtPrecio() { return txtPrecio; }
+
+    /**
+     * Devuelve el botón de aceptar.
+     *
+     * @return JButton de aceptar.
+     */
     public JButton getBtnAceptar() { return btnAceptar; }
+
+    /**
+     * Devuelve el botón de limpiar.
+     *
+     * @return JButton de limpiar.
+     */
     public JButton getBtnLimpiar() { return btnLimpiar; }
 
+    /**
+     * Muestra un mensaje al usuario en una ventana emergente.
+     *
+     * @param mensaje El mensaje a mostrar.
+     */
     public void mostrarMensaje(String mensaje) {
         JOptionPane.showMessageDialog(this, mensaje);
     }
 
+    /**
+     * Limpia todos los campos de entrada del formulario.
+     */
     public void limpiarCampos() {
         txtCodigo.setText("");
         txtNombre.setText("");

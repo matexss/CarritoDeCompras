@@ -6,7 +6,17 @@ import ec.edu.ups.util.*;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Vista interna (JInternalFrame) que permite crear nuevos usuarios en el sistema.
+ * Incluye campos para ingresar el nombre de usuario, contraseña y seleccionar un rol.
+ *
+ * Esta clase implementa {@link ActualizableConIdioma} para permitir la internacionalización dinámica.
+ *
+ * @author Mateo
+ * @version 1.0
+ */
 public class UsuarioCrearView extends JInternalFrame implements ActualizableConIdioma {
+
     private JPanel panelPrincipal;
     private JLabel lblTitulo, lblUsuarioA, lblContraseña, lblRol;
     private JTextField txtUsuario, txtContraseña;
@@ -14,15 +24,22 @@ public class UsuarioCrearView extends JInternalFrame implements ActualizableConI
     private JButton btnCrear;
     private MensajeInternacionalizacionHandler mensajes;
 
+    /**
+     * Constructor que inicializa la vista con el manejador de internacionalización.
+     *
+     * @param mensajes Manejador de textos traducibles.
+     */
     public UsuarioCrearView(MensajeInternacionalizacionHandler mensajes) {
         super("", true, true, true, true);
         this.mensajes = mensajes;
-
         initComponents();
         actualizarTextos(mensajes);
         cargarRoles();
     }
 
+    /**
+     * Inicializa los componentes gráficos del formulario.
+     */
     private void initComponents() {
         setSize(600, 400);
         setLayout(new BorderLayout());
@@ -56,6 +73,11 @@ public class UsuarioCrearView extends JInternalFrame implements ActualizableConI
         add(formPanel, BorderLayout.CENTER);
     }
 
+    /**
+     * Actualiza los textos visibles de la interfaz en función del idioma seleccionado.
+     *
+     * @param mensajes Manejador de textos internacionalizados.
+     */
     @Override
     public void actualizarTextos(MensajeInternacionalizacionHandler mensajes) {
         setTitle(mensajes.get("usuario.crear.titulo.app"));
@@ -87,6 +109,9 @@ public class UsuarioCrearView extends JInternalFrame implements ActualizableConI
         });
     }
 
+    /**
+     * Carga los roles disponibles (ADMINISTRADOR, USUARIO) en el combo box.
+     */
     private void cargarRoles() {
         cbxRoles.removeAllItems();
         for (Rol rol : Rol.values()) {
@@ -96,17 +121,34 @@ public class UsuarioCrearView extends JInternalFrame implements ActualizableConI
         }
     }
 
+    // Getters públicos para acceso desde el controlador
+
+    /** @return Campo de texto del nombre de usuario */
     public JTextField getTxtUsuario() { return txtUsuario; }
+
+    /** @return Campo de texto de la contraseña */
     public JTextField getTxtContraseña() { return txtContraseña; }
+
+    /** @return Botón para crear el usuario */
     public JButton getBtnCrear() { return btnCrear; }
+
+    /** @return ComboBox de selección de roles */
     public JComboBox<Rol> getCbxRoles() { return cbxRoles; }
 
+    /**
+     * Limpia los campos del formulario, dejándolos vacíos o en el valor por defecto.
+     */
     public void limpiarCampos() {
         txtUsuario.setText("");
         txtContraseña.setText("");
         cbxRoles.setSelectedIndex(0);
     }
 
+    /**
+     * Muestra un mensaje informativo al usuario usando un diálogo estándar.
+     *
+     * @param mensaje El texto a mostrar.
+     */
     public void mostrarMensaje(String mensaje) {
         JOptionPane.showMessageDialog(this, mensaje, mensajes.get("yesNo.app.titulo"), JOptionPane.INFORMATION_MESSAGE);
     }

@@ -8,6 +8,15 @@ import ec.edu.ups.util.MensajeInternacionalizacionHandler;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Vista interna (JInternalFrame) que permite eliminar un usuario del sistema.
+ *
+ * Esta clase proporciona una interfaz gráfica para ingresar el nombre de usuario
+ * a eliminar y ejecutar la acción correspondiente. Además, soporta internacionalización.
+ *
+ * @author Mateo
+ * @version 1.0
+ */
 public class UsuarioEliminarView extends JInternalFrame implements ActualizableConIdioma {
 
     private JLabel lblTitulo, lblUsuario;
@@ -17,6 +26,11 @@ public class UsuarioEliminarView extends JInternalFrame implements ActualizableC
     private JTextField textField2;
     private MensajeInternacionalizacionHandler mensajes;
 
+    /**
+     * Constructor que inicializa la vista con el manejador de mensajes internacionalizados.
+     *
+     * @param mensajes Manejador de internacionalización para traducción de textos.
+     */
     public UsuarioEliminarView(MensajeInternacionalizacionHandler mensajes) {
         super("", true, true, true, true);
         this.mensajes = mensajes;
@@ -24,6 +38,9 @@ public class UsuarioEliminarView extends JInternalFrame implements ActualizableC
         actualizarTextos(mensajes);
     }
 
+    /**
+     * Inicializa todos los componentes gráficos de la ventana.
+     */
     private void initComponents() {
         setSize(400, 220);
         setLayout(new BorderLayout());
@@ -52,6 +69,11 @@ public class UsuarioEliminarView extends JInternalFrame implements ActualizableC
         add(panelCentro, BorderLayout.CENTER);
     }
 
+    /**
+     * Actualiza los textos de los componentes con base en el idioma seleccionado.
+     *
+     * @param mensajes Manejador de internacionalización con las traducciones activas.
+     */
     @Override
     public void actualizarTextos(MensajeInternacionalizacionHandler mensajes) {
         setTitle(mensajes.get("usuario.eliminar.titulo.app"));
@@ -61,18 +83,36 @@ public class UsuarioEliminarView extends JInternalFrame implements ActualizableC
         btnEliminar.setText(mensajes.get("global.boton.eliminar"));
     }
 
+    /**
+     * Retorna el campo de texto donde se ingresa el nombre de usuario a eliminar.
+     *
+     * @return JTextField del nombre de usuario.
+     */
     public JTextField getTxtUsuario() {
         return txtUsuario;
     }
 
+    /**
+     * Retorna el botón encargado de ejecutar la acción de eliminación.
+     *
+     * @return JButton para eliminar el usuario.
+     */
     public JButton getBtnEliminar() {
         return btnEliminar;
     }
 
+    /**
+     * Muestra un mensaje al usuario en forma de cuadro de diálogo.
+     *
+     * @param mensaje Texto a mostrar.
+     */
     public void mostrarMensaje(String mensaje) {
         JOptionPane.showMessageDialog(this, mensaje, mensajes.get("yesNo.app.titulo"), JOptionPane.INFORMATION_MESSAGE);
     }
 
+    /**
+     * Limpia el campo de texto, dejándolo vacío.
+     */
     public void limpiarCampos() {
         txtUsuario.setText("");
     }

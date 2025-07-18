@@ -16,6 +16,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * Controlador que gestiona las operaciones relacionadas con los usuarios,
+ * como autenticación, registro, modificación, eliminación, y recuperación de contraseña.
+ * Integra vistas Swing, validaciones y soporte de internacionalización.
+ */
 public class UsuarioController {
 
     private final UsuarioDAO usuarioDAO;
@@ -31,6 +36,14 @@ public class UsuarioController {
     private MensajeInternacionalizacionHandler mensajes;
     private MenuPrincipalView menuPrincipal;
 
+    /**
+     * Constructor que inicializa el controlador con las dependencias básicas y
+     * configura los listeners del login.
+     *
+     * @param usuarioDAO DAO para acceder a los datos del usuario.
+     * @param loginView Vista de login.
+     * @param mensajes Handler de internacionalización.
+     */
     public UsuarioController(UsuarioDAO usuarioDAO, LoginView loginView, MensajeInternacionalizacionHandler mensajes) {
         this.usuarioDAO = usuarioDAO;
         this.loginView = loginView;
@@ -41,6 +54,12 @@ public class UsuarioController {
         this.loginView.getBtnRecuperarContrasenia().addActionListener(e -> mostrarVistaRecuperarContrasenia());
     }
 
+    /**
+     * Establece las vistas asociadas y el manejador de internacionalización.
+     *
+     * @param mensajes Manejador de textos internacionalizados.
+     * @param menuPrincipal Vista principal de la aplicación.
+     */
     public void setInternacionalizacionYVistas(MensajeInternacionalizacionHandler mensajes, MenuPrincipalView menuPrincipal) {
         this.mensajes = mensajes;
         this.menuPrincipal = menuPrincipal;
@@ -54,10 +73,18 @@ public class UsuarioController {
         listarView.getBtnBuscar().addActionListener(e -> buscarUsuarioPorNombre());
     }
 
+    /**
+     * Devuelve el usuario autenticado actual.
+     *
+     * @return Usuario autenticado.
+     */
     public Usuario getUsuarioAutenticado() {
         return usuarioAutenticado;
     }
 
+    /**
+     * Realiza la autenticación del usuario a partir de los datos ingresados en el login.
+     */
     private void autenticar() {
         String user = loginView.getTxtUsuario().getText();
         String pass = new String(loginView.getTxtContrasenia().getPassword());
@@ -65,21 +92,19 @@ public class UsuarioController {
         Usuario usuario = usuarioDAO.autenticar(user, pass);
         if (usuario != null) {
             this.usuarioAutenticado = usuario;
-
-            // 🌐 Actualizar idioma global al iniciar sesión
             Locale localeSeleccionado = loginView.obtenerLocaleSeleccionado();
             mensajes.cambiarIdioma(localeSeleccionado.getLanguage(), localeSeleccionado.getCountry());
-
             loginView.dispose();
         } else {
             loginView.mostrarMensaje(mensajes.get("login.error"));
         }
     }
 
-
+    /**
+     * Muestra la vista para el registro de nuevos usuarios, incluyendo preguntas de seguridad.
+     */
     private void mostrarVistaRegistro() {
         List<Pregunta> listaPreguntas = PreguntaSeguridadService.obtenerTodasLasPreguntas();
-
         RegistroView registroView = new RegistroView(mensajes, listaPreguntas);
         registroView.setVisible(true);
 
@@ -108,7 +133,6 @@ public class UsuarioController {
                 return;
             }
 
-            // Procesar preguntas y respuestas
             List<Pregunta> preguntasSeleccionadas = registroView.getPreguntasSeleccionadas();
             List<String> respuestasSeleccionadas = registroView.getRespuestasSeleccionadas();
 
@@ -124,10 +148,9 @@ public class UsuarioController {
         });
     }
 
-
-
-
-
+    /**
+     * Muestra la vista de recuperación de contraseña usando preguntas de seguridad.
+     */
     private void mostrarVistaRecuperarContrasenia() {
         String username = JOptionPane.showInputDialog(null, mensajes.get("recuperar.usuario"));
         if (username == null || username.trim().isEmpty()) return;
@@ -173,6 +196,9 @@ public class UsuarioController {
         });
     }
 
+    /**
+     * Muestra la vista de creación de usuario desde el panel de administrador.
+     */
     public void mostrarVistaCrearUsuario() {
         crearView.getBtnCrear().addActionListener(e -> {
             String username = crearView.getTxtUsuario().getText().trim();
@@ -205,6 +231,9 @@ public class UsuarioController {
         return usuarioAutenticado != null && Rol.ADMINISTRADOR.equals(usuarioAutenticado.getRol());
     }
 
+    /**
+     * Muestra la vista para eliminar un usuario por parte del administrador.
+     */
     public void mostrarVistaEliminarUsuario() {
         eliminarView.getBtnEliminar().addActionListener(e -> {
             String user = eliminarView.getTxtUsuario().getText();
@@ -230,6 +259,9 @@ public class UsuarioController {
         mostrarVentana(eliminarView);
     }
 
+    /**
+     * Muestra la vista para modificar los datos de un usuario (por un administrador).
+     */
     public void mostrarVistaModificarUsuario() {
         modificarView.getBtnBuscar().addActionListener(e -> {
             if (!esAdmin()) {
@@ -268,12 +300,18 @@ public class UsuarioController {
         mostrarVentana(modificarView);
     }
 
+    /**
+     * Muestra la lista completa de usuarios registrados.
+     */
     public void mostrarVistaListarUsuarios() {
         List<Usuario> usuarios = usuarioDAO.listarTodos();
         listarView.mostrarUsuarios(usuarios);
         mostrarVentana(listarView);
     }
 
+    /**
+     * Permite al usuario autenticado modificar su propio perfil.
+     */
     public void mostrarVistaActualizarUsuario() {
         modificarMisView.getTxtUsuario().setText(usuarioAutenticado.getUsername());
         modificarMisView.getBtnModificar().addActionListener(e -> {
@@ -288,6 +326,9 @@ public class UsuarioController {
         mostrarVentana(modificarMisView);
     }
 
+    /**
+     * Busca usuarios por nombre desde la vista de lista.
+     */
     public void buscarUsuarioPorNombre() {
         String nombre = listarView.getTxtUsuario().getText().trim();
         if (nombre.isEmpty()) {
@@ -298,6 +339,11 @@ public class UsuarioController {
         listarView.mostrarUsuarios(usuarios);
     }
 
+    /**
+     * Muestra una vista interna dentro del escritorio MDI, cerrando otras si es necesario.
+     *
+     * @param vista Ventana interna a mostrar.
+     */
     private void mostrarVentana(JInternalFrame vista) {
         JDesktopPane desktop = menuPrincipal.getjDesktopPane();
 

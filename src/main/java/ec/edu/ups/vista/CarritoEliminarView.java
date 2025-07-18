@@ -10,19 +10,37 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.Locale;
 
+/**
+ * Vista interna para eliminar un carrito de compras del sistema.
+ * Permite buscar un carrito por su código, visualizar sus detalles
+ * y eliminarlo si es necesario. Soporta internacionalización dinámica.
+ *
+ * <p>Está conectada a un {@link CarritoController} y muestra la información
+ * del carrito en una tabla con los productos, cantidades y subtotales.</p>
+ *
+ * @author Mateo
+ * @version 1.0
+ */
 public class CarritoEliminarView extends JInternalFrame implements ActualizableConIdioma {
+
     private final CarritoController carritoController;
     private final MensajeInternacionalizacionHandler mensajes;
     private Locale locale;
+
     private JPanel panelPrincipal;
     private JTextField txtCodigo, txtUsuario, txtFecha;
     private JButton btnBuscar, btnEliminar;
     private JTable tblItems;
     private DefaultTableModel modeloDetalles;
     private Carrito carritoActual;
-
     private JPanel panelSuperior;
 
+    /**
+     * Constructor de la vista para eliminar carritos.
+     *
+     * @param carritoController Controlador que gestiona la lógica de carritos.
+     * @param mensajes Manejador de textos internacionalizados.
+     */
     public CarritoEliminarView(CarritoController carritoController,
                                MensajeInternacionalizacionHandler mensajes) {
         super("", true, true, false, true);
@@ -33,6 +51,9 @@ public class CarritoEliminarView extends JInternalFrame implements ActualizableC
         actualizarTextos(mensajes);
     }
 
+    /**
+     * Inicializa todos los componentes gráficos y listeners de eventos.
+     */
     private void initComponents() {
         Color fondo = new Color(235, 248, 255);
         getContentPane().setBackground(fondo);
@@ -79,6 +100,10 @@ public class CarritoEliminarView extends JInternalFrame implements ActualizableC
         btnEliminar.addActionListener(e -> eliminarCarrito());
     }
 
+    /**
+     * Lógica de búsqueda de carrito por código ingresado.
+     * Si el carrito existe, se muestra su información.
+     */
     private void buscarCarrito() {
         try {
             int codigo = Integer.parseInt(txtCodigo.getText().trim());
@@ -96,6 +121,9 @@ public class CarritoEliminarView extends JInternalFrame implements ActualizableC
         }
     }
 
+    /**
+     * Lógica para eliminar el carrito actualmente cargado en la vista.
+     */
     private void eliminarCarrito() {
         if (carritoActual == null) return;
         carritoController.eliminarCarrito(carritoActual.getCodigo());
@@ -105,6 +133,11 @@ public class CarritoEliminarView extends JInternalFrame implements ActualizableC
         carritoActual = null;
     }
 
+    /**
+     * Actualiza todos los textos de la interfaz con base en el idioma seleccionado.
+     *
+     * @param mensajes Manejador de internacionalización.
+     */
     @Override
     public void actualizarTextos(MensajeInternacionalizacionHandler mensajes) {
         locale = mensajes.getLocale();
@@ -126,6 +159,11 @@ public class CarritoEliminarView extends JInternalFrame implements ActualizableC
         });
     }
 
+    /**
+     * Muestra los ítems del carrito seleccionado en la tabla.
+     *
+     * @param c Carrito con los ítems a mostrar.
+     */
     private void mostrarItemsCarrito(Carrito c) {
         modeloDetalles.setRowCount(0);
         for (ItemCarrito it : c.obtenerItems()) {
@@ -139,6 +177,11 @@ public class CarritoEliminarView extends JInternalFrame implements ActualizableC
         }
     }
 
+    /**
+     * Muestra un mensaje informativo al usuario.
+     *
+     * @param m Mensaje a mostrar.
+     */
     private void mostrarMensaje(String m) {
         JOptionPane.showMessageDialog(this, m, mensajes.get("yesNo.app.titulo"),
                 JOptionPane.INFORMATION_MESSAGE);

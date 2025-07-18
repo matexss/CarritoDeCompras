@@ -12,6 +12,14 @@ import java.awt.*;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * Vista interna que permite listar usuarios registrados en el sistema.
+ * Incluye funciones para buscar usuarios por nombre y mostrar su rol.
+ * Soporta internacionalización mediante el uso de {@link MensajeInternacionalizacionHandler}.
+ *
+ * @author Mateo
+ * @version 1.0
+ */
 public class UsuarioListarView extends JInternalFrame implements ActualizableConIdioma {
 
     private JPanel panelPrincipal;
@@ -27,6 +35,11 @@ public class UsuarioListarView extends JInternalFrame implements ActualizableCon
     private List<Usuario> listaActual;
     private MensajeInternacionalizacionHandler mensajes;
 
+    /**
+     * Constructor que inicializa la vista y sus componentes.
+     *
+     * @param mensajes Manejador de internacionalización para traducir textos.
+     */
     public UsuarioListarView(MensajeInternacionalizacionHandler mensajes) {
         super("", true, true, false, true);
         this.mensajes = mensajes;
@@ -35,6 +48,9 @@ public class UsuarioListarView extends JInternalFrame implements ActualizableCon
         actualizarTextos(mensajes);
     }
 
+    /**
+     * Inicializa y configura los componentes gráficos de la ventana.
+     */
     private void initComponents() {
         setSize(600, 400);
         Color fondo = new Color(255, 228, 232);
@@ -74,11 +90,20 @@ public class UsuarioListarView extends JInternalFrame implements ActualizableCon
         panelPrincipal.add(panelCentro, BorderLayout.CENTER);
     }
 
+    /**
+     * Configura el modelo de la tabla utilizada para mostrar los usuarios.
+     */
     private void configurarTabla() {
         tableModel = new DefaultTableModel();
         tblUsuarios.setModel(tableModel);
     }
 
+    /**
+     * Actualiza los textos de los componentes con base en el idioma seleccionado.
+     * También actualiza los encabezados de la tabla.
+     *
+     * @param mensajes Manejador de internacionalización.
+     */
     @Override
     public void actualizarTextos(MensajeInternacionalizacionHandler mensajes) {
         this.locale = mensajes.getLocale();
@@ -96,6 +121,11 @@ public class UsuarioListarView extends JInternalFrame implements ActualizableCon
         mostrarUsuarios(listaActual);
     }
 
+    /**
+     * Muestra en la tabla una lista de usuarios.
+     *
+     * @param usuarios Lista de usuarios a mostrar.
+     */
     public void mostrarUsuarios(List<Usuario> usuarios) {
         this.listaActual = usuarios;
         tableModel.setRowCount(0);
@@ -112,18 +142,38 @@ public class UsuarioListarView extends JInternalFrame implements ActualizableCon
         }
     }
 
+    /**
+     * Retorna el botón utilizado para listar todos los usuarios.
+     *
+     * @return JButton para listar usuarios.
+     */
     public JButton getBtnListar() {
         return btnListar;
     }
 
+    /**
+     * Retorna el botón utilizado para buscar un usuario.
+     *
+     * @return JButton para buscar usuarios.
+     */
     public JButton getBtnBuscar() {
         return btnBuscar;
     }
 
+    /**
+     * Retorna el campo de texto utilizado para ingresar el nombre del usuario a buscar.
+     *
+     * @return JTextField para ingresar el nombre del usuario.
+     */
     public JTextField getTxtUsuario() {
         return txtUsuario;
     }
 
+    /**
+     * Muestra un mensaje emergente al usuario.
+     *
+     * @param mensaje Texto a mostrar.
+     */
     public void mostrarMensaje(String mensaje) {
         JOptionPane.showMessageDialog(this, mensaje, mensajes.get("yesNo.app.titulo"), JOptionPane.INFORMATION_MESSAGE);
     }

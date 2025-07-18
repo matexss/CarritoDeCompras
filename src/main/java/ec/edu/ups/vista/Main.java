@@ -16,15 +16,34 @@ import javax.swing.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
-import java.util.Locale;
 
+/**
+ * Clase principal que inicia la aplicación de carrito de compras.
+ * Permite al usuario seleccionar el tipo de almacenamiento (memoria, archivo de texto o archivo binario)
+ * y lanza la interfaz gráfica de login para iniciar sesión.
+ * Luego, configura y muestra el menú principal según el rol del usuario autenticado.
+ *
+ * <p>Este sistema incluye soporte para internacionalización dinámica, control de roles,
+ * y persistencia configurable.</p>
+ *
+ * @author Mateo
+ * @version 1.0
+ */
 public class Main {
 
+    /**
+     * Punto de entrada principal de la aplicación.
+     *
+     * @param args Argumentos de línea de comandos (no utilizados).
+     */
     public static void main(String[] args) {
         SwingUtilities.invokeLater(Main::iniciarAplicacion);
-
     }
 
+    /**
+     * Inicializa el sistema permitiendo al usuario elegir el tipo de almacenamiento,
+     * instanciando los DAOs y vistas según corresponda.
+     */
     public static void iniciarAplicacion() {
         String[] opciones = {"Memoria", "Archivo Texto", "Archivo Binario"};
         int seleccion = JOptionPane.showOptionDialog(null,
@@ -40,6 +59,7 @@ public class Main {
         ProductoDAO productoDAO;
         CarritoDAO carritoDAO;
 
+        // Selección del tipo de almacenamiento y carga de rutas si es necesario
         if (seleccion == 1 || seleccion == 2) {
             JFileChooser chooser = new JFileChooser();
             chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -66,13 +86,16 @@ public class Main {
             carritoDAO = new CarritoDAOMemoria();
         }
 
+        // Carga del sistema de internacionalización
         MensajeInternacionalizacionHandler mensajes = new MensajeInternacionalizacionHandler("es", "EC");
         mensajes.verificarClavesFaltantes("claves_requeridas.txt");
 
+        // Login
         LoginView loginView = new LoginView(mensajes);
         UsuarioController usuarioController = new UsuarioController(usuarioDAO, loginView, mensajes);
         loginView.setVisible(true);
 
+        // Lógica post-login: inicialización de controladores, vistas y menú principal
         loginView.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosed(WindowEvent e) {
@@ -101,6 +124,7 @@ public class Main {
 
                     usuarioController.setInternacionalizacionYVistas(mensajes, principalView);
 
+                    // Configuración de menús según el rol
                     principalView.getMenuItemCrearUsuario().addActionListener(ev -> usuarioController.mostrarVistaCrearUsuario());
                     principalView.getMenuItemEliminarUsuario().addActionListener(ev -> usuarioController.mostrarVistaEliminarUsuario());
                     principalView.getMenuItemModificarUsuario().addActionListener(ev -> usuarioController.mostrarVistaModificarUsuario());
@@ -112,11 +136,13 @@ public class Main {
                         principalView.ocultarMenusAdministrador();
                     }
 
+                    // Acciones de productos
                     principalView.getMenuItemCrearProducto().addActionListener(ev -> mostrarVentana(productoAnadirView, principalView));
                     principalView.getMenuItemBuscarProducto().addActionListener(ev -> mostrarVentana(productoListaView, principalView));
                     principalView.getMenuItemEliminarProducto().addActionListener(ev -> mostrarVentana(productoEliminarView, principalView));
                     principalView.getMenuItemActualizarProducto().addActionListener(ev -> mostrarVentana(productoModificarView, principalView));
 
+                    // Acciones de carritos
                     principalView.getMenuItemCrearCarrito().addActionListener(ev -> mostrarVentana(carritoAnadirView, principalView));
                     principalView.getMenuItemEliminarCarrito().addActionListener(ev -> mostrarVentana(carritoEliminarView, principalView));
                     principalView.getMenuItemModificarCarrito().addActionListener(ev -> mostrarVentana(carritoModificarView, principalView));
@@ -129,15 +155,18 @@ public class Main {
                     });
                     principalView.getMenuItemListarMisCarritos().addActionListener(ev -> mostrarVentana(carritoListarMisView, principalView));
 
+                    // Cambio de idioma
                     principalView.getMenuItemIdiomaEspanol().addActionListener(ev -> principalView.cambiarIdioma("es", "EC"));
                     principalView.getMenuItemIdiomaIngles().addActionListener(ev -> principalView.cambiarIdioma("en", "US"));
                     principalView.getMenuItemIdiomaFrances().addActionListener(ev -> principalView.cambiarIdioma("fr", "FR"));
 
+                    // Cerrar aplicación
                     principalView.getMenuItemSalir().addActionListener(ev -> {
                         int opcion = JOptionPane.showConfirmDialog(principalView, mensajes.get("menu.salir.confirmacion"), mensajes.get("menu.salir.titulo"), JOptionPane.YES_NO_OPTION);
                         if (opcion == JOptionPane.YES_OPTION) System.exit(0);
                     });
 
+                    // Cerrar sesión
                     principalView.getMenuItemCerrarSesion().addActionListener(ev -> {
                         int opcion = JOptionPane.showConfirmDialog(principalView, mensajes.get("menu.salir.cerrarConfirmacion"), mensajes.get("menu.salir.titulo"), JOptionPane.YES_NO_OPTION);
                         if (opcion == JOptionPane.YES_OPTION) {
@@ -150,6 +179,13 @@ public class Main {
         });
     }
 
+    /**
+     * Muestra la ventana interna deseada en el escritorio del `MenuPrincipalView`,
+     * ocultando previamente cualquier ventana activa.
+     *
+     * @param ventana        La ventana a mostrar.
+     * @param principalView  El marco principal que contiene el escritorio MDI.
+     */
     private static void mostrarVentana(JInternalFrame ventana, MenuPrincipalView principalView) {
         if (ventana instanceof CarritoListarView listar) {
             listar.cargarCarritos();
