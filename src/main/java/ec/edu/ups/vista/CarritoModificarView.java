@@ -13,7 +13,16 @@ import java.awt.*;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * Vista que permite modificar los productos de un carrito existente.
+ * El usuario puede actualizar las cantidades de los productos, ya sea individualmente o en lote.
+ * Soporta internacionalización dinámica.
+ *
+ * @author Mateo
+ * @version 1.0
+ */
 public class CarritoModificarView extends JInternalFrame implements ActualizableConIdioma {
+
     private JPanel panelPrincipal;
     private CarritoController carritoController;
     private JTextField txtCodigoCarrito;
@@ -32,21 +41,41 @@ public class CarritoModificarView extends JInternalFrame implements Actualizable
     private JLabel lblProducto;
     private JLabel lblCantidad;
 
+    /**
+     * Constructor principal.
+     *
+     * @param carritoController controlador de lógica del carrito.
+     * @param mensajes manejador de internacionalización.
+     */
     public CarritoModificarView(CarritoController carritoController, MensajeInternacionalizacionHandler mensajes) {
         this.carritoController = carritoController;
         this.mensajes = mensajes;
         this.locale = new Locale(mensajes.get("locale.language"), mensajes.get("locale.country"));
         initComponents();
-        actualizarTextos();
+        actualizarTextos(mensajes);
     }
 
+    /**
+     * Inicializa todos los componentes gráficos de la vista.
+     */
     private void initComponents() {
+        Color fondo = new Color(255, 228, 232);
+        Font fuenteTitulo = new Font("Segoe UI", Font.BOLD, 22);
+        JLabel titulo = new JLabel("Modificar Carrito", SwingConstants.CENTER);
+        titulo.setFont(fuenteTitulo);
+        titulo.setForeground(new Color(80, 20, 60));
+        titulo.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+        getContentPane().setBackground(fondo);
+        setLayout(new BorderLayout());
+        add(titulo, BorderLayout.NORTH);
+
         setSize(700, 400);
         setClosable(true);
         setResizable(true);
-        setLayout(new BorderLayout());
 
         JPanel panelEntrada = new JPanel(new GridLayout(4, 2, 10, 10));
+        panelEntrada.setBackground(fondo);
 
         lblCarrito = new JLabel();
         lblProducto = new JLabel();
@@ -90,6 +119,7 @@ public class CarritoModificarView extends JInternalFrame implements Actualizable
 
         btnGuardarCambios = new JButton();
         JPanel panelInferior = new JPanel();
+        panelInferior.setBackground(fondo);
         panelInferior.add(btnGuardarCambios);
         add(panelInferior, BorderLayout.SOUTH);
 
@@ -98,7 +128,13 @@ public class CarritoModificarView extends JInternalFrame implements Actualizable
         btnModificar.addActionListener(e -> modificarCantidad());
     }
 
-    public void actualizarTextos() {
+    /**
+     * Actualiza los textos visibles de la vista, según el idioma actual.
+     *
+     * @param mensajes manejador de internacionalización.
+     */
+    @Override
+    public void actualizarTextos(MensajeInternacionalizacionHandler mensajes) {
         this.locale = new Locale(mensajes.get("locale.language"), mensajes.get("locale.country"));
         setTitle(mensajes.get("carrito.modificar.titulo.app"));
 
@@ -119,6 +155,9 @@ public class CarritoModificarView extends JInternalFrame implements Actualizable
         });
     }
 
+    /**
+     * Busca un carrito por código e inicializa su visualización.
+     */
     private void buscarCarrito() {
         String codigoStr = txtCodigoCarrito.getText().trim();
         if (!codigoStr.matches("\\d+")) {
@@ -138,6 +177,11 @@ public class CarritoModificarView extends JInternalFrame implements Actualizable
         }
     }
 
+    /**
+     * Muestra en la tabla los ítems del carrito actual.
+     *
+     * @param carrito el carrito cuyos ítems se van a mostrar.
+     */
     private void mostrarDetalleCarrito(Carrito carrito) {
         modeloTabla.setRowCount(0);
         List<ItemCarrito> items = carrito.obtenerItems();
@@ -155,6 +199,9 @@ public class CarritoModificarView extends JInternalFrame implements Actualizable
         }
     }
 
+    /**
+     * Guarda todos los cambios de cantidades editadas directamente en la tabla.
+     */
     private void guardarCambios() {
         if (carritoActual == null) {
             JOptionPane.showMessageDialog(this, mensajes.get("carrito.guardar.nohay"), mensajes.get("global.error"), JOptionPane.ERROR_MESSAGE);
@@ -170,6 +217,9 @@ public class CarritoModificarView extends JInternalFrame implements Actualizable
         JOptionPane.showMessageDialog(this, mensajes.get("carrito.modificar.exito"), mensajes.get("yesNo.app.titulo"), JOptionPane.INFORMATION_MESSAGE);
     }
 
+    /**
+     * Modifica una única cantidad ingresada manualmente desde los campos de texto.
+     */
     private void modificarCantidad() {
         if (carritoActual == null) {
             JOptionPane.showMessageDialog(this, mensajes.get("carrito.buscar.primero"), mensajes.get("global.error"), JOptionPane.ERROR_MESSAGE);
@@ -198,11 +248,21 @@ public class CarritoModificarView extends JInternalFrame implements Actualizable
         txtCantidad.setText("");
     }
 
+    /**
+     * Método externo que permite cargar un carrito desde otra vista.
+     *
+     * @param codigo código del carrito a cargar.
+     */
     public void buscarCarritoDesdeExterno(int codigo) {
         txtCodigoCarrito.setText(String.valueOf(codigo));
         buscarCarrito();
     }
 
+    /**
+     * Carga un carrito ya existente en la vista.
+     *
+     * @param carrito carrito a visualizar y modificar.
+     */
     public void setCarrito(Carrito carrito) {
         this.carritoActual = carrito;
         txtCodigoCarrito.setText(String.valueOf(carrito.getCodigo()));

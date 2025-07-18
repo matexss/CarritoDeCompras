@@ -6,8 +6,19 @@ import ec.edu.ups.util.ActualizableConIdioma;
 
 import javax.swing.*;
 
+/**
+ * Vista principal del sistema en forma de ventana JFrame con soporte para menú MDI.
+ * Esta clase organiza los menús de productos, carritos, usuarios, sesión e idiomas,
+ * permitiendo interacción dinámica e internacionalización de la interfaz.
+ *
+ * <p>La ventana es sensible al rol del usuario autenticado y ajusta sus menús según permisos.</p>
+ *
+ * @author Mateo
+ * @version 1.0
+ */
 public class MenuPrincipalView extends JFrame {
 
+    // --- Componentes de la interfaz gráfica ---
     private final JMenuBar menuBar = new JMenuBar();
     private final JDesktopPane jDesktopPane = new MiJDesktopPane();
 
@@ -44,6 +55,12 @@ public class MenuPrincipalView extends JFrame {
     private final MensajeInternacionalizacionHandler mensajes;
     private final CarritoController carritoController;
 
+    /**
+     * Constructor de la vista principal.
+     *
+     * @param mensajes            Manejador de internacionalización.
+     * @param carritoController   Controlador de carritos.
+     */
     public MenuPrincipalView(MensajeInternacionalizacionHandler mensajes, CarritoController carritoController) {
         this.mensajes = mensajes;
         this.carritoController = carritoController;
@@ -51,6 +68,9 @@ public class MenuPrincipalView extends JFrame {
         configurarIdiomaListeners();
     }
 
+    /**
+     * Inicializa los componentes visuales y los menús de la ventana principal.
+     */
     private void initComponents() {
         setTitle("Sistema de Gestión - Carrito de Compras");
         setSize(1000, 700);
@@ -58,6 +78,7 @@ public class MenuPrincipalView extends JFrame {
         setLocationRelativeTo(null);
         setContentPane(jDesktopPane);
 
+        // Organización de menús
         menuProducto.add(menuItemCrearProducto);
         menuProducto.add(menuItemBuscarProducto);
         menuProducto.add(menuItemActualizarProducto);
@@ -83,6 +104,7 @@ public class MenuPrincipalView extends JFrame {
         menuSesion.add(menuItemCerrarSesion);
         menuSesion.add(menuItemSalir);
 
+        // Agregar menús a la barra
         menuBar.add(menuProducto);
         menuBar.add(menuCarrito);
         menuBar.add(menuUsuario);
@@ -90,24 +112,38 @@ public class MenuPrincipalView extends JFrame {
         menuBar.add(menuSesion);
         setJMenuBar(menuBar);
 
-        actualizarTextos();
+        actualizarTextos(mensajes);
     }
 
+    /**
+     * Configura los listeners de cambio de idioma para los ítems del menú correspondiente.
+     */
     private void configurarIdiomaListeners() {
         menuItemIdiomaEspanol.addActionListener(e -> cambiarIdioma("es", "EC"));
         menuItemIdiomaIngles .addActionListener(e -> cambiarIdioma("en", "US"));
         menuItemIdiomaFrances.addActionListener(e -> cambiarIdioma("fr", "FR"));
     }
 
+    /**
+     * Cambia el idioma de la interfaz y actualiza todas las vistas internas que implementan la interfaz ActualizableConIdioma.
+     *
+     * @param lang    Código de idioma (por ejemplo, "es").
+     * @param country Código de país (por ejemplo, "EC").
+     */
     public void cambiarIdioma(String lang, String country) {
         mensajes.cambiarIdioma(lang, country);
-        actualizarTextos();
+        actualizarTextos(mensajes);
         for (JInternalFrame frame : jDesktopPane.getAllFrames()) {
-            if (frame instanceof ActualizableConIdioma a) a.actualizarTextos();
+            if (frame instanceof ActualizableConIdioma a) a.actualizarTextos(mensajes);
         }
     }
 
-    public void actualizarTextos() {
+    /**
+     * Actualiza los textos de los menús e ítems según el idioma actual cargado.
+     *
+     * @param mensajes Instancia del manejador de internacionalización.
+     */
+    public void actualizarTextos(MensajeInternacionalizacionHandler mensajes) {
         setTitle(mensajes.get("app.titulo"));
 
         menuProducto.setText(mensajes.get("menu.producto"));
@@ -141,6 +177,9 @@ public class MenuPrincipalView extends JFrame {
         menuItemIdiomaFrances     .setText(mensajes.get("menu.idioma.fr"));
     }
 
+    /**
+     * Desactiva funcionalidades exclusivas del rol administrador cuando el usuario autenticado es de tipo USUARIO.
+     */
     public void deshabilitarMenusAdministrador() {
         menuProducto.setEnabled(false);
         menuItemListarCarritos.setEnabled(false);
@@ -148,6 +187,9 @@ public class MenuPrincipalView extends JFrame {
         menuItemModificarCarrito.setEnabled(false);
     }
 
+    /**
+     * Oculta completamente los menús reservados para administradores, dejando visible solo la opción de actualizar datos personales.
+     */
     public void ocultarMenusAdministrador() {
         menuProducto.setVisible(false);
         menuItemListarCarritos.setVisible(false);
@@ -159,6 +201,8 @@ public class MenuPrincipalView extends JFrame {
         menuUsuario.add(menuItemActualizarDatos);
         menuUsuario.setVisible(true);
     }
+
+    // --- Getters públicos para controladores ---
 
     public JMenuItem getMenuItemCrearUsuario()      { return menuItemCrearUsuario; }
     public JMenuItem getMenuItemEliminarUsuario()   { return menuItemEliminarUsuario; }
@@ -184,8 +228,20 @@ public class MenuPrincipalView extends JFrame {
     public JMenuItem getMenuItemSalir()             { return menuItemSalir; }
     public JMenuItem getMenuItemCerrarSesion()      { return menuItemCerrarSesion; }
 
-    public JDesktopPane getjDesktopPane()           { return jDesktopPane; }
+    /**
+     * Devuelve el escritorio MDI principal que contiene las ventanas internas.
+     *
+     * @return JDesktopPane del sistema.
+     */
+    public JDesktopPane getjDesktopPane() {
+        return jDesktopPane;
+    }
 
+    /**
+     * Muestra un mensaje emergente en la interfaz principal.
+     *
+     * @param mensaje Mensaje a mostrar.
+     */
     public void mostrarMensaje(String mensaje) {
         JOptionPane.showMessageDialog(this, mensaje);
     }

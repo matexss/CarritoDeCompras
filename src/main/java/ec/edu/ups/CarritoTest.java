@@ -1,13 +1,28 @@
 package ec.edu.ups;
 
-
 import ec.edu.ups.modelo.ItemCarrito;
 import ec.edu.ups.modelo.Producto;
 import ec.edu.ups.modelo.servicio.CarritoService;
 import ec.edu.ups.modelo.servicio.CarritoServiceImpl;
 
+/**
+ * Clase de prueba para verificar el funcionamiento del servicio de carrito de compras.
+ * Se crean productos, se añaden al carrito, se imprime su contenido,
+ * se calcula el total y se realizan operaciones como eliminar y vaciar.
+ *
+ * <p>Este test permite validar las operaciones básicas del carrito temporal
+ * usando la implementación {@link CarritoServiceImpl}.</p>
+ *
+ * @author Mateo Morejon
+ * @version 1.0
+ */
 public class CarritoTest {
 
+    /**
+     * Método principal que ejecuta las pruebas sobre la funcionalidad del carrito.
+     *
+     * @param args Argumentos de línea de comandos (no utilizados).
+     */
     public static void main(String[] args) {
 
         // Crear servicio de carrito
@@ -24,7 +39,9 @@ public class CarritoTest {
         // Mostrar los ítems
         System.out.println("Contenido del carrito:");
         for (ItemCarrito item : carrito.obtenerItems()) {
-            System.out.println("- " + item);
+            System.out.println("- " + item.getProducto().getNombre() +
+                    " x" + item.getCantidad() +
+                    " = $" + item.getSubtotal());
         }
 
         // Calcular total

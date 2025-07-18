@@ -8,6 +8,13 @@ import ec.edu.ups.util.MensajeInternacionalizacionHandler;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Vista interna que permite modificar un usuario existente, cambiando su contraseña
+ * y rol asignado. Incluye campos para búsqueda, edición y control visual con soporte de internacionalización.
+ *
+ * @author Mateo
+ * @version 1.0
+ */
 public class UsuarioModificarView extends JInternalFrame implements ActualizableConIdioma {
 
     private JTextField txtUsuario;
@@ -16,24 +23,41 @@ public class UsuarioModificarView extends JInternalFrame implements Actualizable
     private JButton btnBuscar;
     private JButton btnModificar;
 
+    private JLabel lblTitulo;
     private JLabel lblUsuario;
     private JLabel lblContraseña;
     private JLabel lblRol;
 
     private MensajeInternacionalizacionHandler mensajes;
 
+    /**
+     * Constructor de la vista. Inicializa componentes e idioma.
+     *
+     * @param mensajes Manejador de internacionalización.
+     */
     public UsuarioModificarView(MensajeInternacionalizacionHandler mensajes) {
         super("", true, true, true, true);
         this.mensajes = mensajes;
         initComponents();
-        actualizarTextos();
+        actualizarTextos(mensajes);
     }
 
+    /**
+     * Inicializa todos los componentes visuales de la ventana.
+     */
     private void initComponents() {
         setSize(500, 300);
-        JPanel panelPrincipal = new JPanel(new BorderLayout());
+        setLayout(new BorderLayout());
+        getContentPane().setBackground(new Color(255, 228, 232));
+
+        lblTitulo = new JLabel("", SwingConstants.CENTER);
+        lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 22));
+        lblTitulo.setForeground(new Color(80, 20, 60));
+        lblTitulo.setBorder(BorderFactory.createEmptyBorder(10, 0, 20, 0));
+        add(lblTitulo, BorderLayout.NORTH);
+
         JPanel formPanel = new JPanel(new GridBagLayout());
-        JPanel botonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
+        formPanel.setOpaque(false);
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 5, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -68,13 +92,13 @@ public class UsuarioModificarView extends JInternalFrame implements Actualizable
         gbc.gridx = 1;
         formPanel.add(cbxRoles, gbc);
 
-        panelPrincipal.add(formPanel, BorderLayout.CENTER);
-
+        JPanel botonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
+        botonPanel.setOpaque(false);
         botonPanel.add(btnBuscar);
         botonPanel.add(btnModificar);
-        panelPrincipal.add(botonPanel, BorderLayout.SOUTH);
 
-        setContentPane(panelPrincipal);
+        add(formPanel, BorderLayout.CENTER);
+        add(botonPanel, BorderLayout.SOUTH);
 
         cbxRoles.setRenderer(new DefaultListCellRenderer() {
             @Override
@@ -91,9 +115,15 @@ public class UsuarioModificarView extends JInternalFrame implements Actualizable
         });
     }
 
+    /**
+     * Actualiza los textos de la vista según el idioma actual.
+     *
+     * @param mensajes Manejador de internacionalización.
+     */
     @Override
-    public void actualizarTextos() {
+    public void actualizarTextos(MensajeInternacionalizacionHandler mensajes) {
         setTitle(mensajes.get("usuario.modificar.titulo.app"));
+        lblTitulo.setText(mensajes.get("usuario.modificar.titulo.app"));
 
         lblUsuario.setText(mensajes.get("global.usuario") + ":");
         lblContraseña.setText(mensajes.get("global.contraseña") + ":");
@@ -107,16 +137,53 @@ public class UsuarioModificarView extends JInternalFrame implements Actualizable
         btnModificar.setText(mensajes.get("global.boton.modificar"));
     }
 
+    /**
+     * Devuelve el campo de texto con el nombre de usuario.
+     *
+     * @return JTextField del nombre de usuario.
+     */
     public JTextField getTxtUsuario() { return txtUsuario; }
+
+    /**
+     * Devuelve el campo de texto de la contraseña.
+     *
+     * @return JTextField de la contraseña.
+     */
     public JTextField getTxtContraseña() { return txtContraseña; }
+
+    /**
+     * Devuelve el combo de roles seleccionable.
+     *
+     * @return JComboBox con los roles disponibles.
+     */
     public JComboBox<Rol> getCbxRoles() { return cbxRoles; }
+
+    /**
+     * Devuelve el botón de búsqueda.
+     *
+     * @return JButton para buscar un usuario.
+     */
     public JButton getBtnBuscar() { return btnBuscar; }
+
+    /**
+     * Devuelve el botón para modificar al usuario.
+     *
+     * @return JButton para modificar.
+     */
     public JButton getBtnModificar() { return btnModificar; }
 
+    /**
+     * Muestra un mensaje emergente con el texto indicado.
+     *
+     * @param mensaje Mensaje a mostrar.
+     */
     public void mostrarMensaje(String mensaje) {
         JOptionPane.showMessageDialog(this, mensaje, mensajes.get("yesNo.app.titulo"), JOptionPane.INFORMATION_MESSAGE);
     }
 
+    /**
+     * Limpia los campos de entrada y restablece el estado inicial de los botones.
+     */
     public void limpiarCampos() {
         txtUsuario.setText("");
         txtContraseña.setText("");

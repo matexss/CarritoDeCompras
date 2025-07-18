@@ -5,11 +5,21 @@ import ec.edu.ups.util.MensajeInternacionalizacionHandler;
 import ec.edu.ups.util.IconUtil;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import javax.swing.border.EmptyBorder;
+
 import java.util.Locale;
 
+/**
+ * Vista para la recuperación de contraseña basada en preguntas de seguridad.
+ * Permite al usuario verificar respuestas a preguntas y cambiar la contraseña si la respuesta es correcta.
+ * Implementa el soporte para la internacionalización.
+ *
+ * @author Mateo
+ * @version 1.0
+ */
 public class RecuperarContraseniaView extends JFrame implements ActualizableConIdioma {
+
     private JPanel panel1;
     private JTextField textPregunta1;
     private JTextField txtRespuesta;
@@ -23,18 +33,27 @@ public class RecuperarContraseniaView extends JFrame implements ActualizableConI
     private JTextArea lblPregunta;
     private JLabel lblNuevaContrasenia;
 
+    /**
+     * Constructor para la vista de recuperación de contraseña.
+     *
+     * @param mensajes Manejador de mensajes internacionalizados.
+     * @param preguntaSeguridad Pregunta de seguridad seleccionada para la verificación.
+     */
     public RecuperarContraseniaView(MensajeInternacionalizacionHandler mensajes, String preguntaSeguridad) {
         this.preguntaSeleccionada = preguntaSeguridad;
         this.mensajes = mensajes;
         this.locale = mensajes.getLocale();
 
         initComponents();
-        actualizarTextos();
+        actualizarTextos(mensajes);
     }
 
+    /**
+     * Inicializa los componentes gráficos de la interfaz.
+     */
     private void initComponents() {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setSize(600, 320);
+        setSize(600, 340);
         setLocationRelativeTo(null);
         setResizable(false);
 
@@ -50,6 +69,14 @@ public class RecuperarContraseniaView extends JFrame implements ActualizableConI
         panelPrincipal.setBackground(fondo);
         panelPrincipal.setLayout(new BoxLayout(panelPrincipal, BoxLayout.Y_AXIS));
         panelPrincipal.setBorder(new EmptyBorder(20, 40, 20, 40));
+
+        // Título
+        JLabel titulo = new JLabel("Recuperar Contraseña");
+        titulo.setFont(new Font("Segoe UI", Font.BOLD, 24));
+        titulo.setForeground(new Color(80, 20, 60));
+        titulo.setAlignmentX(Component.CENTER_ALIGNMENT);
+        titulo.setBorder(new EmptyBorder(0, 0, 15, 0));
+        panelPrincipal.add(titulo);
 
         lblPregunta = new JTextArea();
         lblPregunta.setWrapStyleWord(true);
@@ -112,8 +139,13 @@ public class RecuperarContraseniaView extends JFrame implements ActualizableConI
         add(panelPrincipal, BorderLayout.CENTER);
     }
 
+    /**
+     * Actualiza los textos de la interfaz de acuerdo con el idioma seleccionado.
+     *
+     * @param mensajes Manejador de internacionalización.
+     */
     @Override
-    public void actualizarTextos() {
+    public void actualizarTextos(MensajeInternacionalizacionHandler mensajes) {
         locale = mensajes.getLocale();
         setTitle(mensajes.get("recuperar.titulo"));
         lblPregunta.setText(mensajes.get("recuperar.pregunta") + ":\n" + preguntaSeleccionada);
@@ -122,31 +154,64 @@ public class RecuperarContraseniaView extends JFrame implements ActualizableConI
         lblNuevaContrasenia.setText(mensajes.get("recuperar.nueva") + ":");
     }
 
+    /**
+     * Devuelve la respuesta del usuario a la pregunta de seguridad.
+     *
+     * @return Respuesta ingresada por el usuario.
+     */
     public String getRespuesta() {
         return txtRespuesta.getText().trim();
     }
 
+    /**
+     * Devuelve la nueva contraseña que el usuario desea establecer.
+     *
+     * @return Nueva contraseña.
+     */
     public String getNuevaContrasenia() {
         return new String(txtNuevaContrasenia.getPassword()).trim();
     }
 
+    /**
+     * Botón para verificar si la respuesta a la pregunta de seguridad es correcta.
+     *
+     * @return El botón para verificar la respuesta.
+     */
     public JButton getBtnVerificarRespuestas() {
         return btnVerificarRespuestas;
     }
 
+    /**
+     * Botón para cambiar la contraseña si la respuesta es correcta.
+     *
+     * @return El botón para cambiar la contraseña.
+     */
     public JButton getBtnCambiarContrasenia() {
         return btnCambiarContrasenia;
     }
 
+    /**
+     * Habilita el campo para ingresar la nueva contraseña y el botón para cambiar la contraseña.
+     */
     public void habilitarCambioContrasenia() {
         txtNuevaContrasenia.setEnabled(true);
         btnCambiarContrasenia.setEnabled(true);
     }
 
+    /**
+     * Muestra un mensaje en la pantalla.
+     *
+     * @param mensaje Mensaje que se mostrará al usuario.
+     */
     public void mostrarMensaje(String mensaje) {
         JOptionPane.showMessageDialog(this, mensaje);
     }
 
+    /**
+     * Devuelve la pregunta seleccionada para la recuperación de contraseña.
+     *
+     * @return La pregunta seleccionada.
+     */
     public String getPreguntaSeleccionada() {
         return preguntaSeleccionada;
     }
