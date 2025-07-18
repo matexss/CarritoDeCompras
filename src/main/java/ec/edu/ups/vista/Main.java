@@ -164,6 +164,7 @@ public class Main {
                     principalView.getMenuItemSalir().addActionListener(ev -> {
                         int opcion = JOptionPane.showConfirmDialog(principalView, mensajes.get("menu.salir.confirmacion"), mensajes.get("menu.salir.titulo"), JOptionPane.YES_NO_OPTION);
                         if (opcion == JOptionPane.YES_OPTION) System.exit(0);
+                        System.out.println("Saliste");
                     });
 
                     // Cerrar sesión
