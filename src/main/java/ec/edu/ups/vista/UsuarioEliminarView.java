@@ -14,12 +14,15 @@ public class UsuarioEliminarView extends JInternalFrame implements ActualizableC
     private JButton btnEliminar;
 
     private MensajeInternacionalizacionHandler mensajes;
+    private JButton button1;
+    private JTextField textField1;
+    private JTextField textField2;
 
     public UsuarioEliminarView(MensajeInternacionalizacionHandler mensajes) {
         super("", true, true, true, true);
         this.mensajes = mensajes;
         initComponents();
-        actualizarTextos();
+        actualizarTextos(mensajes);
     }
 
     private void initComponents() {
@@ -48,7 +51,7 @@ public class UsuarioEliminarView extends JInternalFrame implements ActualizableC
 
 
     @Override
-    public void actualizarTextos() {
+    public void actualizarTextos(MensajeInternacionalizacionHandler mensajes) {
         setTitle(mensajes.get("usuario.eliminar.titulo.app"));
         lblTitulo.setText(mensajes.get("usuario.eliminar.titulo.app"));
         lblUsuario.setText(mensajes.get("global.usuario") + ":");

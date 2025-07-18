@@ -28,7 +28,7 @@ public class CarritoEliminarView extends JInternalFrame implements ActualizableC
         this.mensajes = mensajes;
         this.locale = mensajes.getLocale();
         initComponents();
-        actualizarTextos();
+        actualizarTextos(mensajes);
     }
 
     private void initComponents() {
@@ -89,7 +89,7 @@ public class CarritoEliminarView extends JInternalFrame implements ActualizableC
         carritoActual = null;
     }
 
-    @Override public void actualizarTextos() {
+    @Override public void actualizarTextos(MensajeInternacionalizacionHandler mensajes) {
         locale = mensajes.getLocale();
         setTitle(mensajes.get("carrito.eliminar.titulo.app"));
         ((JLabel)((JPanel)getContentPane().getComponent(0)).getComponent(0))

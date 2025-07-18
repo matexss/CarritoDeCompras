@@ -26,7 +26,7 @@ public class UsuarioModificarMisView extends JInternalFrame implements Actualiza
         setIconifiable(true);
         setResizable(true);
         txtUsuario.setEditable(false);
-        actualizarTextos();
+        actualizarTextos(mensajes);
     }
 
     private void inicializarComponentes() {
@@ -77,7 +77,7 @@ public class UsuarioModificarMisView extends JInternalFrame implements Actualiza
     }
 
     @Override
-    public void actualizarTextos() {
+    public void actualizarTextos(MensajeInternacionalizacionHandler mensajes) {
         setTitle(mensajes.get("menu.usuario.modificarMis"));
         lblTitulo.setText(mensajes.get("menu.usuario.modificarMis"));
         lblNuevoUser.setText(mensajes.get("global.nuevoUsuario") + ":");

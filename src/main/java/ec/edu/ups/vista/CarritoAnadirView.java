@@ -42,7 +42,7 @@ public class CarritoAnadirView extends JInternalFrame implements ActualizableCon
         this.locale = mensajes.getLocale();
         initComponents();
         initListeners();
-        actualizarTextos();
+        actualizarTextos(mensajes);
     }
 
     private void initComponents() {
@@ -173,7 +173,7 @@ public class CarritoAnadirView extends JInternalFrame implements ActualizableCon
     }
 
     @Override
-    public void actualizarTextos() {
+    public void actualizarTextos(MensajeInternacionalizacionHandler mensajes) {
         locale = mensajes.getLocale();
         setTitle(mensajes.get("carrito.titulo"));
 

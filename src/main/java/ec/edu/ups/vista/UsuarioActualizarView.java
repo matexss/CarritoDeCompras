@@ -14,7 +14,7 @@ public class UsuarioActualizarView extends JFrame implements ActualizableConIdio
     private JLabel lNombre,lFecha,lCorreo,lTel,lNueva;
 
     public UsuarioActualizarView(MensajeInternacionalizacionHandler m){
-        mensajes=m; init(); actualizarTextos();
+        mensajes=m; init(); actualizarTextos(mensajes);
     }
     private void init(){
         setSize(400,300); setLocationRelativeTo(null);
@@ -34,7 +34,7 @@ public class UsuarioActualizarView extends JFrame implements ActualizableConIdio
         add(new JLabel()); add(btnGuardar);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
     }
-    @Override public void actualizarTextos(){
+    @Override public void actualizarTextos(MensajeInternacionalizacionHandler mensajes){
         setTitle(mensajes.get("usuario.actualizar.titulo"));
         lNombre.setText(mensajes.get("usuario.actualizar.nombre")+":");
         lFecha .setText(mensajes.get("usuario.actualizar.fecha.nacimiento")+":");

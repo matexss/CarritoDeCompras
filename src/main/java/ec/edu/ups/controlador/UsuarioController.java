@@ -14,6 +14,7 @@ import ec.edu.ups.util.ValidadorUsuario;
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class UsuarioController {
 
@@ -64,11 +65,17 @@ public class UsuarioController {
         Usuario usuario = usuarioDAO.autenticar(user, pass);
         if (usuario != null) {
             this.usuarioAutenticado = usuario;
+
+            // 🌐 Actualizar idioma global al iniciar sesión
+            Locale localeSeleccionado = loginView.obtenerLocaleSeleccionado();
+            mensajes.cambiarIdioma(localeSeleccionado.getLanguage(), localeSeleccionado.getCountry());
+
             loginView.dispose();
         } else {
             loginView.mostrarMensaje(mensajes.get("login.error"));
         }
     }
+
 
     private void mostrarVistaRegistro() {
         List<Pregunta> listaPreguntas = PreguntaSeguridadService.obtenerTodasLasPreguntas();

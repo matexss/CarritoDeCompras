@@ -37,11 +37,11 @@ public class CarritoListarView extends JInternalFrame implements ActualizableCon
             }
         });
 
-        actualizarTextos();
+        actualizarTextos(mensajes);
     }
 
     @Override
-    public void actualizarTextos() {
+    public void actualizarTextos(MensajeInternacionalizacionHandler mensajes) {
         setTitle(mensajes.get("menu.carrito.listar"));
         modelo.setColumnIdentifiers(new String[]{
                 mensajes.get("global.codigo"),

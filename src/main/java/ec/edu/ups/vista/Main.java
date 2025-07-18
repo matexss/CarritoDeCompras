@@ -16,6 +16,7 @@ import javax.swing.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.util.Locale;
 
 public class Main {
 
@@ -67,7 +68,8 @@ public class Main {
         MensajeInternacionalizacionHandler mensajes = new MensajeInternacionalizacionHandler("es", "EC");
         mensajes.verificarClavesFaltantes("claves_requeridas.txt");
 
-        LoginView loginView = new LoginView();
+        // 🔁 Versión corregida del LoginView
+        LoginView loginView = new LoginView(mensajes);
         UsuarioController usuarioController = new UsuarioController(usuarioDAO, loginView, mensajes);
         loginView.setVisible(true);
 
@@ -76,6 +78,7 @@ public class Main {
             public void windowClosed(WindowEvent e) {
                 Usuario usuarioAutenticado = usuarioController.getUsuarioAutenticado();
                 if (usuarioAutenticado != null) {
+
                     CarritoServiceImpl carritoService = new CarritoServiceImpl();
                     CarritoController carritoController = new CarritoController(carritoDAO, productoDAO, usuarioController);
 
@@ -118,7 +121,7 @@ public class Main {
                     principalView.getMenuItemEliminarCarrito().addActionListener(ev -> mostrarVentana(carritoEliminarView, principalView));
                     principalView.getMenuItemModificarCarrito().addActionListener(ev -> mostrarVentana(carritoModificarView, principalView));
                     principalView.getMenuItemListarCarritos().addActionListener(ev -> {
-                        if (usuarioAutenticado.getRol() == Rol.ADMINISTRADOR) {
+                        if (usuarioAutenticado.getRol().equals(Rol.ADMINISTRADOR)) {
                             mostrarVentana(carritoListarView, principalView);
                         } else {
                             mostrarVentana(carritoListarMisView, principalView);

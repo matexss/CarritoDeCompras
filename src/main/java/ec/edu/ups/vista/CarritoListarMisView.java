@@ -49,11 +49,11 @@ public class CarritoListarMisView extends JInternalFrame implements Actualizable
             }
         });
 
-        actualizarTextos();
+        actualizarTextos(mensajes);
     }
 
     @Override
-    public void actualizarTextos() {
+    public void actualizarTextos(MensajeInternacionalizacionHandler mensajes) {
         setTitle(mensajes.get("menu.carrito.listarMis"));
         btnModificar.setToolTipText(mensajes.get("menu.carrito.modificar"));
         btnEliminar .setToolTipText(mensajes.get("menu.carrito.eliminar"));

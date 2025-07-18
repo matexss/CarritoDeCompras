@@ -26,7 +26,7 @@ public class UsuarioModificarView extends JInternalFrame implements Actualizable
         super("", true, true, true, true);
         this.mensajes = mensajes;
         initComponents();
-        actualizarTextos();
+        actualizarTextos(mensajes);
     }
 
     private void initComponents() {
@@ -92,7 +92,7 @@ public class UsuarioModificarView extends JInternalFrame implements Actualizable
     }
 
     @Override
-    public void actualizarTextos() {
+    public void actualizarTextos(MensajeInternacionalizacionHandler mensajes) {
         setTitle(mensajes.get("usuario.modificar.titulo.app"));
 
         lblUsuario.setText(mensajes.get("global.usuario") + ":");

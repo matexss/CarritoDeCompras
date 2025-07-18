@@ -90,7 +90,7 @@ public class MenuPrincipalView extends JFrame {
         menuBar.add(menuSesion);
         setJMenuBar(menuBar);
 
-        actualizarTextos();
+        actualizarTextos(mensajes);
     }
 
     private void configurarIdiomaListeners() {
@@ -101,13 +101,13 @@ public class MenuPrincipalView extends JFrame {
 
     public void cambiarIdioma(String lang, String country) {
         mensajes.cambiarIdioma(lang, country);
-        actualizarTextos();
+        actualizarTextos(mensajes);
         for (JInternalFrame frame : jDesktopPane.getAllFrames()) {
-            if (frame instanceof ActualizableConIdioma a) a.actualizarTextos();
+            if (frame instanceof ActualizableConIdioma a) a.actualizarTextos(mensajes);
         }
     }
 
-    public void actualizarTextos() {
+    public void actualizarTextos(MensajeInternacionalizacionHandler mensajes) {
         setTitle(mensajes.get("app.titulo"));
 
         menuProducto.setText(mensajes.get("menu.producto"));

@@ -32,7 +32,7 @@ public class UsuarioListarView extends JInternalFrame implements ActualizableCon
         this.mensajes = mensajes;
         initComponents();
         configurarTabla();
-        actualizarTextos();
+        actualizarTextos(mensajes);
     }
 
     private void initComponents() {
@@ -73,7 +73,7 @@ public class UsuarioListarView extends JInternalFrame implements ActualizableCon
     }
 
     @Override
-    public void actualizarTextos() {
+    public void actualizarTextos(MensajeInternacionalizacionHandler mensajes) {
         this.locale = mensajes.getLocale();
         setTitle(mensajes.get("usuario.listar.titulo.app"));
         lblTitulo.setText(mensajes.get("usuario.listar.titulo.app"));

@@ -37,7 +37,7 @@ public class CarritoModificarView extends JInternalFrame implements Actualizable
         this.mensajes = mensajes;
         this.locale = new Locale(mensajes.get("locale.language"), mensajes.get("locale.country"));
         initComponents();
-        actualizarTextos();
+        actualizarTextos(mensajes);
     }
 
     private void initComponents() {
@@ -98,7 +98,7 @@ public class CarritoModificarView extends JInternalFrame implements Actualizable
         btnModificar.addActionListener(e -> modificarCantidad());
     }
 
-    public void actualizarTextos() {
+    public void actualizarTextos(MensajeInternacionalizacionHandler mensajes) {
         this.locale = new Locale(mensajes.get("locale.language"), mensajes.get("locale.country"));
         setTitle(mensajes.get("carrito.modificar.titulo.app"));
 

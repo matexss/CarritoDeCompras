@@ -28,7 +28,7 @@ public class ProductoModificarView extends JInternalFrame implements Actualizabl
         this.mensajes = mensajes;
         this.locale = mensajes.getLocale();
         initComponents();
-        actualizarTextos();
+        actualizarTextos(mensajes);
     }
 
     private void initComponents() {
@@ -100,7 +100,7 @@ public class ProductoModificarView extends JInternalFrame implements Actualizabl
     }
 
     @Override
-    public void actualizarTextos() {
+    public void actualizarTextos(MensajeInternacionalizacionHandler mensajes) {
         locale = mensajes.getLocale();
         setTitle(mensajes.get("producto.titulo.modificar"));
 

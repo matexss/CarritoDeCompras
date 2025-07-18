@@ -30,7 +30,7 @@ public class ProductoEliminarView extends JInternalFrame implements Actualizable
         this.mensajes = mensajes;
         this.locale = mensajes.getLocale();
         initComponents();
-        actualizarTextos();
+        actualizarTextos(mensajes);
     }
 
     private void initComponents() {
@@ -66,7 +66,7 @@ public class ProductoEliminarView extends JInternalFrame implements Actualizable
     }
 
     @Override
-    public void actualizarTextos() {
+    public void actualizarTextos(MensajeInternacionalizacionHandler mensajes) {
         locale = mensajes.getLocale();
         setTitle(mensajes.get("producto.titulo.eliminar"));
         lblNombre.setText(mensajes.get("global.nombre") + ":");

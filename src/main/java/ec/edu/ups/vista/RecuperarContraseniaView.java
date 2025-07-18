@@ -29,7 +29,7 @@ public class RecuperarContraseniaView extends JFrame implements ActualizableConI
         this.locale = mensajes.getLocale();
 
         initComponents();
-        actualizarTextos();
+        actualizarTextos(mensajes);
     }
 
     private void initComponents() {
@@ -113,7 +113,7 @@ public class RecuperarContraseniaView extends JFrame implements ActualizableConI
     }
 
     @Override
-    public void actualizarTextos() {
+    public void actualizarTextos(MensajeInternacionalizacionHandler mensajes) {
         locale = mensajes.getLocale();
         setTitle(mensajes.get("recuperar.titulo"));
         lblPregunta.setText(mensajes.get("recuperar.pregunta") + ":\n" + preguntaSeleccionada);

@@ -29,7 +29,7 @@ public class ProductoAnadirView extends JInternalFrame implements ActualizableCo
         this.mensajes = mensajes;
         this.locale = mensajes.getLocale();
         initComponents();
-        actualizarTextos();
+        actualizarTextos(mensajes);
     }
 
     private void initComponents() {
@@ -74,7 +74,7 @@ public class ProductoAnadirView extends JInternalFrame implements ActualizableCo
     }
 
     @Override
-    public void actualizarTextos() {
+    public void actualizarTextos(MensajeInternacionalizacionHandler mensajes) {
         locale = mensajes.getLocale();
         setTitle(mensajes.get("producto.titulo.anadir"));
         lblCodigo.setText(mensajes.get("global.codigo") + ":");

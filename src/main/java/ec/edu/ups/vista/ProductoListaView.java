@@ -28,7 +28,7 @@ public class ProductoListaView extends JInternalFrame implements ActualizableCon
         this.mensajes = mensajes;
         this.locale = mensajes.getLocale();
         initComponents();
-        actualizarTextos();
+        actualizarTextos(mensajes);
     }
 
     private void initComponents() {
@@ -68,7 +68,7 @@ public class ProductoListaView extends JInternalFrame implements ActualizableCon
     }
 
     @Override
-    public void actualizarTextos() {
+    public void actualizarTextos(MensajeInternacionalizacionHandler mensajes) {
         locale = mensajes.getLocale();
         setTitle(mensajes.get("producto.titulo.listar"));
         lblBuscar.setText(mensajes.get("global.nombre") + ":");

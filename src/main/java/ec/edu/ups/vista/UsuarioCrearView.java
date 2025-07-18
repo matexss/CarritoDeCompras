@@ -27,7 +27,7 @@ public class UsuarioCrearView extends JInternalFrame implements ActualizableConI
         this.mensajes = mensajes;
 
         initComponents();
-        actualizarTextos();
+        actualizarTextos(mensajes);
         cargarRoles();
     }
 
@@ -67,7 +67,7 @@ public class UsuarioCrearView extends JInternalFrame implements ActualizableConI
 
 
     @Override
-    public void actualizarTextos() {
+    public void actualizarTextos(MensajeInternacionalizacionHandler mensajes) {
         setTitle(mensajes.get("usuario.crear.titulo.app"));
         lblTitulo.setText(mensajes.get("usuario.crear.titulo.app"));
 
