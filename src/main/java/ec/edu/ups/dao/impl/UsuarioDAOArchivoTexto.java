@@ -17,6 +17,21 @@
         public UsuarioDAOArchivoTexto(String rutaArchivo) {
             this.archivo = new File(rutaArchivo);
             cargarDesdeArchivo();
+            if (usuarios.isEmpty()) {
+                Usuario admin = new Usuario();
+                admin.setUsername("admin");
+                admin.setPassword("admin123");
+                admin.setRol(Rol.ADMINISTRADOR);
+                admin.setNombreCompleto("Administrador del Sistema");
+                admin.setCorreo("admin@ups.edu.ec");
+                admin.setTelefono("0999999999");
+                admin.setFechaNacimiento("2000-01-01");
+                admin.setRespuestasSeguridad(new ArrayList<>());
+
+                usuarios.put(admin.getUsername(), admin);
+                guardarEnArchivo();
+            }
+
         }
 
         private void cargarDesdeArchivo() {

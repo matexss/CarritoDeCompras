@@ -1,6 +1,8 @@
 package ec.edu.ups.dao.impl;
 
 import ec.edu.ups.dao.UsuarioDAO;
+import ec.edu.ups.modelo.Pregunta;
+import ec.edu.ups.modelo.RespuestaSeguridad;
 import ec.edu.ups.modelo.Rol;
 import ec.edu.ups.modelo.Usuario;
 
@@ -9,21 +11,36 @@ import java.util.*;
 
 public class UsuarioDAOArchivoBinario implements UsuarioDAO, Serializable {
 
+    private static final long serialVersionUID = 1L;
     private final File archivo;
     private final Map<String, Usuario> usuarios = new HashMap<>();
 
     public UsuarioDAOArchivoBinario(String rutaArchivo) {
         this.archivo = new File(rutaArchivo);
         cargarDesdeArchivo();
+
+        if (usuarios.isEmpty()) {
+            Usuario admin = new Usuario();
+            admin.setUsername("admin");
+            admin.setPassword("admin123");
+            admin.setRol(Rol.ADMINISTRADOR);
+            admin.setNombreCompleto("Administrador del Sistema");
+            admin.setCorreo("admin@ups.edu.ec");
+            admin.setTelefono("0999999999");
+            admin.setFechaNacimiento("2000-01-01");
+            admin.setRespuestasSeguridad(new ArrayList<>()); // vacío pero funcional
+
+            usuarios.put(admin.getUsername(), admin); // ✔️ correcto
+            guardarEnArchivo();
+        }
     }
 
     private void cargarDesdeArchivo() {
         if (!archivo.exists()) return;
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(archivo))) {
             Object obj = ois.readObject();
-            if (obj instanceof Map<?, ?>) {
-                Map<?, ?> mapaLeido = (Map<?, ?>) obj;
-                for (Map.Entry<?, ?> entry : mapaLeido.entrySet()) {
+            if (obj instanceof Map<?, ?> map) {
+                for (Map.Entry<?, ?> entry : map.entrySet()) {
                     if (entry.getKey() instanceof String && entry.getValue() instanceof Usuario) {
                         usuarios.put((String) entry.getKey(), (Usuario) entry.getValue());
                     }
@@ -38,7 +55,7 @@ public class UsuarioDAOArchivoBinario implements UsuarioDAO, Serializable {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(archivo))) {
             oos.writeObject(usuarios);
         } catch (IOException e) {
-            System.err.println("Error al guardar usuarios en binario: " + e.getMessage());
+            System.err.println("Error al escribir archivo binario de usuarios: " + e.getMessage());
         }
     }
 
@@ -55,7 +72,8 @@ public class UsuarioDAOArchivoBinario implements UsuarioDAO, Serializable {
 
     @Override
     public void actualizar(Usuario usuario) {
-        crear(usuario);
+        usuarios.put(usuario.getUsername(), usuario);
+        guardarEnArchivo();
     }
 
     @Override
@@ -71,26 +89,32 @@ public class UsuarioDAOArchivoBinario implements UsuarioDAO, Serializable {
 
     @Override
     public Usuario autenticar(String username, String password) {
-        Usuario u = usuarios.get(username);
-        if (u != null && u.getPassword().equals(password)) return u;
+        Usuario usuario = usuarios.get(username);
+        if (usuario != null && usuario.getPassword().equals(password)) {
+            return usuario;
+        }
         return null;
     }
 
     @Override
     public List<Usuario> listarPorRol(Rol rol) {
-        List<Usuario> lista = new ArrayList<>();
-        for (Usuario u : usuarios.values()) {
-            if (u.getRol().equals(rol)) lista.add(u);
+        List<Usuario> resultado = new ArrayList<>();
+        for (Usuario usuario : usuarios.values()) {
+            if (usuario.getRol().equals(rol)) {
+                resultado.add(usuario);
+            }
         }
-        return lista;
+        return resultado;
     }
 
     @Override
     public List<Usuario> buscarPorNombre(String nombre) {
-        List<Usuario> lista = new ArrayList<>();
-        for (Usuario u : usuarios.values()) {
-            if (u.getNombreCompleto().toLowerCase().contains(nombre.toLowerCase())) lista.add(u);
+        List<Usuario> resultado = new ArrayList<>();
+        for (Usuario usuario : usuarios.values()) {
+            if (usuario.getNombreCompleto().toLowerCase().contains(nombre.toLowerCase())) {
+                resultado.add(usuario);
+            }
         }
-        return lista;
+        return resultado;
     }
 }
